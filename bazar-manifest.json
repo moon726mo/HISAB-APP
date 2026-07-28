@@ -1,0 +1,20 @@
+{
+  "name": "বাজার হিসাব",
+  "short_name": "বাজার হিসাব",
+  "description": "অফলাইন বাজার হিসাব, দামের তালিকা আর প্রাইস ট্রেন্ড ট্র্যাকার",
+  "id": "./bazar-hisab.html",
+  "start_url": "./bazar-hisab.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#FBF6EA",
+  "theme_color": "#1B4332",
+  "orientation": "portrait-primary",
+  "lang": "bn",
+  "dir": "ltr",
+  "icons": [
+    { "src": "bazar-icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "bazar-icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "bazar-icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,3004 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>বাজার হিসাব</title>
+
+<!-- PWA -->
+<link rel="manifest" href="./bazar-manifest.json">
+<meta name="theme-color" content="#1B4332">
+<meta name="background-color" content="#FBF6EA">
+<link rel="icon" type="image/png" sizes="32x32" href="./bazar-icons/favicon-32.png">
+<link rel="apple-touch-icon" href="./bazar-icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="বাজার হিসাব">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@500;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF6EA;
+    --ink:#20301F;
+    --green:#1B4332;
+    --green-2:#2D6A4F;
+    --mustard:#C89116;
+    --mustard-light:#E8B93A;
+    --brick:#A13D2E;
+    --line:#D8CBA3;
+    --shadow: rgba(27,67,50,0.18);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh;
+    background: linear-gradient(160deg, #EFE9D6 0%, #E4DCC2 100%);
+    font-family:'Hind Siliguri', sans-serif;
+    color:var(--ink);
+    padding:24px 16px calc(24px + env(safe-area-inset-bottom));
+  }
+  h1,h2,h3, .brand{ font-family:'Baloo Da 2', 'Hind Siliguri', sans-serif; }
+  .wrap{ max-width:920px; margin:0 auto; }
+
+  header.top{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; margin-bottom:20px; position:relative; z-index:200; }
+  .menu-btn{
+    position:absolute; left:0; top:50%; transform:translateY(-50%); border:none; background:none;
+    font-size:1.5rem; color:var(--green); cursor:pointer; padding:6px 8px; line-height:1;
+  }
+  .menu-btn:hover{ color:var(--green-2); }
+  .notif-corner{ position:absolute; right:0; top:50%; transform:translateY(-50%); }
+  .notif-corner .menu-btn.notif-btn{ position:static; transform:none; font-size:1.3rem; }
+  .menu-corner{ position:absolute; left:0; top:50%; transform:translateY(-50%); }
+  .menu-corner .menu-btn.gear-btn{ position:static; transform:none; }
+  .menu-corner .notif-dropdown{ left:0; right:auto; text-align:left; }
+  .menu-dropdown-item{
+    display:flex; align-items:center; gap:8px; width:100%; text-align:left; border:none;
+    background:none; font-family:'Hind Siliguri', sans-serif; font-weight:600; font-size:0.9rem;
+    color:var(--ink); padding:10px 10px; border-radius:8px; cursor:pointer;
+  }
+  .menu-dropdown-item:hover{ background:#F1EEE2; }
+  .notif-badge{
+    position:absolute; top:3px; right:2px; width:9px; height:9px; border-radius:50%;
+    background:var(--brick); border:1.5px solid #FEFDF9;
+  }
+  .notif-dropdown{
+    position:absolute; top:calc(100% + 8px); right:0; width:270px; max-width:80vw;
+    background:#fff; border-radius:12px; box-shadow:0 12px 34px rgba(0,0,0,0.28);
+    border:1px solid rgba(27,67,50,0.08); padding:10px; z-index:110;
+    display:none; text-align:left;
+  }
+  .notif-dropdown.open{ display:block; }
+  .notif-dropdown-title{ font-size:0.78rem; font-weight:700; color:#5b6b58; margin-bottom:6px; padding:0 2px; }
+  .notif-list{ display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto; }
+  .notif-item{ font-size:0.82rem; padding:8px 10px; border-radius:8px; background:#F1EEE2; color:var(--ink); line-height:1.4; }
+  .notif-item.err{ background:#FBEAE6; color:#8a3b2c; }
+  .notif-item .notif-time{ display:block; font-size:0.7rem; color:#9a9a86; margin-top:2px; }
+  .notif-empty{ font-size:0.8rem; color:#9a9a86; text-align:center; padding:12px 4px; }
+  header.top .brand{ font-size:2.1rem; font-weight:800; color:var(--green); }
+  header.top .brand span{ color:var(--mustard); }
+  header.top .sub{ color:#5b6b58; font-size:0.92rem; }
+
+  .bottom-nav{
+    position:fixed; left:0; right:0; bottom:0; z-index:50;
+    display:flex; justify-content:center;
+    padding:0;
+    pointer-events:none;
+  }
+  .bottom-nav-inner{
+    pointer-events:auto;
+    display:flex; align-items:stretch; gap:2px;
+    width:100%; max-width:560px;
+    background:#FEFDF9; border-radius:20px 20px 0 0;
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+    box-shadow: 0 -6px 20px -10px rgba(27,67,50,0.35), 0 -2px 8px -2px rgba(27,67,50,0.12);
+    border:1px solid rgba(27,67,50,0.05);
+    border-bottom:none;
+  }
+  .navbtn{
+    flex:1; border:none; background:transparent; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:3px; padding:8px 4px 7px; border-radius:14px;
+    font-family:'Hind Siliguri', sans-serif; color:#8a9088; transition:all .15s;
+  }
+  .navbtn .navicon{ font-size:1.28rem; line-height:1; filter:grayscale(35%); opacity:0.85; }
+  .navbtn .navlabel{ font-size:0.66rem; font-weight:600; line-height:1; white-space:nowrap; }
+  .navbtn:active{ transform:scale(0.94); }
+  .navbtn.active{ color:var(--green); background:#EAF3EC; }
+  .navbtn.active .navicon{ filter:none; opacity:1; }
+
+  .tabpage{ display:none; }
+  .tabpage.active{ display:block; }
+
+  .card{
+    background:#fff; border-radius:16px; padding:20px 20px 22px;
+    box-shadow: 0 10px 30px -14px var(--shadow);
+    border:1px solid rgba(27,67,50,0.06);
+  }
+  .card h2{ margin:0 0 14px; font-size:1.15rem; color:var(--green); display:flex; align-items:center; gap:8px; }
+  .card h2 .tag{
+    font-family:'JetBrains Mono', monospace; font-size:0.65rem; font-weight:700;
+    background:var(--green); color:#fff; padding:2px 8px; border-radius:20px; letter-spacing:0.5px;
+  }
+
+  label{ font-size:0.85rem; color:#4a564a; display:block; margin:10px 0 5px; font-weight:500; }
+  input, select{
+    width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid var(--line);
+    font-family:'Hind Siliguri', sans-serif; font-size:1rem; background:#FCFBF6; outline:none;
+    transition:border-color .15s, background .15s;
+  }
+  input:focus, select:focus{ border-color:var(--green-2); background:#fff; }
+
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+  .btn{
+    border:none; cursor:pointer; font-family:'Hind Siliguri', sans-serif; font-weight:600;
+    border-radius:10px; padding:11px 16px; font-size:0.95rem; transition:transform .1s, filter .15s;
+  }
+  .btn:active{ transform:scale(0.97); }
+  .btn-primary{ background:var(--green); color:#fff; }
+  .btn-primary:hover{ filter:brightness(1.1); }
+  .btn-ghost{ background:#F1EEE2; color:var(--ink); }
+  .btn-ghost:hover{ background:#E7E2D2; }
+  .btn-danger{ background:transparent; color:var(--brick); border:1.5px solid var(--brick); }
+  .btn-danger:hover{ background:rgba(161,61,46,0.08); }
+  .btn-full{ width:100%; margin-top:14px; }
+
+  .plist{ margin-top:16px; }
+  .plist-row{ border-bottom:1px dashed var(--line); }
+  .plist-row:last-child{ border-bottom:none; }
+  .plist-item{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 4px; font-size:0.92rem;
+  }
+  .trend-btn{
+    background:none; border:none; cursor:pointer; font-size:0.95rem; padding:2px 4px;
+    border-radius:6px; opacity:0.75; transition:opacity .15s, background .15s;
+  }
+  .trend-btn:hover{ opacity:1; background:rgba(200,145,22,0.14); }
+  .trend-panel{
+    background:#FBF8EE; border-radius:10px; padding:14px 16px; margin:0 4px 12px;
+    border:1px solid var(--line);
+  }
+  .trend-chart-svg{ min-height:200px; }
+  @media (max-width:420px){
+    .trend-chart-svg{ min-height:230px; }
+  }
+  .trend-summary{ display:flex; justify-content:space-between; font-size:0.8rem; color:#5b6b58; margin-top:8px; }
+  .trend-summary .up{ color:var(--brick); font-weight:700; }
+  .trend-summary .down{ color:var(--green-2); font-weight:700; }
+  .trend-pct-up{ color:var(--brick); font-weight:700; font-size:0.78rem; white-space:nowrap; }
+  .trend-pct-down{ color:var(--green-2); font-weight:700; font-size:0.78rem; white-space:nowrap; }
+  .trend-pct-flat{ color:#7a8a76; font-weight:600; font-size:0.78rem; white-space:nowrap; }
+
+  .trend-chip-row{
+    display:flex; flex-wrap:nowrap; overflow-x:auto; gap:8px;
+    padding:2px 2px 8px; margin:0 0 10px;
+    scrollbar-width:thin; -webkit-overflow-scrolling:touch;
+  }
+  .trend-chip-row .cat-chip{ flex:0 0 auto; }
+  .trend-chip-row::-webkit-scrollbar{ height:5px; }
+  .trend-chip-row::-webkit-scrollbar-thumb{ background:var(--line); border-radius:10px; }
+
+
+  .mover-cards{ display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px; margin:0 0 14px; }
+  .mover-card{
+    border:1.5px solid var(--line); background:#FCFBF6; border-radius:14px;
+    padding:10px 12px; cursor:pointer; transition:all .15s; text-align:left;
+  }
+  .mover-card:hover{ border-color:var(--mustard); box-shadow:0 2px 8px var(--shadow); transform:translateY(-1px); }
+  .mover-card .mover-fire{ font-size:0.95rem; }
+  .mover-card .mover-nm{ font-weight:700; font-size:0.88rem; color:var(--ink); display:block; margin:4px 0 3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .mover-card .mover-pct{ font-weight:800; font-size:0.95rem; }
+  .mover-card .mover-pct.up{ color:var(--brick); }
+  .mover-card .mover-pct.down{ color:var(--green-2); }
+  .mover-card .mover-price{ font-size:0.72rem; color:#7a8a76; margin-top:2px; font-family:'JetBrains Mono', monospace; }
+  .plist-item .nm{ font-weight:600; }
+  .plist-item .pr{ font-family:'JetBrains Mono', monospace; color:var(--green-2); font-size:0.85rem; cursor:pointer; border-bottom:1px dashed var(--green-2); padding:2px 3px; border-radius:4px; }
+  .plist-item .pr:hover{ background:rgba(45,106,79,0.1); }
+  .plist-item .pr-edit{ width:80px; padding:5px 7px; font-family:'JetBrains Mono', monospace; font-size:0.85rem; border-radius:6px; }
+  .plist-item button{ background:none; border:none; color:var(--brick); cursor:pointer; font-size:0.9rem; }
+  .empty-note{ color:#9a9a86; font-style:italic; padding:14px 4px; }
+  .history-entry{
+    border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-bottom:10px; background:#fff;
+    transition:background-color .15s ease, border-color .15s ease;
+  }
+  .history-entry[open]{
+    background:#F6F3E7; border-color:var(--green-2);
+  }
+  .history-entry summary{
+    display:flex; justify-content:space-between; align-items:center; cursor:pointer;
+    list-style:none; font-weight:600;
+  }
+  .history-entry summary::-webkit-details-marker{ display:none; }
+  .history-entry .hist-date{ color:var(--ink); }
+  .history-entry .hist-total{ font-family:'JetBrains Mono', monospace; color:var(--green-2); }
+  .checklist-grand-total{
+    text-align:center; font-family:'JetBrains Mono', monospace; font-weight:700;
+    font-size:1.05rem; color:var(--green-2); padding:2px 16px 8px;
+  }
+  .hist-checklist-badge{
+    display:inline-block; font-family:'JetBrains Mono', monospace; font-weight:700; font-size:0.72rem;
+    color:var(--green-2); background:#EAF3EC; border-radius:20px; padding:2px 8px; margin-left:4px; vertical-align:middle;
+  }
+  .hist-body{ margin-top:8px; padding-top:8px; border-top:1px dashed var(--line); }
+  .hist-cat{ font-weight:700; color:var(--green); margin:6px 0 2px; }
+  .hist-item{ display:flex; justify-content:space-between; padding:3px 0; font-size:0.92rem; }
+  .hist-cat-total{ text-align:right; font-size:0.85rem; color:#5b6b58; margin-top:2px; }
+  .cl-cat-label{ font-weight:600; color:#7a8a76; margin:6px 0 2px; font-size:0.85rem; }
+  .hist-item-done{ text-decoration:line-through; color:#9a9a86; }
+  .hist-item-check{ margin-right:4px; }
+
+  .cat-chips{ display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 4px; }
+  .cat-chip{
+    border:1.5px solid var(--line); background:#FCFBF6; color:#4a564a;
+    padding:7px 14px; border-radius:20px; font-size:0.85rem; font-weight:600;
+    cursor:pointer; transition:all .15s;
+  }
+  .cat-chip.active{ background:var(--mustard); border-color:var(--mustard); color:#fff; }
+  .cat-chip:hover{ border-color:var(--green-2); }
+  .cat-chip-add{
+    border-style:dashed; color:var(--green-2); font-weight:800; padding:7px 16px;
+  }
+  .cat-chip-add:hover{ background:var(--green-2); border-color:var(--green-2); color:#fff; }
+
+  .item-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:12px; margin-top:16px; }
+  .item-card{
+    border:1.8px solid var(--line); border-radius:14px; padding:14px; background:#FCFBF6;
+    cursor:pointer; transition:border-color .15s, background .15s;
+  }
+  .item-card.selected{ border-color:var(--green-2); background:#EAF3EC; }
+  .item-card .nm{ font-weight:700; font-size:1rem; color:var(--ink); }
+  .item-card .meta{ font-size:0.78rem; color:#7a8a76; margin:2px 0 10px; }
+  .item-card input{ padding:8px 10px; font-family:'JetBrains Mono', monospace; }
+  .item-card .sub{ margin-top:8px; font-size:0.82rem; color:var(--green-2); font-weight:600; min-height:1.2em; }
+
+  .receipt-shell{
+    background:var(--paper); border-radius:14px; margin-top:22px;
+    box-shadow: 0 14px 34px -16px var(--shadow); padding:20px 22px;
+  }
+  .receipt-head{ display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px dashed var(--line); padding-bottom:12px; margin-bottom:4px; }
+  .receipt-head .store{ font-family:'Baloo Da 2'; font-size:1.2rem; color:var(--green); font-weight:700; }
+  .receipt-head .date{ font-family:'JetBrains Mono', monospace; font-size:0.72rem; color:#7a7a68; }
+
+  .cart-list{ margin-top:6px; }
+  .cart-empty{ text-align:center; color:#9a9a86; font-style:italic; padding:20px 4px; }
+  .cart-cat-head{
+    font-family:'Baloo Da 2', 'Hind Siliguri', sans-serif; font-weight:700; font-size:0.88rem;
+    color:var(--green); padding:12px 2px 6px; border-bottom:1.5px solid var(--green-2); margin-top:6px;
+  }
+  .cart-cat-head:first-child{ margin-top:0; padding-top:2px; }
+  .cart-item{ padding:10px 2px; border-bottom:1px dashed var(--line); }
+  .cart-item-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+  .cart-item-name{ font-weight:600; font-size:0.92rem; color:var(--ink); word-break:break-word; }
+  .cart-item-meta{
+    display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 14px; margin-top:5px;
+    font-family:'JetBrains Mono', monospace; font-size:0.82rem; color:#5b6b58;
+  }
+  .cart-item-meta .qty{ white-space:nowrap; }
+  .cart-item-meta .price{ white-space:nowrap; color:#7a8a76; }
+  .cart-item-meta .sub{ white-space:nowrap; color:var(--green-2); font-weight:700; margin-left:auto; }
+  .cart-cat-subtotal{
+    padding:7px 2px 14px; font-size:0.8rem; font-weight:600; color:#5b6b58;
+    font-style:italic; display:flex; justify-content:space-between;
+  }
+  .cart-cat-subtotal .val{ font-style:normal; color:var(--mustard); font-family:'JetBrains Mono', monospace; font-size:0.85rem; }
+  .del-btn{ background:none; border:none; color:var(--brick); cursor:pointer; font-size:1rem; line-height:1; padding:2px 6px; border-radius:6px; flex-shrink:0; }
+  .del-btn:hover{ background:rgba(161,61,46,0.12); }
+
+  .grand{
+    display:flex; justify-content:space-between; align-items:center; margin-top:14px;
+    padding:14px 16px; background:var(--green); color:#fff; border-radius:12px;
+  }
+  .grand .lbl{ font-family:'Baloo Da 2'; font-size:1rem; }
+  .grand .val{ font-family:'JetBrains Mono', monospace; font-size:1.5rem; font-weight:700; color:var(--mustard-light); }
+
+  .actions-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; }
+  .actions-row .btn{ min-width:0; }
+  .actions-row .btn:nth-child(3){ grid-column:1 / -1; }
+
+  @media print{
+    .bottom-nav, header.top, .item-grid, .actions-row{ display:none !important; }
+  }
+
+  .sync-toast{
+    position:fixed; bottom:calc(70px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%) translateY(8px);
+    display:flex; align-items:center; gap:10px; z-index:100;
+    background:#2A3A28; border-radius:20px; padding:8px 16px;
+    box-shadow:0 10px 24px -10px rgba(0,0,0,0.35);
+    opacity:0; pointer-events:none; transition:opacity .3s ease, transform .3s ease;
+    max-width:calc(100% - 32px); text-align:center;
+  }
+  .sync-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .sync-status{ font-size:0.8rem; color:#fff; font-weight:500; }
+  .sync-status.ok{ color:#8FDBB0; }
+  .sync-status.err{ color:#F0A08E; }
+  .sync-status.busy{ color:var(--mustard-light); }
+  .search-select{ position:relative; }
+
+  .item-picker-btn{
+    width:100%; display:flex; align-items:center; justify-content:space-between;
+    padding:11px 14px; border-radius:10px; border:1.5px solid var(--line);
+    background:#FCFBF6; font-family:'Hind Siliguri', sans-serif; font-size:1rem;
+    color:#8a9088; cursor:pointer; text-align:left; transition:border-color .15s;
+  }
+  .item-picker-btn:hover{ border-color:var(--green-2); }
+  .item-picker-btn .ipb-label.chosen{ color:var(--ink); font-weight:600; }
+  .item-picker-btn.chosen{ color:var(--ink); font-weight:600; }
+  .qty-unit-box{
+    display:flex; align-items:center; gap:6px;
+    border:1.5px solid var(--line); border-radius:10px; background:#FCFBF6;
+    padding:0 12px;
+  }
+  .qty-unit-box input{
+    border:none; background:transparent; outline:none; width:100%;
+    padding:11px 0; font-family:'Hind Siliguri', sans-serif; font-size:1rem; color:var(--ink);
+  }
+  .qty-unit-box span{ color:#8a9088; font-size:0.85rem; white-space:nowrap; }
+  .qty-unit-box span.chosen{ color:var(--ink); font-weight:600; }
+  .qty-unit-box span.toggleable{
+    cursor:pointer; border-bottom:1.5px dashed var(--green-2); padding-bottom:1px;
+  }
+  .qty-unit-box span.toggleable:hover{ color:var(--green-2); }
+  .item-picker-btn .ipb-arrow{ color:#8a9088; font-size:0.8rem; margin-left:8px; }
+
+  body.no-scroll{ overflow:hidden; }
+
+  .picker-overlay{
+    display:none; position:fixed; inset:0; background:rgba(20,30,20,0.45);
+    z-index:200; align-items:flex-start; justify-content:center;
+    padding-top:env(safe-area-inset-top);
+  }
+  .picker-overlay.open{ display:flex; }
+  .picker-sheet{
+    background:#FBF6EA; width:100%; max-width:560px; border-radius:0 0 20px 20px;
+    max-height:78vh; display:flex; flex-direction:column; position:relative;
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+    animation: sheetDown .08s ease;
+  }
+  @keyframes sheetDown{ from{ transform:translateY(-18px); opacity:0.7; } to{ transform:translateY(0); opacity:1; } }
+  .picker-head{ display:flex; align-items:center; justify-content:space-between; padding:14px 46px 8px 16px; }
+  .picker-title{ font-family:'Baloo Da 2'; font-weight:700; color:var(--green); font-size:1.05rem; }
+  #checklistTitleText{ cursor:pointer; border-bottom:1px dashed var(--line); }
+  .checklist-title-input{
+    font-family:'Baloo Da 2'; font-weight:700; color:var(--green); font-size:1.05rem;
+    border:1.5px solid var(--green-2); border-radius:6px; padding:2px 6px; width:100%;
+  }
+  .picker-close{
+    border:none; background:#F1EEE2; color:var(--ink); width:30px; height:30px;
+    border-radius:50%; cursor:pointer; font-size:0.95rem; line-height:1;
+    position:absolute; top:14px; right:16px; z-index:5;
+  }
+  .picker-close:hover{ background:#E7E2D2; }
+  .hist-add-checklist-btn{
+    border:none; background:var(--green); color:#fff; width:22px; height:22px;
+    border-radius:50%; cursor:pointer; font-size:0.85rem; line-height:1; font-weight:700;
+    display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .hist-add-checklist-btn:hover{ opacity:0.85; }
+  .cl-page-remove-btn{
+    background:none; border:none; color:var(--brick); font-size:1rem; font-weight:700;
+    cursor:pointer; padding:2px 6px 2px 0; line-height:1; vertical-align:middle;
+  }
+  .cl-page-remove-btn:hover{ opacity:0.7; }
+  .picker-search-wrap{ padding:4px 16px 10px; }
+  .picker-search{
+    width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--line);
+    font-family:'Hind Siliguri', sans-serif; font-size:1rem; background:#fff; outline:none;
+  }
+  .picker-search:focus{ border-color:var(--green-2); }
+  .picker-list{ overflow-y:auto; padding:2px 10px calc(16px + env(safe-area-inset-bottom)); flex:1; }
+  .picker-item{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 8px; border-radius:12px; cursor:pointer; gap:10px;
+    border-bottom:1px dashed var(--line); position:relative;
+  }
+  .picker-item:last-child{ border-bottom:none; }
+  .picker-item:active, .picker-item:hover{ background:#F1EEE2; }
+  .picker-item.selected{ background:#EAF3EC; }
+  .picker-item .nm{ font-weight:600; color:var(--ink); }
+  .picker-item .pr{ font-family:'JetBrains Mono', monospace; color:var(--green-2); font-size:0.82rem; white-space:nowrap; }
+  .picker-item .pr-unit{ font-size:0.82rem; color:#7a8a76; white-space:nowrap; border-bottom:1px dashed #7a8a76; padding:2px 3px; border-radius:4px; }
+  .picker-item .pr-unit:hover{ background:rgba(45,106,79,0.08); }
+  .picker-item .pr{ cursor:pointer; border-bottom:1px dashed var(--green-2); padding:2px 3px; border-radius:4px; }
+  .picker-item .pr:hover{ background:rgba(45,106,79,0.1); }
+  .picker-item .pr-view-row{ display:flex; align-items:center; gap:6px; }
+  .picker-item .pr-unit-view{ font-size:0.82rem; color:#7a8a76; white-space:nowrap; }
+  .picker-item .pr-view{ font-family:'JetBrains Mono', monospace; color:var(--green-2); font-size:0.82rem; white-space:nowrap; }
+  .picker-item .pr-edit{ width:74px; padding:5px 7px; font-family:'JetBrains Mono', monospace; font-size:0.82rem; border-radius:6px; }
+  .picker-item .pr-edit-unit{ width:auto; flex:0 0 auto; padding:5px 6px; font-size:0.82rem; border-radius:6px; font-family:'Hind Siliguri', sans-serif; }
+  #categoryPickerList .picker-item{ touch-action:none; user-select:none; -webkit-user-select:none; }
+  #categoryPickerList .picker-item.cat-dragging{
+    background:#FCF6E0; box-shadow:0 6px 16px var(--shadow); z-index:5;
+    border-radius:12px; border-bottom-color:transparent;
+  }
+  #categoryPickerList .picker-item.cat-drop-before{ border-top:2.5px solid var(--mustard); }
+  #categoryPickerList .picker-item.cat-drop-after{ border-bottom:2.5px solid var(--mustard); }
+  .picker-dots-btn{
+    background:none; border:none; color:#7a8a76; font-size:1.3rem; cursor:pointer;
+    padding:6px 12px; line-height:1; flex-shrink:0; border-radius:8px;
+  }
+  .picker-dots-btn:hover, .picker-dots-btn:active{ background:#F1EEE2; color:var(--ink); }
+  .picker-item-menu{
+    display:flex; align-items:center; gap:6px; margin-top:2px;
+    background:#F1EEE2; border-radius:8px; padding:8px 10px;
+  }
+  .picker-item-menu .pr-unit, .picker-item-menu .pr{ font-size:1rem; padding:4px 6px; }
+
+  .item-menu-popup{
+    position:fixed; background:#fff; border-radius:12px; width:190px; box-sizing:border-box;
+    box-shadow:0 12px 34px rgba(0,0,0,0.28); border:1px solid rgba(27,67,50,0.08);
+    z-index:400; overflow:hidden; padding:8px;
+  }
+  .item-menu-popup .menu-row{
+    display:grid; grid-template-columns:1fr 96px; align-items:center; gap:8px;
+    padding:12px 14px; cursor:pointer; font-size:0.88rem; color:var(--ink);
+    border:1px solid var(--line); border-radius:8px; margin-bottom:8px;
+    box-sizing:border-box; width:100%; overflow:hidden;
+  }
+  .item-menu-popup .menu-row:last-child{ margin-bottom:0; }
+  .item-menu-popup .menu-row:active, .item-menu-popup .menu-row:hover{ background:#F1EEE2; }
+  .item-menu-popup .menu-row.danger{ color:var(--brick); font-weight:600; justify-content:flex-start; }
+  .item-menu-popup .menu-label{ color:#7a8a76; font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .item-menu-popup .menu-value{
+    font-family:'JetBrains Mono', monospace; color:var(--green-2); font-weight:600;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:right;
+  }
+  .item-menu-split{ display:flex; gap:8px; margin-bottom:0; }
+  .item-menu-split .split-btn{
+    flex:1; display:flex; align-items:center; justify-content:center;
+    padding:12px 10px; cursor:pointer; font-size:0.88rem;
+    border:1px solid var(--line); border-radius:8px;
+  }
+  .item-menu-split .split-btn:active, .item-menu-split .split-btn:hover{ background:#F1EEE2; }
+  .item-menu-split .split-btn.danger{ color:var(--brick); font-weight:600; }
+  .item-menu-split .split-btn.save{ color:var(--green-2); font-weight:600; }
+  .item-menu-popup select.pr-edit-unit, .item-menu-popup input.pr-edit{
+    margin:0; width:100%; max-width:100%; min-width:0; box-sizing:border-box;
+    padding:5px 6px; font-size:0.8rem; border-radius:6px;
+  }
+  .picker-none{ padding:24px 16px; text-align:center; color:#9a9a86; font-style:italic; }
+  #itemPickerModal.picker-overlay{ align-items:stretch; padding-top:0; }
+  #itemPickerModal .picker-sheet{ max-height:100vh; max-height:100dvh; height:100vh; height:100dvh; border-radius:0; }
+  #itemPickerModal .picker-list{ flex:1 1 auto; }
+  #categoryPickerModal.picker-overlay{ align-items:stretch; padding-top:0; }
+  #categoryPickerModal .picker-sheet{ max-height:100vh; max-height:100dvh; height:100vh; height:100dvh; border-radius:0; }
+  #categoryPickerModal .picker-list{ flex:1 1 auto; }
+  #checklistModal.picker-overlay{ align-items:stretch; padding-top:0; }
+  #checklistModal .picker-sheet{ max-height:100vh; max-height:100dvh; height:100vh; height:100dvh; border-radius:0; overflow-y:auto; }
+  #checklistModal .picker-list{ flex:none; }
+  .checklist-item{
+    display:flex; align-items:center; gap:10px; padding:12px 8px;
+    border-radius:12px; border-bottom:1px dashed var(--line);
+  }
+  .checklist-item:last-child{ border-bottom:none; }
+  .checklist-item input[type="checkbox"]{ width:20px; height:20px; flex-shrink:0; accent-color:var(--green); cursor:pointer; }
+  .checklist-item .cl-name{ flex:1; font-weight:600; color:var(--ink); }
+  .checklist-item.done .cl-name{ text-decoration:line-through; color:#9a9a86; font-weight:500; }
+  .cl-name-input{
+    flex:1; min-width:0; padding:4px 6px; border:1.5px solid var(--green-2); border-radius:6px;
+    font-size:0.92rem; font-weight:600; color:var(--ink); background:#fff;
+  }
+  .checklist-item .cl-meta{ font-size:0.8rem; color:#7a8a76; white-space:nowrap; }
+  .cl-price-input{
+    width:64px; padding:4px 6px; border:1.5px solid var(--line); border-radius:6px;
+    font-size:0.82rem; text-align:right; color:var(--ink); background:#fff; flex-shrink:0;
+  }
+  .cl-price-input:focus{ border-color:var(--green-2); }
+  .checklist-completed-wrap{
+    border-top:1.5px solid var(--line); margin:0 10px; padding:4px 0 calc(10px + env(safe-area-inset-bottom));
+  }
+  .checklist-completed-summary{
+    padding:10px 6px; font-weight:700; color:var(--green-2); cursor:pointer; font-size:0.92rem; list-style:none;
+  }
+  .checklist-completed-summary::-webkit-details-marker{ display:none; }
+  .checklist-empty{ padding:20px 16px; text-align:center; color:#9a9a86; font-style:italic; }
+  .checklist-extra-total{
+    margin:0 16px 10px; padding:9px 14px; border-radius:10px; background:#EAF3EC;
+    color:var(--green-2); font-weight:700; font-size:0.88rem; text-align:center;
+  }
+  .checklist-item .cl-del-btn{
+    background:none; border:none; color:var(--brick); font-size:1rem; cursor:pointer;
+    padding:4px 6px; line-height:1; flex-shrink:0;
+  }
+  .checklist-item .cl-del-btn:hover{ opacity:0.7; }
+  .checklist-progress-wrap{ padding:2px 16px 10px; }
+  .checklist-progress-track{ background:#EAE6D6; border-radius:8px; height:8px; overflow:hidden; }
+  .checklist-progress-bar{ background:var(--green); height:100%; width:0%; border-radius:8px; transition:width .25s ease; }
+  .checklist-progress-label{ margin-top:6px; font-size:0.8rem; color:#5b6b58; font-weight:600; text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="menu-corner">
+      <button type="button" class="menu-btn gear-btn" id="headerMenuBtn" onclick="toggleGearDropdown()" aria-label="মেনু">☰</button>
+      <div id="gearDropdown" class="notif-dropdown">
+        <button type="button" class="menu-dropdown-item" onclick="toggleGearDropdown(); switchTab(2);">🏠 হোম</button>
+        <button type="button" class="menu-dropdown-item" onclick="toggleGearDropdown(); switchTab(5);">✅ চেকলিস্ট</button>
+        <button type="button" class="menu-dropdown-item" onclick="toggleGearDropdown(); switchTab(4);">📈 মূল্য বৃদ্ধি</button>
+        <button type="button" class="menu-dropdown-item" onclick="toggleGearDropdown(); switchTab(3);">🕘 হিস্টরি</button>
+        <button type="button" class="menu-dropdown-item" onclick="toggleGearDropdown(); openSyncSettings();">🔗 URL সিঙ্ক</button>
+      </div>
+    </div>
+    <div class="brand">🧺 বাজার <span>হিসাব</span></div>
+    <div class="notif-corner">
+      <button type="button" class="menu-btn notif-btn" id="notifBtn" onclick="toggleNotifDropdown()" aria-label="নোটিফিকেশন">
+        🔔
+        <span id="notifBadge" class="notif-badge" style="display:none;"></span>
+      </button>
+      <div id="notifDropdown" class="notif-dropdown">
+        <div class="notif-dropdown-title">সাম্প্রতিক সিঙ্ক মেসেজ</div>
+        <div id="notifList" class="notif-list"></div>
+      </div>
+    </div>
+  </header>
+
+
+
+  <div id="syncBar" class="sync-toast">
+    <span id="syncStatus" class="sync-status">🔌 সিঙ্ক সেট করা নেই</span>
+  </div>
+
+  <!-- TAB 2: Shopping -->
+  <div class="tabpage active" id="tabPage2">
+    <div class="card">
+      <div style="display:flex; gap:8px; align-items:stretch;">
+        <button type="button" id="selectItemBtn" class="item-picker-btn" style="width:auto; flex:1 1 0;" onclick="openItemPicker()">
+          <span id="selectItemBtnLabel" class="ipb-label">জিনিস সিলেক্ট করুন</span>
+          <span class="ipb-arrow">▾</span>
+        </button>
+        <div class="qty-unit-box" style="flex:1 1 0;">
+          <input type="number" id="selectQty" min="0" step="0.01" placeholder="যেমন: 5">
+          <span id="selectUnitBadge" onpointerdown="event.preventDefault()" onclick="toggleSelectQtyUnit()">একক</span>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:8px; align-items:stretch; margin-top:10px;">
+        <input type="text" id="otherItemInput" placeholder="অন্যান্য" style="flex:1 1 0; width:50%;">
+        <button class="btn btn-primary" style="flex:1 1 0; width:50%;" onclick="addSelectedItem()">➕ যোগ করো</button>
+      </div>
+
+      <div id="selectPreview" class="empty-note" style="display:none; margin-top:4px;"></div>
+
+      <div id="shopEmptyNote" class="empty-note" style="display:none;">
+        এখনো কোনো জিনিস সেভ করা নেই। আগে "প্রাইস লিস্ট" ট্যাবে গিয়ে জিনিস যোগ করুন।
+      </div>
+    </div>
+
+    <div class="receipt-shell">
+      <div class="receipt-head">
+        <div class="store">আজকের বাজার</div>
+        <div class="date" id="todayDate"></div>
+      </div>
+      <div class="cart-list" id="summaryBody">
+        <div class="cart-empty">এখনো কিছু যোগ করা হয়নি</div>
+      </div>
+      <div class="grand">
+        <div class="lbl">সর্বমোট খরচ<div id="grandOtherNote" style="display:none; font-size:0.68rem; font-weight:400; color:#9a9a86; margin-top:2px;">*অন্যান্য বাদে</div></div>
+        <div class="val">৳ <span id="grandTotal">0.00</span></div>
+      </div>
+      <div class="actions-row">
+        <button class="btn btn-ghost" id="copyWithPriceBtn" onclick="copySummary()">📋 কপি (দামসহ)</button>
+        <button class="btn btn-ghost" id="copyNoPriceBtn" onclick="copyNameQtyOnly()">📝 কপি (দামছাড়া)</button>
+        <button class="btn btn-danger" onclick="clearQuantities()">🗑️ ক্লিয়ার</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: History -->
+  <div class="tabpage" id="tabPage3">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button type="button" class="picker-close" style="position:static;" onclick="switchTab(2)" aria-label="ফিরে যান">←</button>
+          <div class="picker-title">হিস্টরি</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button type="button" class="btn btn-ghost" style="background:transparent; border:none; box-shadow:none;" onclick="clearAllHistory()">🗑️</button>
+        </div>
+      </div>
+      <div id="historyListBox"></div>
+    </div>
+  </div>
+
+  <!-- TAB 4: Price Trend -->
+  <div class="tabpage" id="tabPage4">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button type="button" class="picker-close" style="position:static;" onclick="switchTab(2)" aria-label="ফিরে যান">←</button>
+          <div class="picker-title">📈 মূল্য বৃদ্ধি</div>
+        </div>
+      </div>
+      <div id="trendTopMoversBox"></div>
+      <div class="trend-chip-row" id="trendCatChips"></div>
+      <div class="trend-chip-row" id="trendSortChips"></div>
+      <div class="trend-chip-row" id="trendRangeChips"></div>
+      <div class="picker-search-wrap" style="padding:0 0 10px;">
+        <input type="text" id="trendSearchInput" class="picker-search" autocomplete="off"
+          placeholder="জিনিসের নাম দিয়ে খুঁজুন..." oninput="renderTrendList()">
+      </div>
+      <div id="trendListBox"></div>
+    </div>
+  </div>
+
+  <!-- TAB 5: Checklist Page -->
+  <div class="tabpage" id="tabPage5">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button type="button" class="picker-close" style="position:static;" onclick="switchTab(2)" aria-label="ফিরে যান">←</button>
+          <div class="picker-title">চেকলিস্ট</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button type="button" class="btn btn-primary" style="width:auto; padding:8px 14px; font-size:0.85rem;" onclick="createNewChecklistEntry()" aria-label="নতুন চেকলিস্ট">➕ যোগ</button>
+        </div>
+      </div>
+      <div id="checklistPageListBox"></div>
+    </div>
+  </div>
+
+</div>
+
+<div id="itemPickerModal" class="picker-overlay" onclick="if(event.target===this) closeItemPicker()">
+  <div class="picker-sheet">
+    <div class="picker-head">
+      <div class="cat-chips" id="itemPickerCatChips" style="margin:0; flex:1;"></div>
+      <button type="button" class="picker-close" onclick="closeItemPicker()">✕</button>
+    </div>
+    <div class="picker-search-wrap" style="display:flex; gap:8px;">
+      <input type="text" id="pickerSearchInput" class="picker-search" autocomplete="off"
+        placeholder="জিনিসের নাম লিখুন..." style="flex:1;" oninput="renderPickerList()">
+      <button type="button" id="pickerSaveBtn" class="btn btn-primary" style="flex-shrink:0;" onclick="saveNewItemFromPicker()">সেভ</button>
+    </div>
+    <div class="row2" style="margin:0 16px 10px;">
+      <div>
+        <select id="pickerNewItemUnit">
+          <option value="কেজি">কেজি (kg)</option>
+          <option value="লিটার">লিটার (litre)</option>
+          <option value="পিস">পিস (piece)</option>
+          <option value="ডজন">ডজন (dozen)</option>
+          <option value="গ্রাম">গ্রাম (gram)</option>
+          <option value="প্যাকেট">প্যাকেট (packet)</option>
+          <option value="পাতা">পাতা (page)</option>
+          <option value="টাকা">টাকা (taka)</option>
+        </select>
+      </div>
+      <div>
+        <input type="number" id="pickerNewItemPrice" min="0" step="0.01" placeholder="প্রতি একক দাম (৳)">
+      </div>
+    </div>
+    <div id="pickerList" class="picker-list"></div>
+  </div>
+</div>
+
+<div id="pickerItemMenuPopup" class="item-menu-popup" style="display:none;" onclick="event.stopPropagation()"></div>
+<div id="categoryItemMenuPopup" class="item-menu-popup" style="display:none;" onclick="event.stopPropagation()"></div>
+
+<div id="categoryPickerModal" class="picker-overlay" onclick="if(event.target===this) closeCategoryPicker()">
+  <div class="picker-sheet">
+    <div class="picker-head">
+      <div class="picker-title">ক্যাটাগরি সিলেক্ট করুন</div>
+      <button type="button" class="picker-close" onclick="closeCategoryPicker()">✕</button>
+    </div>
+    <div class="picker-search-wrap" style="display:flex; gap:8px;">
+      <input type="text" id="newCategoryInput" class="picker-search" autocomplete="off"
+        placeholder="নতুন ক্যাটাগরির নাম লিখুন..." style="flex:1;">
+      <button type="button" class="btn btn-primary" style="flex-shrink:0;" onclick="saveNewCategory()">সেভ</button>
+    </div>
+    <div id="categoryPickerList" class="picker-list"></div>
+  </div>
+</div>
+
+<div id="checklistModal" class="picker-overlay" onclick="if(event.target===this) closeChecklistModal()">
+  <div class="picker-sheet">
+    <div class="picker-head">
+      <div class="picker-title" id="checklistTitleText" onclick="startEditChecklistTitle(this)">✅ চেকলিস্ট</div>
+      <button type="button" class="picker-close" onclick="closeChecklistModal()">✕</button>
+    </div>
+    <div id="checklistGrandTotal" class="checklist-grand-total"></div>
+    <div id="checklistProgressWrap" class="checklist-progress-wrap">
+      <div class="checklist-progress-track"><div id="checklistProgressBar" class="checklist-progress-bar"></div></div>
+      <div id="checklistProgressLabel" class="checklist-progress-label">০/০ কেনা হয়েছে</div>
+    </div>
+    <div class="picker-search-wrap" style="display:flex; gap:8px;">
+      <input type="text" id="checklistNewName" class="picker-search" autocomplete="off"
+        placeholder="নতুন জিনিসের নাম..." style="flex:1.4;">
+      <input type="number" id="checklistNewPrice" class="picker-search" min="0" step="0.01"
+        placeholder="দাম (ঐচ্ছিক)" style="flex:1;">
+      <button type="button" class="btn btn-primary" style="flex-shrink:0;" onclick="addChecklistItem()">➕ যোগ</button>
+    </div>
+    <div id="checklistExtraTotalLine" class="checklist-extra-total" style="display:none;"></div>
+    <div id="checklistPendingList" class="picker-list"></div>
+    <details id="checklistCompletedWrap" class="checklist-completed-wrap">
+      <summary class="checklist-completed-summary">✅ সম্পন্ন (<span id="checklistCompletedCount">0</span>)</summary>
+      <div id="checklistCompletedList" class="picker-list"></div>
+    </details>
+  </div>
+</div>
+
+<script>
+  const PRICE_KEY = 'bazarHisab_priceList_v2';
+  const HISTORY_KEY = 'bazarHisab_priceHistory_v1';
+  const CATEGORY_KEY = 'bazarHisab_categoryList_v1';
+  const CATEGORY_ORDER_KEY = 'bazarHisab_categoryOrder_v1';
+  const SHOP_LOG_KEY = 'bazarHisab_shoppingLog_v1';
+  const DEFAULT_CAT = 'সাধারণ';
+  let priceList = JSON.parse(localStorage.getItem(PRICE_KEY) || '{}'); // { name: {unit, price, category} }
+  let priceHistory = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}'); // { name: [{date:'YYYY-MM-DD', price}] }
+  let customCategories = JSON.parse(localStorage.getItem(CATEGORY_KEY) || '[]'); // category names saved even before any item uses them
+  let categoryOrder = JSON.parse(localStorage.getItem(CATEGORY_ORDER_KEY) || '[]'); // user's drag-reordered category sequence
+  let shoppingLog = JSON.parse(localStorage.getItem(SHOP_LOG_KEY) || '[]'); // [{id, dateLabel, grand, categories:[{category, catTotal, items:[{name,qty,unit,price,sub}]}]}]
+  let quantities = {}; // { name: qty } -- current selection in the shopping tab
+  let otherItems = []; // [{id, text}] -- free-text "অন্যান্য" entries in the shopping tab
+  let pickerOpenMenuKey = null; // name of item whose ⋮ menu (একক/দাম/মুছুন) is open in the item picker
+  let pickerMenuBtnEl = null; // the ⋮ button element the popup is anchored to
+  let priceFilterCat = 'সব';
+  let trendFilterCat = 'সব';
+  let trendSortMode = 'name'; // 'name' | 'up' | 'down'
+  let trendTimeRange = 'all'; // 'all' | '30' | '90'
+  let shopFilterCat = 'সব';
+  let selectedItemCategory = ''; // category chosen in the "নতুন জিনিস যোগ করুন" form, via the category picker
+  let categoryPickerFromShop = false; // true when the category picker was opened from the বাজার করুন item-picker's + button
+  let catMenuOpenName = null; // category name whose ⋮ menu (নাম পরিবর্তন/মুছুন) is open
+  let catMenuBtnEl = null; // the ⋮ button element the category popup is anchored to
+
+  /* ---------- Google Sheet auto-sync (two-way) ---------- */
+  const SCRIPT_URL_KEY = 'bazarHisab_scriptUrl_v1';
+  let scriptUrl = localStorage.getItem(SCRIPT_URL_KEY) || '';
+  let pushTimer = null;
+  let isPulling = false;
+  let isPushing = false;
+  let localEditCounter = 0; // পুল চলাকালীন লোকালি কোনো এডিট (যেমন rename/সেভ) হলো কিনা বোঝার জন্য
+  let syncToastTimer = null;
+
+  /* ---------- নোটিফিকেশন বেল (সিঙ্ক মেসেজ হিস্টরি) ----------
+     শেষ ৩টা মেসেজ লোকালি (শুধু এই সেশনে) জমা থাকে — কোনো সার্ভারে সিঙ্ক হয় না।
+     সাধারণ/সাকসেস মেসেজ নীরবে এখানে জমা হয় (কাজের মাঝে বিরক্ত করবে না);
+     শুধু এরর/অফলাইন (urgent) মেসেজ হলে নিচে toast দেখাবে + বেলে লাল ব্যাজ জ্বলবে। */
+  let notifHistory = [];
+  const NOTIF_LIMIT = 3;
+  let notifHasUrgentUnread = false;
+
+  function pushNotif(text, kind){
+    notifHistory.unshift({ text, kind: kind || '', time: nowTimeLabel() });
+    if (notifHistory.length > NOTIF_LIMIT) notifHistory = notifHistory.slice(0, NOTIF_LIMIT);
+    if (kind === 'err') notifHasUrgentUnread = true;
+    renderNotifDropdown();
+    updateNotifBadge();
+  }
+
+  function updateNotifBadge(){
+    const badge = document.getElementById('notifBadge');
+    if (badge) badge.style.display = notifHasUrgentUnread ? 'block' : 'none';
+  }
+
+  function renderNotifDropdown(){
+    const list = document.getElementById('notifList');
+    if (!list) return;
+    if (notifHistory.length === 0){
+      list.innerHTML = `<div class="notif-empty">এখনো কোনো মেসেজ নেই</div>`;
+      return;
+    }
+    list.innerHTML = notifHistory.map(n => `
+      <div class="notif-item${n.kind === 'err' ? ' err' : ''}">
+        <span>${n.text}</span>
+        <span class="notif-time">${n.time}</span>
+      </div>`).join('');
+  }
+
+  function toggleNotifDropdown(){
+    const dd = document.getElementById('notifDropdown');
+    if (!dd) return;
+    const opening = !dd.classList.contains('open');
+    dd.classList.toggle('open', opening);
+    if (opening){
+      notifHasUrgentUnread = false; // দেখে ফেলা মানে ব্যাজ ক্লিয়ার, পুরনো মেসেজগুলো তালিকায় থেকেই যাবে
+      updateNotifBadge();
+      renderNotifDropdown();
+    }
+  }
+
+  function toggleGearDropdown(){
+    const dd = document.getElementById('gearDropdown');
+    if (!dd) return;
+    dd.classList.toggle('open');
+  }
+
+  document.addEventListener('click', (e) => {
+    const dd = document.getElementById('gearDropdown');
+    const btn = document.getElementById('headerMenuBtn');
+    if (!dd || !dd.classList.contains('open')) return;
+    if (dd.contains(e.target) || (btn && btn.contains(e.target))) return;
+    dd.classList.remove('open');
+  });
+
+  document.addEventListener('click', (e) => {
+    const dd = document.getElementById('notifDropdown');
+    const btn = document.getElementById('notifBtn');
+    if (!dd || !dd.classList.contains('open')) return;
+    if (dd.contains(e.target) || (btn && btn.contains(e.target))) return;
+    dd.classList.remove('open');
+  });
+
+  function setSyncStatus(text, kind){
+    pushNotif(text, kind);
+
+    const bar = document.getElementById('syncBar');
+    const el = document.getElementById('syncStatus');
+    if (!el || !bar) return;
+
+    if (kind !== 'err'){
+      // সাধারণ/সাকসেস মেসেজ — শুধু বেল আইকনে জমা থাকবে, নিচে toast দেখিয়ে বিরক্ত করবে না
+      return;
+    }
+
+    el.textContent = text;
+    el.className = 'sync-status' + (kind ? (' ' + kind) : '');
+    bar.classList.add('show');
+    if (syncToastTimer) clearTimeout(syncToastTimer);
+    syncToastTimer = setTimeout(() => bar.classList.remove('show'), 2200);
+  }
+
+  // ইন্টারনেট চলে গেলে/ফিরে আসলে — অ্যাপ সবসময় localStorage থেকেই অফলাইনে কাজ করে;
+  // এখানে শুধু নেট ফিরলে পেন্ডিং পরিবর্তন (যদি sync চালু থাকে) অটো পুশ করা হয়।
+  window.addEventListener('online', () => {
+    if (scriptUrl){
+      setSyncStatus('🌐 ইন্টারনেট ফিরেছে, সিঙ্ক হচ্ছে...', 'busy');
+      pushToSheet();
+    }
+  });
+  window.addEventListener('offline', () => {
+    setSyncStatus('📴 অফলাইন — সব পরিবর্তন এখনো এখানেই সেভ হচ্ছে, নেট ফিরলে অটো সিঙ্ক হবে', 'err');
+  });
+
+  function openSyncSettings(){
+    const current = scriptUrl || '';
+    const entered = prompt('Paste URL:', current);
+    if (entered === null) return; // cancelled
+    scriptUrl = entered.trim();
+    localStorage.setItem(SCRIPT_URL_KEY, scriptUrl);
+    if (!scriptUrl){
+      setSyncStatus('🔌 সিঙ্ক সেট করা নেই', '');
+      return;
+    }
+    pullFromSheet(true);
+  }
+
+  async function pullFromSheet(showAlertOnError){
+    if (!scriptUrl || isPulling) return;
+    if (!navigator.onLine){
+      setSyncStatus('📴 অফলাইন — নেট আসলে আবার চেষ্টা করবে', 'err');
+      return;
+    }
+    isPulling = true;
+    setSyncStatus('⬇️ শিট থেকে আনা হচ্ছে...', 'busy');
+    const editCounterBeforePull = localEditCounter;
+    try {
+      const res = await fetch(scriptUrl + '?action=getAll');
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+
+      // পুল চলাকালীন (fetch শেষ হওয়ার আগেই) যদি ইউজার কিছু এডিট/রিনেম/সেভ করে ফেলে,
+      // তাহলে শিট থেকে আসা (তখনও পুরনো) ডেটা দিয়ে ওভাররাইট না করে লোকাল পরিবর্তনটাই
+      // রাখা হচ্ছে — নাহলে "সেভ করলাম কিন্তু হলো না" মনে হয়ে বারবার ক্লিক করতে হতো।
+      if (localEditCounter !== editCounterBeforePull){
+        setSyncStatus('✅ সিঙ্ক করা আছে', 'ok');
+        queuePushToSheet();
+        return;
+      }
+
+      const incomingList = data.priceList || {};
+      const incomingHistory = data.priceHistory || {};
+      const incomingShoppingLog = data.shoppingLog || [];
+
+      // চেকলিস্টে ম্যানুয়ালি যোগ করা আইটেমগুলো যদি শিট থেকে ফেরত না আসে, অথবা
+      // পুশ শেষ হওয়ার আগেই পুল হয়ে যায় (রেস কন্ডিশন — শিটে তখনও পুরনো ডেটা),
+      // তাহলে সেগুলো যেন হারিয়ে না যায় — যে ভার্সনে বেশি আইটেম আছে সেটাই রাখা হচ্ছে।
+      const oldChecklistById = {};
+      shoppingLog.forEach(e => { if (e.checklist) oldChecklistById[e.id] = e.checklist; });
+      incomingShoppingLog.forEach(e => {
+        const oldChecklist = oldChecklistById[e.id];
+        if (!oldChecklist) return;
+        const oldCount = oldChecklist.items ? oldChecklist.items.length : 0;
+        const newCount = (e.checklist && e.checklist.items) ? e.checklist.items.length : 0;
+        if (oldCount > newCount) {
+          e.checklist = oldChecklist;
+        }
+      });
+
+      // Sheet is treated as the source of truth on open, so app matches
+      // whatever is currently in the sheet (empty sheet clears local list too,
+      // since the same sheet may also be edited from another device).
+      priceList = incomingList;
+      priceHistory = incomingHistory;
+      shoppingLog = incomingShoppingLog;
+      savePriceList();
+      savePriceHistory();
+      saveShoppingLog();
+
+      renderPriceList();
+      renderSelectDropdown();
+      renderSummary();
+      renderHistoryList();
+      renderChecklistPageList();
+
+      setSyncStatus('✅ সিঙ্ক করা আছে', 'ok');
+    } catch (err) {
+      console.error('Pull sync failed:', err);
+      setSyncStatus('❌ সিঙ্ক এরর (শিট থেকে আনতে পারেনি)', 'err');
+      if (showAlertOnError) alert('শিট থেকে ডেটা আনতে সমস্যা হয়েছে। URL এবং Apps Script ডিপ্লয়মেন্ট চেক করো।\n\n' + err.message);
+    } finally {
+      isPulling = false;
+    }
+  }
+
+  function queuePushToSheet(){
+    localEditCounter++;
+    if (!scriptUrl) return;
+    if (!navigator.onLine){
+      setSyncStatus('📴 অফলাইনে সেভ হয়েছে, নেট ফিরলে অটো সিঙ্ক হবে', 'err');
+      return; // নেট ফিরলে 'online' ইভেন্ট লিসেনার নিজে থেকেই pushToSheet() চালাবে
+    }
+    setSyncStatus('✏️ পরিবর্তন হয়েছে, সিঙ্ক হবে...', 'busy');
+    if (pushTimer) clearTimeout(pushTimer);
+    pushTimer = setTimeout(pushToSheet, 900);
+  }
+
+  async function pushToSheet(){
+    if (!scriptUrl || isPushing) return;
+    isPushing = true;
+    setSyncStatus('⬆️ শিটে পাঠানো হচ্ছে...', 'busy');
+    try {
+      // text/plain avoids a CORS preflight, which Apps Script web apps can't handle
+      const res = await fetch(scriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'syncAll',
+          priceList: priceList,
+          priceHistory: priceHistory,
+          shoppingLog: shoppingLog
+        })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      setSyncStatus('✅ সিঙ্ক করা আছে', 'ok');
+    } catch (err) {
+      console.error('Push sync failed:', err);
+      setSyncStatus('❌ সিঙ্ক এরর (শিটে পাঠাতে পারেনি)', 'err');
+    } finally {
+      isPushing = false;
+    }
+  }
+
+  function savePriceHistory(){
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(priceHistory));
+  }
+
+  function todayISO(){
+    const d = new Date();
+    return d.toISOString().slice(0,10);
+  }
+
+  function nowTimeLabel(){
+    const d = new Date();
+    return d.toLocaleTimeString('bn-BD', { hour:'2-digit', minute:'2-digit' });
+  }
+
+  function recordPriceHistory(name, price){
+    if (!priceHistory[name]) priceHistory[name] = [];
+    const hist = priceHistory[name];
+    const last = hist[hist.length - 1];
+    if (last && last.price === price) return; // price didn't actually change, skip duplicate point
+    const today = todayISO();
+    if (last && last.date === today){
+      // another change on the same day: keep it as its own point (don't overwrite), tag with time so it's distinguishable
+      hist.push({ date: today, time: nowTimeLabel(), price });
+    } else {
+      hist.push({ date: today, price });
+    }
+    savePriceHistory();
+  }
+
+  // Migrate any older items saved without a category, and seed price history
+  Object.keys(priceList).forEach(k => {
+    if (!priceList[k].category) priceList[k].category = DEFAULT_CAT;
+    if (!priceHistory[k] || priceHistory[k].length === 0){
+      priceHistory[k] = [{ date: todayISO(), price: priceList[k].price }];
+    }
+  });
+  savePriceHistory();
+
+  document.getElementById('todayDate').textContent = new Date().toLocaleDateString('bn-BD', {
+    year:'numeric', month:'long', day:'numeric'
+  });
+
+  function fmt(n){
+    return Number(n).toLocaleString('en-IN', { minimumFractionDigits:2, maximumFractionDigits:2 });
+  }
+  // যদি একক কেজি হয় আর পরিমাণ ১ কেজির কম হয়, তাহলে গ্রামে দেখায় (যেমন 0.5 → 500 গ্রাম)
+  function getDisplayQtyUnit(qty, unit){
+    if (unit === 'কেজি' && qty > 0 && qty < 1){
+      return { qty: Math.round(qty * 1000), unit: 'গ্রাম' };
+    }
+    return { qty, unit };
+  }
+  function savePriceList(){
+    localStorage.setItem(PRICE_KEY, JSON.stringify(priceList));
+  }
+  function saveCategoryList(){
+    localStorage.setItem(CATEGORY_KEY, JSON.stringify(customCategories));
+  }
+  function saveCategoryOrder(){
+    localStorage.setItem(CATEGORY_ORDER_KEY, JSON.stringify(categoryOrder));
+  }
+  function getCategories(){
+    const set = new Set([
+      ...Object.values(priceList).map(it => it.category || DEFAULT_CAT),
+      ...customCategories
+    ]);
+    const all = Array.from(set);
+    let ordered = categoryOrder.filter(c => all.includes(c));
+    const newOnes = all.filter(c => !ordered.includes(c)).sort();
+    if (newOnes.length){
+      ordered = [...ordered, ...newOnes];
+      categoryOrder = ordered;
+      saveCategoryOrder(); // নতুন ক্যাটাগরি পেলে তার পজিশন স্থায়ীভাবে সেভ করে রাখা (self-healing)
+    }
+    return ordered;
+  }
+
+  function switchTab(n){
+    document.getElementById('tabPage2').classList.toggle('active', n===2);
+    document.getElementById('tabPage3').classList.toggle('active', n===3);
+    document.getElementById('tabPage4').classList.toggle('active', n===4);
+    document.getElementById('tabPage5').classList.toggle('active', n===5);
+    if (n === 2) renderSelectDropdown();
+    if (n === 3) renderHistoryList();
+    if (n === 4) renderTrendList();
+    if (n === 5) renderChecklistPageList();
+  }
+
+  /* ---------- TAB 1: Price list management ---------- */
+  function addToPriceList(){
+    const name = document.getElementById('itemName').value.trim();
+    const unit = document.getElementById('itemUnit').value;
+    const price = parseFloat(document.getElementById('itemPrice').value);
+    const category = selectedItemCategory || DEFAULT_CAT;
+
+    if (!name){ alert('জিনিসের নাম লিখুন'); return; }
+    if (isNaN(price) || price < 0){ alert('সঠিক দাম লিখুন'); return; }
+
+    priceList[name] = { unit, price, category };
+    savePriceList();
+    recordPriceHistory(name, price);
+    renderPriceList();
+    queuePushToSheet();
+
+    document.getElementById('itemName').value = '';
+    document.getElementById('itemPrice').value = '';
+    selectedItemCategory = '';
+    updateItemCategoryBtnLabel();
+    document.getElementById('itemName').focus();
+  }
+
+  function updateItemCategoryBtnLabel(){
+    const label = document.getElementById('itemCategoryBtnLabel');
+    if (!label) return;
+    if (selectedItemCategory){
+      label.textContent = selectedItemCategory;
+      label.classList.add('chosen');
+    } else {
+      label.textContent = 'ক্যাটাগরি';
+      label.classList.remove('chosen');
+    }
+  }
+
+  function openCategoryPicker(fromShop){
+    categoryPickerFromShop = !!fromShop;
+    const overlay = document.getElementById('categoryPickerModal');
+    const newCatInput = document.getElementById('newCategoryInput');
+    newCatInput.value = '';
+    closeCategoryItemMenu();
+    renderCategoryPickerList();
+    overlay.classList.add('open');
+    document.body.classList.add('no-scroll');
+    // no .focus() here on purpose — keyboard should only open once the user taps the input
+  }
+
+  function closeCategoryPicker(){
+    document.getElementById('categoryPickerModal').classList.remove('open');
+    document.body.classList.remove('no-scroll');
+    closeCategoryItemMenu();
+  }
+
+  function renderCategoryPickerList(){
+    const list = document.getElementById('categoryPickerList');
+    const cats = getCategories();
+    const activeCat = categoryPickerFromShop ? shopFilterCat : selectedItemCategory;
+
+    if (cats.length === 0){
+      list.innerHTML = `<div class="picker-none">এখনো কোনো ক্যাটাগরি নেই</div>`;
+      return;
+    }
+    list.innerHTML = cats.map(c => {
+      const safe = c.replace(/'/g,"\\'");
+      const sel = c === activeCat ? ' selected' : '';
+      return `<div class="picker-item${sel}" data-cat="${c.replace(/"/g,'&quot;')}" onclick="pickCategory('${safe}')" onpointerdown="startCategoryDrag(event, '${safe}')">
+        <span class="nm">${c}</span>
+        <button type="button" class="picker-dots-btn" title="নাম পরিবর্তন, মুছুন" onclick="event.stopPropagation(); toggleCategoryItemMenu(this, '${safe}')">⋮</button>
+      </div>`;
+    }).join('');
+  }
+
+  /* ---------- ক্যাটাগরি ড্র্যাগ-রিঅর্ডার (কোনো আলাদা হ্যান্ডেল আইকন নেই, পুরো রো-টাই ধরে টানা যায়) ---------- */
+  let catDrag = null; // active drag state, or null when not dragging
+  let catDragJustMoved = false; // থ্রেশহোল্ড পার হয়ে সত্যিকারের ড্র্যাগ হলে true — পরের click ইভেন্ট (pickCategory) ইগনোর করার জন্য
+
+  function startCategoryDrag(e, name){
+    if (e.target.closest('.picker-dots-btn')) return; // ⋮ বাটনে চাপলে ড্র্যাগ শুরু হবে না
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    const itemEl = e.currentTarget;
+    const listEl = document.getElementById('categoryPickerList');
+    catDrag = {
+      pointerId: e.pointerId,
+      startY: e.clientY,
+      itemEl, listEl, name,
+      dragging: false,
+      dropTargetEl: null,
+      dropBefore: true
+    };
+    itemEl.addEventListener('pointermove', onCategoryDragMove);
+    itemEl.addEventListener('pointerup', onCategoryDragEnd);
+    itemEl.addEventListener('pointercancel', onCategoryDragEnd);
+  }
+
+  function onCategoryDragMove(e){
+    if (!catDrag || e.pointerId !== catDrag.pointerId) return;
+    const dy = e.clientY - catDrag.startY;
+
+    if (!catDrag.dragging){
+      if (Math.abs(dy) < 8) return; // ছোটখাটো নড়াচড়াকে ট্যাপ হিসেবেই ধরা হবে, ড্র্যাগ না
+      catDrag.dragging = true;
+      catDragJustMoved = true;
+      catDrag.itemEl.setPointerCapture(e.pointerId);
+      catDrag.itemEl.classList.add('cat-dragging');
+    }
+
+    e.preventDefault();
+    catDrag.itemEl.style.transform = `translateY(${dy}px)`;
+
+    // পয়েন্টার কোন সিবলিং-এর উপরে আছে সেটা বের করে drop-indicator দেখানো
+    const siblings = Array.from(catDrag.listEl.children).filter(el => el !== catDrag.itemEl);
+    if (catDrag.dropTargetEl){
+      catDrag.dropTargetEl.classList.remove('cat-drop-before', 'cat-drop-after');
+    }
+    catDrag.dropTargetEl = null;
+    for (const sib of siblings){
+      const r = sib.getBoundingClientRect();
+      const mid = r.top + r.height / 2;
+      if (e.clientY < mid){
+        sib.classList.add('cat-drop-before');
+        catDrag.dropTargetEl = sib;
+        catDrag.dropBefore = true;
+        break;
+      }
+    }
+    if (!catDrag.dropTargetEl && siblings.length){
+      const last = siblings[siblings.length - 1];
+      last.classList.add('cat-drop-after');
+      catDrag.dropTargetEl = last;
+      catDrag.dropBefore = false;
+    }
+  }
+
+  function onCategoryDragEnd(e){
+    if (!catDrag || e.pointerId !== catDrag.pointerId) return;
+    const { itemEl, listEl, dragging, dropTargetEl, dropBefore } = catDrag;
+
+    itemEl.removeEventListener('pointermove', onCategoryDragMove);
+    itemEl.removeEventListener('pointerup', onCategoryDragEnd);
+    itemEl.removeEventListener('pointercancel', onCategoryDragEnd);
+
+    if (dropTargetEl) dropTargetEl.classList.remove('cat-drop-before', 'cat-drop-after');
+    itemEl.classList.remove('cat-dragging');
+    itemEl.style.transform = '';
+
+    if (dragging && dropTargetEl){
+      if (dropBefore) listEl.insertBefore(itemEl, dropTargetEl);
+      else listEl.insertBefore(itemEl, dropTargetEl.nextSibling);
+
+      categoryOrder = Array.from(listEl.querySelectorAll('.picker-item')).map(el => el.dataset.cat);
+      saveCategoryOrder();
+
+      renderPriceList();
+      renderTrendList();
+      renderSelectDropdown();
+      renderCatChips('itemPickerCatChips', shopFilterCat, 'setItemPickerCatFilter', 'openCategoryPicker(true)');
+    }
+    catDrag = null;
+  }
+
+  function deleteCategory(name){
+    if (!confirm(`"${name}" ক্যাটাগরি মুছে ফেলতে চান? এই ক্যাটাগরির জিনিসগুলো "${DEFAULT_CAT}"-এ চলে যাবে।`)) return;
+
+    Object.keys(priceList).forEach(k => {
+      if ((priceList[k].category || DEFAULT_CAT) === name){
+        priceList[k].category = DEFAULT_CAT;
+      }
+    });
+    customCategories = customCategories.filter(c => c !== name);
+    savePriceList();
+    saveCategoryList();
+    queuePushToSheet();
+
+    if (selectedItemCategory === name){ selectedItemCategory = ''; updateItemCategoryBtnLabel(); }
+    if (priceFilterCat === name){ priceFilterCat = 'সব'; }
+    if (trendFilterCat === name){ trendFilterCat = 'সব'; }
+    if (shopFilterCat === name){ shopFilterCat = 'সব'; }
+
+    closeCategoryItemMenu();
+    renderCategoryPickerList();
+    renderPriceList();
+    renderTrendList();
+    renderSelectDropdown();
+    renderCatChips('itemPickerCatChips', shopFilterCat, 'setItemPickerCatFilter', 'openCategoryPicker(true)');
+  }
+
+  /* ---------- ক্যাটাগরির ⋮ মেনু (নাম পরিবর্তন / মুছুন) ---------- */
+  function toggleCategoryItemMenu(btnEl, name){
+    if (catMenuOpenName === name){
+      closeCategoryItemMenu();
+      return;
+    }
+    catMenuOpenName = name;
+    catMenuBtnEl = btnEl;
+    renderCategoryItemMenuPopup();
+  }
+
+  function closeCategoryItemMenu(){
+    catMenuOpenName = null;
+    catMenuBtnEl = null;
+    const popup = document.getElementById('categoryItemMenuPopup');
+    if (popup) popup.style.display = 'none';
+  }
+
+  function renderCategoryItemMenuPopup(){
+    const name = catMenuOpenName;
+    const popup = document.getElementById('categoryItemMenuPopup');
+    if (!popup) return;
+    if (!name || !getCategories().includes(name) || !catMenuBtnEl){ closeCategoryItemMenu(); return; }
+    const safe = name.replace(/'/g,"\\'");
+    popup.innerHTML = `
+      <div class="menu-row" onclick="event.stopPropagation(); editCategoryNamePopup('${safe}')">
+        <span class="menu-label">নাম পরিবর্তন</span>
+        <span class="menu-value" id="catPopupNameVal">${name}</span>
+      </div>
+      <div class="item-menu-split">
+        <div class="split-btn danger" onclick="event.stopPropagation(); deleteCategory('${safe}')">ডিলিট</div>
+        <div class="split-btn save" onclick="event.stopPropagation(); saveCategoryRename('${safe}')">সেভ</div>
+      </div>
+    `;
+    positionPickerPopup(popup, catMenuBtnEl);
+  }
+
+  document.addEventListener('click', function(e){
+    const popup = document.getElementById('categoryItemMenuPopup');
+    if (!popup || popup.style.display === 'none') return;
+    if (!popup.contains(e.target)) closeCategoryItemMenu();
+  });
+
+  // নাম পরিবর্তন popup-এর ভেতরেই শুধু ইনপুটে স্টেজ হয় — Enter/ব্লার না দেওয়া পর্যন্ত
+  // আসল রিনেম (saveCategoryRename) ঘটে না।
+  function editCategoryNamePopup(name){
+    const view = document.getElementById('catPopupNameVal');
+    if (!view) return;
+    const safe = name.replace(/'/g,"\\'");
+    view.outerHTML = `<input type="text" class="pr-edit" id="catPopupNameEdit"
+        value="${name}"
+        onclick="event.stopPropagation()"
+        onkeydown="if(event.key==='Enter'){event.stopPropagation(); saveCategoryRename('${safe}');}">`;
+    const input = document.getElementById('catPopupNameEdit');
+    input.focus();
+    input.select();
+    positionPickerPopup(document.getElementById('categoryItemMenuPopup'), catMenuBtnEl);
+  }
+
+  function saveCategoryRename(oldName){
+    const input = document.getElementById('catPopupNameEdit');
+    if (!input){ closeCategoryItemMenu(); return; }
+    const newName = input.value.trim();
+    if (!newName){ alert('ক্যাটাগরির নাম লিখুন'); return; }
+
+    if (newName !== oldName){
+      if (getCategories().includes(newName)){
+        alert(`"${newName}" নামে ইতিমধ্যে একটি ক্যাটাগরি আছে`);
+        return;
+      }
+
+      Object.keys(priceList).forEach(k => {
+        if ((priceList[k].category || DEFAULT_CAT) === oldName){
+          priceList[k].category = newName;
+        }
+      });
+      customCategories = customCategories.filter(c => c !== oldName);
+      if (!customCategories.includes(newName)) customCategories.push(newName);
+      categoryOrder = categoryOrder.map(c => c === oldName ? newName : c);
+      savePriceList();
+      saveCategoryList();
+      saveCategoryOrder();
+      queuePushToSheet();
+
+      if (selectedItemCategory === oldName){ selectedItemCategory = newName; updateItemCategoryBtnLabel(); }
+      if (priceFilterCat === oldName){ priceFilterCat = newName; }
+      if (trendFilterCat === oldName){ trendFilterCat = newName; }
+      if (shopFilterCat === oldName){ shopFilterCat = newName; }
+    }
+
+    closeCategoryItemMenu();
+    renderCategoryPickerList();
+    renderPriceList();
+    renderTrendList();
+    renderSelectDropdown();
+    renderCatChips('itemPickerCatChips', shopFilterCat, 'setItemPickerCatFilter', 'openCategoryPicker(true)');
+  }
+
+  function pickCategory(name){
+    if (catDragJustMoved){ catDragJustMoved = false; return; } // ড্র্যাগ করে ছাড়ার পরের ক্লিক ইভেন্ট — সিলেক্ট করা চলবে না
+    if (categoryPickerFromShop){
+      setItemPickerCatFilter(name);
+    } else {
+      selectedItemCategory = name;
+      updateItemCategoryBtnLabel();
+    }
+    closeCategoryPicker();
+  }
+
+  function saveNewCategory(){
+    const input = document.getElementById('newCategoryInput');
+    const name = input.value.trim();
+    if (!name){ alert('ক্যাটাগরির নাম লিখুন'); return; }
+
+    if (!getCategories().includes(name)){
+      customCategories.push(name);
+      saveCategoryList();
+    }
+    if (categoryPickerFromShop){
+      setItemPickerCatFilter(name);
+    } else {
+      selectedItemCategory = name;
+      updateItemCategoryBtnLabel();
+    }
+    input.value = '';
+    closeCategoryPicker();
+  }
+
+  function deleteFromPriceList(key){
+    if (!confirm(`"${key}" লিস্ট থেকে মুছে ফেলতে চান?`)) return;
+    delete priceList[key];
+    delete priceHistory[key];
+    delete quantities[key];
+    savePriceList();
+    savePriceHistory();
+    renderPriceList();
+    renderSelectDropdown();
+    renderSummary();
+    queuePushToSheet();
+  }
+
+  function setPriceCatFilter(cat){
+    priceFilterCat = cat;
+    renderPriceList();
+  }
+
+  function renderCatChips(containerId, activeCat, onClickFnName, addBtnHandler){
+    const box = document.getElementById(containerId);
+    const cats = ['সব', ...getCategories()];
+    let html = '';
+    if (getCategories().length > 0){
+      html = cats.map(c => {
+        const safe = c.replace(/'/g,"\\'");
+        const active = c === activeCat ? 'active' : '';
+        return `<button type="button" class="cat-chip ${active}" onclick="${onClickFnName}('${safe}')">${c}</button>`;
+      }).join('');
+    }
+    if (addBtnHandler){
+      html += `<button type="button" class="cat-chip cat-chip-add" onclick="${addBtnHandler}" title="নতুন ক্যাটাগরি যোগ করুন">+</button>`;
+    }
+    box.innerHTML = html;
+  }
+
+  function renderPriceList(){
+    const box = document.getElementById('priceListBox');
+    if (!box) return; // Price List tab has been removed; item data itself is still managed via the item picker
+
+    renderCatChips('priceCatChips', priceFilterCat, 'setPriceCatFilter');
+
+    let keys = Object.keys(priceList).sort();
+    if (priceFilterCat !== 'সব'){
+      keys = keys.filter(k => (priceList[k].category || DEFAULT_CAT) === priceFilterCat);
+    }
+
+    if (Object.keys(priceList).length === 0){
+      box.innerHTML = `<div class="empty-note">এখনো কিছু সেভ করা নেই</div>`;
+      return;
+    }
+    if (keys.length === 0){
+      box.innerHTML = `<div class="empty-note">এই ক্যাটাগরিতে কিছু নেই</div>`;
+      return;
+    }
+    box.innerHTML = keys.map(k => {
+      const it = priceList[k];
+      const safeKey = k.replace(/'/g,"\\'");
+      return `<div class="plist-row">
+        <div class="plist-item">
+          <span class="nm">${k} <span style="color:#9a9a86; font-weight:400;">(${it.unit})</span></span>
+          <span style="display:flex; align-items:center; gap:10px;">
+            <button class="trend-btn" title="দামের ট্রেন্ড দেখুন" onclick="toggleTrend('${safeKey}')">📈</button>
+            <span class="pr" id="prView-${cssId(k)}" title="দাম পরিবর্তন করতে ক্লিক করুন" onclick="editPrice('${safeKey}')">৳${fmt(it.price)}</span>
+            <button onclick="deleteFromPriceList('${safeKey}')">✕</button>
+          </span>
+        </div>
+        <div class="trend-panel" id="trend-${cssId(k)}" style="display:none;"></div>
+      </div>`;
+    }).join('');
+  }
+
+  function cssId(name){
+    return name.replace(/[^a-zA-Z0-9\u0980-\u09FF]/g, '_');
+  }
+
+  function toggleTrend(name){
+    const panel = document.getElementById('trend-' + cssId(name));
+    if (!panel) return;
+    const isOpen = panel.style.display !== 'none';
+    if (isOpen){
+      panel.style.display = 'none';
+      panel.innerHTML = '';
+      return;
+    }
+    panel.style.display = 'block';
+    panel.innerHTML = buildTrendHTML(name);
+  }
+
+  function buildTrendHTML(name, histOverride){
+    const hist = histOverride || getHistFromLog(name);
+    if (hist.length < 2){
+      return `<div class="empty-note" style="padding:4px 0;">
+        এখনো যথেষ্ট তথ্য নেই — দাম আরও একবার বদলালে (বা কয়েকদিন পর) এখানে ট্রেন্ড গ্রাফ দেখা যাবে।
+      </div>`;
+    }
+
+    const w = 560, h = 300, padL = 46, padR = 16, padT = 18, padB = 34;
+    const prices = hist.map(p => p.price);
+    const minP = Math.min(...prices), maxP = Math.max(...prices);
+    const range = (maxP - minP) || 1;
+
+    const xStep = (w - padL - padR) / (hist.length - 1);
+    const points = hist.map((p, i) => {
+      const x = padL + i * xStep;
+      const y = padT + (h - padT - padB) * (1 - (p.price - minP) / range);
+      return { x, y, ...p };
+    });
+
+    const linePath = points.map((p, i) => (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
+    const dots = points.map(p =>
+      `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4.5" fill="#1B4332"></circle>`
+    ).join('');
+    const firstLabel = points[0];
+    const lastLabel = points[points.length - 1];
+
+    const first = hist[0].price, last = hist[hist.length - 1].price;
+    const diff = last - first;
+    const pct = first !== 0 ? (diff / first * 100) : 0;
+    const trendClass = diff > 0 ? 'up' : (diff < 0 ? 'down' : '');
+    const arrow = diff > 0 ? '▲' : (diff < 0 ? '▼' : '—');
+
+    return `
+      <svg viewBox="0 0 ${w} ${h}" class="trend-chart-svg" style="width:100%; height:auto; display:block;">
+        <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${h-padB}" stroke="#D8CBA3" stroke-width="1.4"/>
+        <line x1="${padL}" y1="${h-padB}" x2="${w-padR}" y2="${h-padB}" stroke="#D8CBA3" stroke-width="1.4"/>
+        <text x="4" y="${padT+10}" font-size="15" fill="#5b6b58">৳${fmt(maxP)}</text>
+        <text x="4" y="${h-padB}" font-size="15" fill="#5b6b58">৳${fmt(minP)}</text>
+        <path d="${linePath}" fill="none" stroke="#2D6A4F" stroke-width="3"/>
+        ${dots}
+        <text x="${firstLabel.x}" y="${h-10}" font-size="13" fill="#7a8a76" text-anchor="start">${firstLabel.date}${firstLabel.time ? ' '+firstLabel.time : ''}</text>
+        <text x="${lastLabel.x}" y="${h-10}" font-size="13" fill="#7a8a76" text-anchor="end">${lastLabel.date}${lastLabel.time ? ' '+lastLabel.time : ''}</text>
+      </svg>
+      <div class="trend-summary">
+        <span>প্রথম দাম: ৳${fmt(first)} (${hist[0].date}${hist[0].time ? ' '+hist[0].time : ''})</span>
+        <span>এখনকার দাম: ৳${fmt(last)}</span>
+        <span class="${trendClass}">${arrow} ${Math.abs(pct).toFixed(1)}%</span>
+      </div>
+    `;
+  }
+
+  function setTrendCatFilter(cat){
+    trendFilterCat = cat;
+    renderTrendList();
+  }
+
+  function setTrendSortMode(mode){
+    trendSortMode = mode;
+    renderTrendList();
+  }
+
+  function setTrendTimeRange(range){
+    trendTimeRange = range;
+    renderTrendList();
+  }
+
+  function filterHistoryByRange(hist, range){
+    if (range === 'all' || !hist.length) return hist;
+    const daysMap = { today: 0, '7': 7, '30': 30, '90': 90 };
+    const days = daysMap.hasOwnProperty(range) ? daysMap[range] : 90;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    const cutoffISO = cutoff.toISOString().slice(0, 10);
+    return hist.filter(p => p.date >= cutoffISO);
+  }
+
+  // মূল্য বৃদ্ধি (ট্রেন্ড) পেজের সব হিসাব এখন শুধু আসল "হিস্ট্রি" (shoppingLog, অর্থাৎ
+  // যেই এন্ট্রিগুলো আসলেই বাজার/শপিং করে সেভ করা হয়েছে) থেকে বের করা হয় — দাম এডিট/টেস্ট
+  // করার সময় priceHistory-তে যা রেকর্ড হয়, সেটা আর ট্রেন্ডে যোগ হয় না। ফলে হিস্ট্রি থেকে
+  // একটা এন্ট্রি ডিলিট করলে ট্রেন্ডও সাথে সাথে আপডেট হয়ে যাবে।
+  function getHistFromLog(name){
+    const entries = shoppingLog
+      .filter(e => Array.isArray(e.categories) && e.categories.length)
+      .slice()
+      .sort((a, b) => a.id - b.id); // পুরনো থেকে নতুন — সময় অনুযায়ী
+
+    const hist = [];
+    let lastDate = null;
+    entries.forEach(e => {
+      let price = null;
+      for (const c of e.categories){
+        if (c.category === 'অন্যান্য (দাম ছাড়া)') continue; // এগুলোর দাম থাকে না
+        const found = (c.items || []).find(it => it.name === name && it.price > 0);
+        if (found){ price = found.price; break; }
+      }
+      if (price === null) return;
+
+      const d = new Date(e.id);
+      const dateISO = d.toISOString().slice(0, 10);
+      const point = { date: dateISO, price };
+      if (lastDate === dateISO){
+        // একই দিনে একাধিক শপিং এন্ট্রি হলে সময় দেখিয়ে আলাদা করা হয়
+        point.time = d.toLocaleTimeString('bn-BD', { hour:'2-digit', minute:'2-digit' });
+      }
+      lastDate = dateISO;
+      hist.push(point);
+    });
+    return hist;
+  }
+
+  function getFilteredHist(name){
+    return filterHistoryByRange(getHistFromLog(name), trendTimeRange);
+  }
+
+  function getTrendPct(name, histOverride){
+    const hist = histOverride || getHistFromLog(name);
+    if (hist.length < 2) return null;
+    const first = hist[0].price, last = hist[hist.length - 1].price;
+    const diff = last - first;
+    const pct = first !== 0 ? (diff / first * 100) : 0;
+    return { first, last, diff, pct };
+  }
+
+  /* Phase 4 — টপ মুভার্স ক্যালকুলেশন (ডেটা লজিক শুধু; UI Phase 5-এ বসবে)
+     সব আইটেম ঘুরে, বর্তমান টাইম-রেঞ্জ ফিল্টার (trendTimeRange) অনুযায়ী history নিয়ে
+     % পরিবর্তন হিসাব করে, সবচেয়ে বেশি ওঠানামা (উপরে বা নিচে, দুটোই) হওয়া আইটেমগুলো
+     abs(%) অনুযায়ী সাজিয়ে টপ N (ডিফল্ট ৪টা) রিটার্ন করে। */
+  function getTopMovers(count){
+    const n = count || 4;
+    const movers = Object.keys(priceList).map(name => {
+      const hist = getFilteredHist(name);
+      const info = getTrendPct(name, hist);
+      if (!info) return null;
+      return {
+        name,
+        unit: priceList[name] ? priceList[name].unit : '',
+        first: info.first,
+        last: info.last,
+        diff: info.diff,
+        pct: info.pct
+      };
+    }).filter(Boolean);
+
+    movers.sort((a, b) => Math.abs(b.pct) - Math.abs(a.pct));
+    return movers.slice(0, n);
+  }
+
+  function renderTopMovers(){
+    const box = document.getElementById('trendTopMoversBox');
+    if (!box) return;
+    const movers = getTopMovers(4);
+    if (movers.length === 0){
+      box.innerHTML = '';
+      return;
+    }
+    box.innerHTML = `<div class="mover-cards">` + movers.map(m => {
+      const safeKey = m.name.replace(/'/g, "\\'");
+      const dirClass = m.diff > 0 ? 'up' : (m.diff < 0 ? 'down' : '');
+      const arrow = m.diff > 0 ? '▲' : (m.diff < 0 ? '▼' : '—');
+      return `<button type="button" class="mover-card" onclick="scrollToMoverItem('${safeKey}')">
+        <span class="mover-fire">🔥</span>
+        <span class="mover-nm">${m.name}</span>
+        <span class="mover-pct ${dirClass}">${arrow} ${Math.abs(m.pct).toFixed(1)}%</span>
+        <div class="mover-price">৳${fmt(m.first)} → ৳${fmt(m.last)}</div>
+      </button>`;
+    }).join('') + `</div>`;
+  }
+
+  function scrollToMoverItem(name){
+    trendFilterCat = 'সব';
+    const searchInput = document.getElementById('trendSearchInput');
+    if (searchInput) searchInput.value = '';
+    renderTrendList();
+    const panel = document.getElementById('trend2-' + cssId(name));
+    if (!panel) return;
+    toggleTrend2(name);
+    const row = panel.closest('.plist-row');
+    if (row && row.scrollIntoView) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function renderTrendSortChips(){
+    const box = document.getElementById('trendSortChips');
+    if (!box) return;
+    const opts = [
+      { mode: 'name', label: 'নাম অনুযায়ী' },
+      { mode: 'up', label: '▲ সবচেয়ে বেশি বেড়েছে' },
+      { mode: 'down', label: '▼ সবচেয়ে বেশি কমেছে' }
+    ];
+    box.innerHTML = opts.map(o =>
+      `<button type="button" class="cat-chip${trendSortMode === o.mode ? ' active' : ''}" onclick="setTrendSortMode('${o.mode}')">${o.label}</button>`
+    ).join('');
+  }
+
+  function renderTrendRangeChips(){
+    const box = document.getElementById('trendRangeChips');
+    if (!box) return;
+    const opts = [
+      { range: 'all', label: 'সব সময়' },
+      { range: 'today', label: 'আজকের দিন' },
+      { range: '7', label: '১ সপ্তাহ' },
+      { range: '30', label: 'গত ৩০ দিন' },
+      { range: '90', label: 'গত ৯০ দিন' }
+    ];
+    box.innerHTML = opts.map(o =>
+      `<button type="button" class="cat-chip${trendTimeRange === o.range ? ' active' : ''}" onclick="setTrendTimeRange('${o.range}')">${o.label}</button>`
+    ).join('');
+  }
+
+  function renderTrendList(){
+    const box = document.getElementById('trendListBox');
+    if (!box) return;
+    renderTopMovers();
+    renderCatChips('trendCatChips', trendFilterCat, 'setTrendCatFilter');
+    renderTrendSortChips();
+    renderTrendRangeChips();
+
+    const q = (document.getElementById('trendSearchInput')?.value || '').trim().toLowerCase();
+
+    let keys = Object.keys(priceList).sort();
+    if (trendFilterCat !== 'সব'){
+      keys = keys.filter(k => (priceList[k].category || DEFAULT_CAT) === trendFilterCat);
+    }
+    if (q) keys = keys.filter(k => k.toLowerCase().includes(q));
+
+    if (trendSortMode === 'up' || trendSortMode === 'down'){
+      const withPct = keys.filter(k => getTrendPct(k, getFilteredHist(k)) !== null);
+      const withoutPct = keys.filter(k => getTrendPct(k, getFilteredHist(k)) === null);
+      withPct.sort((a, b) => {
+        const pa = getTrendPct(a, getFilteredHist(a)).pct, pb = getTrendPct(b, getFilteredHist(b)).pct;
+        return trendSortMode === 'up' ? (pb - pa) : (pa - pb);
+      });
+      keys = withPct.concat(withoutPct);
+    }
+
+    if (Object.keys(priceList).length === 0){
+      box.innerHTML = `<div class="empty-note">এখনো কোনো জিনিস সেভ করা নেই</div>`;
+      return;
+    }
+    if (keys.length === 0){
+      box.innerHTML = `<div class="empty-note">এই ফিল্টারে কিছু পাওয়া যায়নি</div>`;
+      return;
+    }
+
+    box.innerHTML = keys.map(k => {
+      const it = priceList[k];
+      const safeKey = k.replace(/'/g,"\\'");
+      const trendInfo = getTrendPct(k, getFilteredHist(k));
+      let badge = '';
+      if (trendInfo){
+        const { diff, pct } = trendInfo;
+        const cls = diff > 0 ? 'trend-pct-up' : (diff < 0 ? 'trend-pct-down' : 'trend-pct-flat');
+        const arrow = diff > 0 ? '▲' : (diff < 0 ? '▼' : '—');
+        badge = `<span class="${cls}">${arrow} ${Math.abs(pct).toFixed(1)}%</span>`;
+      }
+      return `<div class="plist-row">
+        <div class="plist-item" style="cursor:pointer;" onclick="toggleTrend2('${safeKey}')">
+          <span class="nm">${k} <span style="color:#9a9a86; font-weight:400;">(${it.unit})</span></span>
+          <span style="display:flex; align-items:center; gap:10px;">
+            <span class="pr" style="cursor:default; border-bottom:none;">৳${fmt(it.price)}</span>
+            ${badge}
+          </span>
+        </div>
+        <div class="trend-panel" id="trend2-${cssId(k)}" style="display:none;"></div>
+      </div>`;
+    }).join('');
+  }
+
+  function toggleTrend2(name){
+    const panel = document.getElementById('trend2-' + cssId(name));
+    if (!panel) return;
+    const isOpen = panel.style.display !== 'none';
+    if (isOpen){
+      panel.style.display = 'none';
+      panel.innerHTML = '';
+      return;
+    }
+    panel.style.display = 'block';
+    panel.innerHTML = buildTrendHTML(name, getFilteredHist(name));
+  }
+
+  function editPrice(name){
+    const view = document.getElementById('prView-' + cssId(name));
+    if (!view) return;
+    const current = priceList[name].price;
+    view.outerHTML = `<input type="number" min="0" step="0.01" class="pr-edit" id="prEdit-${cssId(name)}"
+        value="${current}"
+        onblur="saveEditedPrice('${name.replace(/'/g,"\\'")}')"
+        onkeydown="if(event.key==='Enter'){this.blur();}">`;
+    const input = document.getElementById('prEdit-' + cssId(name));
+    input.focus();
+    input.select();
+  }
+
+  function saveEditedPrice(name){
+    const input = document.getElementById('prEdit-' + cssId(name));
+    if (!input) return;
+    const newPrice = parseFloat(input.value);
+    if (!isNaN(newPrice) && newPrice >= 0){
+      priceList[name].price = newPrice;
+      savePriceList();
+      recordPriceHistory(name, newPrice);
+      queuePushToSheet();
+    }
+    renderPriceList();
+    renderSelectDropdown();
+  }
+
+  /* ---------- TAB 2: Select one item at a time, then add ---------- */
+  let selectedShopItem = ''; // currently chosen item name (from search dropdown)
+  let shopItemKeys = [];     // items available under current category filter
+  let selectQtyUnitMode = 'base'; // 'base' | 'gram' — toggles the quantity entry unit when the item's base unit is কেজি
+
+
+  function setShopCatFilter(cat){
+    shopFilterCat = cat;
+    renderSelectDropdown();
+  }
+
+  function setItemPickerCatFilter(cat){
+    shopFilterCat = cat;
+    renderSelectDropdown();
+    renderCatChips('itemPickerCatChips', shopFilterCat, 'setItemPickerCatFilter', 'openCategoryPicker(true)');
+    renderPickerList();
+  }
+
+  function renderSelectDropdown(){
+    const emptyNote = document.getElementById('shopEmptyNote');
+
+    let keys = Object.keys(priceList).sort();
+    if (shopFilterCat !== 'সব'){
+      keys = keys.filter(k => (priceList[k].category || DEFAULT_CAT) === shopFilterCat);
+    }
+    shopItemKeys = keys;
+
+    if (Object.keys(priceList).length === 0){
+      emptyNote.textContent = 'এখনো কোনো জিনিস সেভ করা নেই। আগে "প্রাইস লিস্ট" ট্যাবে গিয়ে জিনিস যোগ করুন।';
+      emptyNote.style.display = 'block';
+    } else if (keys.length === 0){
+      emptyNote.textContent = 'এই ক্যাটাগরিতে কিছু নেই';
+      emptyNote.style.display = 'block';
+    } else {
+      emptyNote.style.display = 'none';
+    }
+
+    // if the previously selected item fell out of the current filter, clear it
+    if (selectedShopItem && !keys.includes(selectedShopItem)){
+      selectedShopItem = '';
+      selectQtyUnitMode = 'base';
+    }
+    updateSelectItemBtnLabel();
+    onSelectItemChange();
+  }
+
+  function getQtyUnitBadgeInfo(name){
+    if (!name || !priceList[name]) return { toggleable: false, label: 'একক', factor: 1 };
+    const it = priceList[name];
+    if (it.unit === 'কেজি'){
+      return {
+        toggleable: true,
+        label: selectQtyUnitMode === 'gram' ? 'গ্রাম' : 'কেজি',
+        factor: selectQtyUnitMode === 'gram' ? 0.001 : 1
+      };
+    }
+    return { toggleable: false, label: it.unit, factor: 1 };
+  }
+
+  function toggleSelectQtyUnit(){
+    const name = selectedShopItem;
+    const info = getQtyUnitBadgeInfo(name);
+    if (!info.toggleable) return;
+    selectQtyUnitMode = (selectQtyUnitMode === 'gram') ? 'base' : 'gram';
+    updateSelectItemBtnLabel();
+    const qtyInput = document.getElementById('selectQty');
+    if (qtyInput){
+      qtyInput.placeholder = `${getQtyUnitBadgeInfo(name).label} লিখুন`;
+      if (document.activeElement === qtyInput) qtyInput.focus();
+    }
+    updateLivePreview();
+  }
+
+  function updateSelectItemBtnLabel(){
+    const label = document.getElementById('selectItemBtnLabel');
+    if (!label) return;
+    const unitBadge = document.getElementById('selectUnitBadge');
+    if (selectedShopItem && priceList[selectedShopItem]){
+      label.textContent = selectedShopItem;
+      label.classList.add('chosen');
+      if (unitBadge){
+        const info = getQtyUnitBadgeInfo(selectedShopItem);
+        unitBadge.textContent = info.label;
+        unitBadge.classList.add('chosen');
+        unitBadge.classList.toggle('toggleable', info.toggleable);
+        unitBadge.title = info.toggleable ? 'ক্লিক করে কেজি/গ্রাম বদলান' : '';
+      }
+    } else {
+      label.textContent = 'জিনিস সিলেক্ট করুন';
+      label.classList.remove('chosen');
+      if (unitBadge){
+        unitBadge.textContent = 'একক';
+        unitBadge.classList.remove('chosen');
+        unitBadge.classList.remove('toggleable');
+        unitBadge.title = '';
+      }
+    }
+  }
+
+  function openItemPicker(){
+    const overlay = document.getElementById('itemPickerModal');
+    const search = document.getElementById('pickerSearchInput');
+    search.value = '';
+    document.getElementById('pickerNewItemUnit').value = 'কেজি';
+    document.getElementById('pickerNewItemPrice').value = '';
+    closePickerItemMenu();
+    renderCatChips('itemPickerCatChips', shopFilterCat, 'setItemPickerCatFilter', 'openCategoryPicker(true)');
+    renderPickerList();
+    overlay.classList.add('open');
+    document.body.classList.add('no-scroll');
+    // no .focus() here on purpose — keyboard should only open once the user taps the search box
+  }
+
+  function closeItemPicker(){
+    document.getElementById('itemPickerModal').classList.remove('open');
+    document.body.classList.remove('no-scroll');
+    closePickerItemMenu();
+  }
+
+  function renderPickerList(){
+    const list = document.getElementById('pickerList');
+    const query = document.getElementById('pickerSearchInput').value.trim().toLowerCase();
+    const matches = query
+      ? shopItemKeys.filter(k => k.toLowerCase().includes(query))
+      : shopItemKeys;
+
+    if (matches.length === 0){
+      list.innerHTML = `<div class="picker-none">কোনো জিনিস পাওয়া যায়নি</div>`;
+      return;
+    }
+    list.innerHTML = matches.map(k => {
+      const it = priceList[k];
+      const safe = k.replace(/'/g,"\\'");
+      const sel = k === selectedShopItem ? ' selected' : '';
+      return `<div class="picker-item${sel}" style="flex-direction:column; align-items:stretch; gap:4px;" onclick="pickShopItem('${safe}')">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="nm">${k}</span>
+          <button type="button" class="picker-dots-btn" title="একক, দাম, ডিলিট" onclick="event.stopPropagation(); togglePickerItemMenu(this, '${safe}')">⋮</button>
+        </div>
+        <div class="pr-view-row">
+          <span class="pr-unit-view">${it.unit}</span>
+          <span>·</span>
+          <span class="pr-view">৳${fmt(it.price)}</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function togglePickerItemMenu(btnEl, name){
+    if (pickerOpenMenuKey === name){
+      closePickerItemMenu();
+      return;
+    }
+    pickerOpenMenuKey = name;
+    pickerMenuBtnEl = btnEl;
+    renderPickerItemMenuPopup();
+  }
+
+  function closePickerItemMenu(){
+    pickerOpenMenuKey = null;
+    pickerMenuBtnEl = null;
+    const popup = document.getElementById('pickerItemMenuPopup');
+    if (popup) popup.style.display = 'none';
+  }
+
+  function renderPickerItemMenuPopup(){
+    const name = pickerOpenMenuKey;
+    const popup = document.getElementById('pickerItemMenuPopup');
+    if (!popup) return;
+    if (!name || !priceList[name] || !pickerMenuBtnEl){ closePickerItemMenu(); return; }
+    const it = priceList[name];
+    const safe = name.replace(/'/g,"\\'");
+    popup.innerHTML = `
+      <div class="menu-row" onclick="event.stopPropagation(); editPickerNamePopup('${safe}')">
+        <span class="menu-label">নাম পরিবর্তন</span>
+        <span class="menu-value" id="popupNameVal">${name}</span>
+      </div>
+      <div class="menu-row" onclick="event.stopPropagation(); editPickerUnitPopup('${safe}')">
+        <span class="menu-label">একক</span>
+        <span class="menu-value" id="popupUnitVal">${it.unit}</span>
+      </div>
+      <div class="menu-row" onclick="event.stopPropagation(); editPickerPricePopup('${safe}')">
+        <span class="menu-label">দাম</span>
+        <span class="menu-value" id="popupPriceVal">৳${fmt(it.price)}</span>
+      </div>
+      <div class="item-menu-split">
+        <div class="split-btn danger" onclick="event.stopPropagation(); deleteFromPickerList('${safe}')">ডিলিট</div>
+        <div class="split-btn save" onclick="event.stopPropagation(); savePopupChanges('${safe}')">সেভ</div>
+      </div>
+    `;
+    positionPickerPopup(popup, pickerMenuBtnEl);
+  }
+
+  function positionPickerPopup(popup, btnEl){
+    const rect = btnEl.getBoundingClientRect();
+    const margin = 8;
+    popup.style.visibility = 'hidden';
+    popup.style.display = 'block';
+    const pw = popup.offsetWidth;
+    const ph = popup.offsetHeight;
+    let left = rect.right - pw;
+    if (left < margin) left = margin;
+    if (left + pw > window.innerWidth - margin) left = window.innerWidth - pw - margin;
+    let top = rect.bottom + 4;
+    if (top + ph > window.innerHeight - margin){
+      top = rect.top - ph - 4;
+      if (top < margin) top = margin;
+    }
+    popup.style.left = left + 'px';
+    popup.style.top = top + 'px';
+    popup.style.visibility = 'visible';
+  }
+
+  document.addEventListener('click', function(e){
+    const popup = document.getElementById('pickerItemMenuPopup');
+    if (!popup || popup.style.display === 'none') return;
+    if (!popup.contains(e.target)) closePickerItemMenu();
+  });
+
+  function deleteFromPickerList(name){
+    deleteFromPriceList(name);
+    if (pickerOpenMenuKey === name) closePickerItemMenu();
+    renderPickerList();
+  }
+
+  // Editing নাম inside the popup only stages the change in the input — nothing is
+  // committed to priceList until "সেভ" is tapped (savePopupChanges করে rename করে)।
+  function editPickerNamePopup(name){
+    const view = document.getElementById('popupNameVal');
+    if (!view || !priceList[name]) return;
+    view.outerHTML = `<input type="text" class="pr-edit" id="popupNameEdit"
+        value="${name}"
+        onclick="event.stopPropagation()"
+        onkeydown="if(event.key==='Enter'){event.stopPropagation(); savePopupChanges('${name.replace(/'/g,"\\'")}');}">`;
+    const input = document.getElementById('popupNameEdit');
+    input.focus();
+    input.select();
+    positionPickerPopup(document.getElementById('pickerItemMenuPopup'), pickerMenuBtnEl);
+  }
+
+  // Editing একক/দাম inside the popup only stages the change in the input/select.
+  // Nothing is saved to priceList or re-rendered until "সেভ" is tapped —
+  // this keeps the popup's DOM (and its anchor button) untouched, so its position stays fixed.
+  function editPickerUnitPopup(name){
+    const view = document.getElementById('popupUnitVal');
+    if (!view || !priceList[name]) return;
+    const current = priceList[name].unit;
+    const units = ['কেজি','লিটার','পিস','ডজন','গ্রাম','প্যাকেট','পাতা','টাকা'];
+    const options = units.map(u => `<option value="${u}"${u===current?' selected':''}>${u}</option>`).join('');
+    view.outerHTML = `<select class="pr-edit-unit" id="popupUnitEdit" onclick="event.stopPropagation()">${options}</select>`;
+    const sel = document.getElementById('popupUnitEdit');
+    sel.focus();
+    if (sel.showPicker){ try{ sel.showPicker(); }catch(e){} }
+    positionPickerPopup(document.getElementById('pickerItemMenuPopup'), pickerMenuBtnEl);
+  }
+
+  function editPickerPricePopup(name){
+    const view = document.getElementById('popupPriceVal');
+    if (!view || !priceList[name]) return;
+    const current = priceList[name].price;
+    view.outerHTML = `<input type="number" min="0" step="0.01" class="pr-edit" id="popupPriceEdit"
+        value="${current}"
+        onclick="event.stopPropagation()"
+        onkeydown="if(event.key==='Enter'){event.stopPropagation(); savePopupChanges('${name.replace(/'/g,"\\'")}');}">`;
+    const input = document.getElementById('popupPriceEdit');
+    input.focus();
+    input.select();
+    positionPickerPopup(document.getElementById('pickerItemMenuPopup'), pickerMenuBtnEl);
+  }
+
+  // Commits any staged নাম/একক/দাম edits and closes the popup.
+  function savePopupChanges(name){
+    if (!priceList[name]){ closePickerItemMenu(); return; }
+    let currentKey = name;
+
+    const nameInput = document.getElementById('popupNameEdit');
+    if (nameInput){
+      const newName = nameInput.value.trim();
+      if (newName && newName !== currentKey){
+        if (priceList[newName]){
+          alert('এই নামে ইতিমধ্যে একটা জিনিস আছে');
+        } else {
+          priceList[newName] = priceList[currentKey];
+          delete priceList[currentKey];
+          if (priceHistory[currentKey]){
+            priceHistory[newName] = priceHistory[currentKey];
+            delete priceHistory[currentKey];
+          }
+          if (quantities[currentKey] !== undefined){
+            quantities[newName] = quantities[currentKey];
+            delete quantities[currentKey];
+          }
+          if (selectedShopItem === currentKey) selectedShopItem = newName;
+          currentKey = newName;
+        }
+      }
+    }
+
+    const unitSel = document.getElementById('popupUnitEdit');
+    if (unitSel){
+      priceList[currentKey].unit = unitSel.value;
+    }
+    const priceInput = document.getElementById('popupPriceEdit');
+    if (priceInput){
+      const newPrice = parseFloat(priceInput.value);
+      if (!isNaN(newPrice) && newPrice >= 0){
+        priceList[currentKey].price = newPrice;
+        recordPriceHistory(currentKey, newPrice);
+      }
+    }
+    savePriceList();
+    queuePushToSheet();
+    renderPriceList();
+    renderSelectDropdown();
+    renderPickerList();
+    closePickerItemMenu();
+  }
+
+  function pickShopItem(name){
+    if (!priceList[name]) return;
+    selectedShopItem = name;
+    selectQtyUnitMode = 'base';
+    updateSelectItemBtnLabel();
+    closeItemPicker();
+    onSelectItemChange();
+    document.getElementById('selectQty').focus();
+  }
+
+  function saveNewItemFromPicker(){
+    const nameInput = document.getElementById('pickerSearchInput');
+    const name = nameInput.value.trim();
+    const unit = document.getElementById('pickerNewItemUnit').value;
+    const price = parseFloat(document.getElementById('pickerNewItemPrice').value);
+    const category = (shopFilterCat && shopFilterCat !== 'সব') ? shopFilterCat : DEFAULT_CAT;
+
+    if (!name){ flashButtonLabel('pickerSaveBtn', '⚠️ নাম লিখুন'); return; }
+    if (priceList[name]){ flashButtonLabel('pickerSaveBtn', '⚠️ আগে থেকেই আছে'); return; }
+    if (isNaN(price) || price < 0){ flashButtonLabel('pickerSaveBtn', '⚠️ সঠিক দাম লিখুন'); return; }
+
+    priceList[name] = { unit, price, category };
+    savePriceList();
+    recordPriceHistory(name, price);
+    renderPriceList();
+    queuePushToSheet();
+
+    document.getElementById('pickerNewItemPrice').value = '';
+    renderSelectDropdown();
+    pickShopItem(name);
+  }
+
+  function onSelectItemChange(){
+    const preview = document.getElementById('selectPreview');
+    const qtyInput = document.getElementById('selectQty');
+    const name = selectedShopItem;
+
+    if (!name || !priceList[name]){
+      preview.style.display = 'none';
+      qtyInput.placeholder = 'যেমন: 5';
+      return;
+    }
+    const it = priceList[name];
+    const info = getQtyUnitBadgeInfo(name);
+    preview.style.display = 'block';
+    preview.textContent = `প্রতি ${it.unit} — ৳${fmt(it.price)}`;
+    qtyInput.placeholder = `${info.label} লিখুন`;
+    updateLivePreview();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('selectQty').addEventListener('input', updateLivePreview);
+  });
+
+  function updateLivePreview(){
+    const name = selectedShopItem;
+    const preview = document.getElementById('selectPreview');
+    if (!name || !priceList[name]) return;
+    const it = priceList[name];
+    const info = getQtyUnitBadgeInfo(name);
+    const qty = parseFloat(document.getElementById('selectQty').value);
+    if (!isNaN(qty) && qty > 0){
+      const baseQty = qty * info.factor;
+      const total = baseQty * it.price;
+      if (info.factor !== 1){
+        preview.textContent = `${qty} ${info.label} (= ${fmt(baseQty)} ${it.unit}) x ৳${fmt(it.price)} = ৳${fmt(total)}`;
+      } else {
+        preview.textContent = `${qty} ${info.label} x ৳${fmt(it.price)} = ৳${fmt(total)}`;
+      }
+    } else {
+      preview.textContent = `প্রতি ${it.unit} — ৳${fmt(it.price)}`;
+    }
+  }
+
+  function addSelectedItem(){
+    const name = selectedShopItem;
+    const qtyInput = document.getElementById('selectQty');
+    const qty = parseFloat(qtyInput.value);
+    const otherInput = document.getElementById('otherItemInput');
+    const otherText = otherInput.value.trim();
+
+    const hasItemSelected = !!(name && priceList[name]);
+
+    if (!hasItemSelected && !otherText){
+      alert('আগে একটা জিনিস সিলেক্ট করুন অথবা "অন্যান্য" বক্সে কিছু লিখুন');
+      openItemPicker();
+      return;
+    }
+
+    if (hasItemSelected){
+      if (isNaN(qty) || qty <= 0){ alert('সঠিক পরিমাণ লিখুন'); qtyInput.focus(); return; }
+      const info = getQtyUnitBadgeInfo(name);
+      const baseQty = qty * info.factor;
+      quantities[name] = (quantities[name] || 0) + baseQty;
+      qtyInput.value = '';
+      selectedShopItem = '';
+      selectQtyUnitMode = 'base';
+      updateSelectItemBtnLabel();
+      onSelectItemChange();
+    }
+
+    if (otherText){
+      otherText.split(',')
+        .map(t => t.trim())
+        .filter(t => t.length > 0)
+        .forEach(t => otherItems.push({ id: Date.now() + Math.random(), text: t }));
+      otherInput.value = '';
+    }
+
+    renderSummary();
+  }
+
+  function removeOtherItem(id){
+    otherItems = otherItems.filter(o => o.id !== id);
+    renderSummary();
+  }
+
+
+  function groupCartByCategory(){
+    const names = Object.keys(quantities).filter(n => priceList[n]);
+    const byCategory = {};
+    names.forEach(n => {
+      const cat = priceList[n].category || DEFAULT_CAT;
+      if (!byCategory[cat]) byCategory[cat] = [];
+      byCategory[cat].push(n);
+    });
+    Object.keys(byCategory).forEach(cat => byCategory[cat].sort());
+    return byCategory;
+  }
+
+  function sortCatsOtherLast(cats){
+    // ক্যাটাগরি পিকারে ড্র্যাগ করে যেই সিরিয়াল সেট করা হয়েছে (categoryOrder),
+    // ঠিক সেই সিরিয়াল অনুযায়ী এখানে জিনিসগুলো সাজানো হয় — লিস্ট, কপি ও হিস্টরি সব জায়গায়।
+    const order = getCategories();
+    return cats.sort((a, b) => {
+      const ia = order.indexOf(a);
+      const ib = order.indexOf(b);
+      if (ia === -1 && ib === -1) return a.localeCompare(b);
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+    });
+  }
+
+  function saveShoppingLog(){
+    localStorage.setItem(SHOP_LOG_KEY, JSON.stringify(shoppingLog));
+  }
+
+  function saveCartToHistory(){
+    const byCategory = groupCartByCategory();
+    const cats = sortCatsOtherLast(Object.keys(byCategory));
+    if (cats.length === 0 && otherItems.length === 0) return;
+
+    let grand = 0;
+    const categories = cats.map(cat => {
+      let catTotal = 0;
+      const items = byCategory[cat].map(n => {
+        const it = priceList[n];
+        const qty = quantities[n];
+        const sub = qty * it.price;
+        catTotal += sub;
+        grand += sub;
+        const disp = getDisplayQtyUnit(qty, it.unit);
+        return { name:n, qty: disp.qty, unit: disp.unit, price:it.price, sub };
+      });
+      return { category:cat, catTotal, items };
+    });
+
+    if (otherItems.length > 0){
+      categories.push({
+        category: 'অন্যান্য (দাম ছাড়া)',
+        catTotal: 0,
+        items: otherItems.map(o => ({ name:o.text, qty:'', unit:'', price:0, sub:0 }))
+      });
+    }
+
+    const entry = {
+      id: Date.now(),
+      dateLabel: new Date().toLocaleString('bn-BD', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }),
+      grand,
+      categories
+    };
+    shoppingLog.unshift(entry);
+    saveShoppingLog();
+    renderHistoryList();
+    queuePushToSheet();
+  }
+
+  // হিস্টরি পেজের + বাটনে ক্লিক করলে খালি (কোনো কেনাকাটা ছাড়া) একটা নতুন
+  // হিস্টরি এন্ট্রি তৈরি হয়, যেটার নিজস্ব চেকলিস্ট থাকে — ঠিক বাকি এন্ট্রিগুলোর মতোই।
+  function createNewChecklistEntry(){
+    const entry = {
+      id: Date.now(),
+      dateLabel: new Date().toLocaleString('bn-BD', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }),
+      grand: 0,
+      categories: [],
+      isChecklistOnly: true
+    };
+    shoppingLog.unshift(entry);
+    saveShoppingLog();
+    renderHistoryList();
+    renderChecklistPageList();
+    queuePushToSheet();
+    openChecklist(entry.id);
+  }
+
+  function renderHistoryList(){
+    const box = document.getElementById('historyListBox');
+    if (!box) return;
+    // কোন কোন এন্ট্রি এখন খোলা আছে সেটা মনে রাখা হচ্ছে, যাতে রি-রেন্ডারের পর
+    // (যেমন ব্যাকগ্রাউন্ডে শিট-পুল শেষ হলে) খোলা এন্ট্রি হুট করে বন্ধ হয়ে না যায়।
+    const openIds = new Set(
+      Array.from(box.querySelectorAll('details.history-entry[open]')).map(d => d.dataset.entryId)
+    );
+    if (shoppingLog.length === 0){
+      box.innerHTML = `<div class="empty-note">এখনো কোনো হিস্টরি নেই</div>`;
+      return;
+    }
+    box.innerHTML = shoppingLog.map(entry => {
+      const body = entry.categories.map(c => {
+        const rows = c.items.map(it =>
+          it.unit
+            ? `<div class="hist-item"><span>${it.name} — ${it.qty} ${it.unit}</span><span>৳${fmt(it.sub)}</span></div>`
+            : `<div class="hist-item"><span>${it.name}</span><span></span></div>`
+        ).join('');
+        return `<div class="hist-cat">— ${c.category} —</div>${rows}<div class="hist-cat-total">মোট: ৳${fmt(c.catTotal)}</div>`;
+      }).join('');
+      const clItems = entry.checklist ? entry.checklist.items : [];
+      const clDone = clItems.filter(it => it.done).length;
+      const clBadge = clItems.length > 0
+        ? `<span id="histChecklistBadge-${entry.id}" class="hist-checklist-badge">${clDone}/${clItems.length}</span>`
+        : `<span id="histChecklistBadge-${entry.id}" class="hist-checklist-badge" style="display:none;"></span>`;
+      const openAttr = openIds.has(String(entry.id)) ? ' open' : '';
+      const displayTotal = entry.grand + manualItemsTotal(entry);
+      return `<details class="history-entry" data-entry-id="${entry.id}"${openAttr}>
+        <summary>
+          <span class="hist-date">${entry.dateLabel} ${clBadge}</span>
+          <span class="hist-total" id="histTotal-${entry.id}">৳${fmt(displayTotal)}</span>
+        </summary>
+        <div class="hist-body">${body}</div>
+        <div id="histManual-${entry.id}">${manualSectionHtml(entry)}</div>
+        <div class="hist-actions" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:8px;">
+          <button type="button" class="btn btn-ghost" id="histCopyBtn-${entry.id}" onclick="copyHistoryEntry(${entry.id})">📋 কপি</button>
+          <button type="button" class="btn btn-ghost" onclick="openChecklist(${entry.id})">➕ যোগ</button>
+          <button type="button" class="btn btn-danger" onclick="deleteHistoryEntry(${entry.id})">🗑️ ডিলিট</button>
+        </div>
+      </details>`;
+    }).join('');
+  }
+
+  // চেকলিস্ট পেজ — এখানে শুধু "+" বাটনে ক্লিক করে বানানো (isChecklistOnly)
+  // এন্ট্রিগুলোই দেখানো হয়। বাকি সব এন্ট্রি (সাধারণ বাজার হিসাব) হিস্টরি পেজেই থাকে,
+  // তবে "+" দিয়ে বানানো এন্ট্রিগুলো হিস্টরি পেজেও (সব হিস্টরির অংশ হিসেবে) দেখা যায়।
+  function renderChecklistPageList(){
+    const box = document.getElementById('checklistPageListBox');
+    if (!box) return;
+    const openIds = new Set(
+      Array.from(box.querySelectorAll('details.history-entry[open]')).map(d => d.dataset.entryId)
+    );
+    const clOnlyEntries = shoppingLog.filter(e => e.isChecklistOnly);
+    if (clOnlyEntries.length === 0){
+      box.innerHTML = `<div class="empty-note">এখনো কোনো চেকলিস্ট নেই</div>`;
+      return;
+    }
+    box.innerHTML = clOnlyEntries.map(entry => {
+      const body = entry.categories.map(c => {
+        const rows = c.items.map(it =>
+          it.unit
+            ? `<div class="hist-item"><span>${it.name} — ${it.qty} ${it.unit}</span><span>৳${fmt(it.sub)}</span></div>`
+            : `<div class="hist-item"><span>${it.name}</span><span></span></div>`
+        ).join('');
+        return `<div class="hist-cat">— ${c.category} —</div>${rows}<div class="hist-cat-total">মোট: ৳${fmt(c.catTotal)}</div>`;
+      }).join('');
+      const clItems = entry.checklist ? entry.checklist.items : [];
+      const clDone = clItems.filter(it => it.done).length;
+      const clBadge = clItems.length > 0
+        ? `<span id="clPageBadge-${entry.id}" class="hist-checklist-badge">${clDone}/${clItems.length}</span>`
+        : `<span id="clPageBadge-${entry.id}" class="hist-checklist-badge" style="display:none;"></span>`;
+      const openAttr = openIds.has(String(entry.id)) ? ' open' : '';
+      const displayTotal = entry.grand + manualItemsTotal(entry);
+      return `<details class="history-entry" data-entry-id="${entry.id}"${openAttr}>
+        <summary>
+          <span class="hist-date">
+            <button type="button" class="cl-page-remove-btn" onclick="event.stopPropagation(); event.preventDefault(); removeFromChecklistPage(${entry.id});" aria-label="চেকলিস্ট থেকে সরান">✕</button>
+            ${entry.dateLabel} ${clBadge}
+          </span>
+          <span class="hist-total" id="clPageTotal-${entry.id}">৳${fmt(displayTotal)}</span>
+        </summary>
+        <div class="hist-body">${body}</div>
+        <div id="clPageManual-${entry.id}">${manualSectionHtml(entry)}</div>
+        <div class="hist-actions" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:8px;">
+          <button type="button" class="btn btn-ghost" id="clPageCopyBtn-${entry.id}" onclick="copyHistoryEntry(${entry.id}, 'clPageCopyBtn-${entry.id}')">📋 কপি</button>
+          <button type="button" class="btn btn-ghost" onclick="openChecklist(${entry.id})">➕ যোগ</button>
+          <button type="button" class="btn btn-danger" onclick="deleteHistoryEntry(${entry.id})">🗑️ ডিলিট</button>
+        </div>
+      </details>`;
+    }).join('');
+  }
+
+  // চেকলিস্ট পেজের "✕" বাটন — শুধু চেকলিস্ট পেজ থেকে এন্ট্রিটি সরিয়ে দেয় (isChecklistOnly ফ্ল্যাগ
+  // বন্ধ করে দিয়ে), কিন্তু এন্ট্রিটা shoppingLog-এ থেকে যায় বলে হিস্টরি পেজে ঠিকই দেখা যাবে।
+  // পুরোপুরি ডিলিট করতে হলে "🗑️ ডিলিট" বাটন ব্যবহার করতে হবে (deleteHistoryEntry)।
+  function removeFromChecklistPage(id){
+    const entry = shoppingLog.find(e => e.id === id);
+    if (!entry) return;
+    if (!confirm('এই চেকলিস্টটি চেকলিস্ট পেজ থেকে সরাতে চান? (হিস্টরিতে থেকে যাবে)')) return;
+    entry.isChecklistOnly = false;
+    saveShoppingLog();
+    renderChecklistPageList();
+    queuePushToSheet();
+  }
+
+  // চেকলিস্টে ম্যানুয়ালি যোগ করা আইটেমগুলোর সর্বমোট দাম — এটা এন্ট্রির overall
+  // সর্বমোটের (hist-total) সাথে যোগ হয়ে দেখানো হয়।
+  function manualItemsTotal(entry){
+    if (!entry.checklist) return 0;
+    return entry.checklist.items
+      .filter(it => it.source === 'manual')
+      .reduce((sum, it) => sum + (parseFloat(it.price) || 0), 0);
+  }
+
+  // চেকলিস্টে ম্যানুয়ালি যোগ করা (নতুন) আইটেমগুলো — হিস্টরি লিস্টেই সরাসরি দেখানোর জন্য,
+  // মোডাল না খুলেও দেখা যায়। toggle/add/delete হলে renderHistoryManualSection() দিয়ে রিফ্রেশ হয়।
+  function manualSectionHtml(entry){
+    const manualItems = entry.checklist ? entry.checklist.items.filter(it => it.source === 'manual') : [];
+    if (manualItems.length === 0) return '';
+    const rows = manualItems.map(it => {
+      const check = it.done ? '☑ ' : '☐ ';
+      return `<div class="hist-item${it.done ? ' hist-item-done' : ''}"><span><span class="hist-item-check">${check}</span>${it.name}</span><span>৳${fmt(it.price)}</span></div>`;
+    }).join('');
+    const total = manualItems.reduce((sum, it) => sum + (parseFloat(it.price) || 0), 0);
+    return `<div class="hist-cat">— ☑ —</div>${rows}<div class="hist-cat-total">মোট: ৳${fmt(total)}</div>`;
+  }
+
+  function renderHistoryManualSection(entryId){
+    const wrap = document.getElementById(`histManual-${entryId}`);
+    const entry = shoppingLog.find(e => e.id === entryId);
+    if (!wrap || !entry) return;
+    wrap.innerHTML = manualSectionHtml(entry);
+    const totalEl = document.getElementById(`histTotal-${entryId}`);
+    if (totalEl) totalEl.textContent = `৳${fmt(entry.grand + manualItemsTotal(entry))}`;
+
+    // চেকলিস্ট পেজেও একই এন্ট্রি থাকলে সেখানকার ম্যানুয়াল সেকশন/টোটালও আপডেট হবে
+    const clWrap = document.getElementById(`clPageManual-${entryId}`);
+    if (clWrap) clWrap.innerHTML = manualSectionHtml(entry);
+    const clTotalEl = document.getElementById(`clPageTotal-${entryId}`);
+    if (clTotalEl) clTotalEl.textContent = `৳${fmt(entry.grand + manualItemsTotal(entry))}`;
+  }
+
+  /* ---------- হিস্টরি চেকলিস্ট (Phase 1: ডেটা লেয়ার + view/toggle) ----------
+     এন্ট্রির মূল categories ডেটা টাচ না করে entry.checklist.items[] আলাদাভাবে তৈরি হয়,
+     যাতে হিস্টরির মূল রেকর্ড (তখন কী কেনা হয়েছিল) অপরিবর্তিত থাকে। */
+  let checklistEntryId = null;
+
+  function ensureChecklist(entry){
+    if (!entry.checklist){
+      let idx = 0;
+      const items = [];
+      entry.categories.forEach(c => {
+        c.items.forEach(it => {
+          idx++;
+          items.push({
+            id: 'cl_' + entry.id + '_' + idx,
+            name: it.name,
+            qty: it.qty,
+            unit: it.unit,
+            price: it.price,
+            done: false,
+            source: 'history',
+            category: c.category
+          });
+        });
+      });
+      entry.checklist = { items, extraTotal: 0 };
+    } else {
+      // পুরনো (আপডেটের আগে সেভ হওয়া) checklist-এ category ফিল্ড না থাকলে
+      // মূল categories থেকে মিলিয়ে সেটা যোগ করে দেওয়া হচ্ছে (এক-বার মাইগ্রেশন)।
+      entry.checklist.items.forEach(it => {
+        if (!it.category && it.source === 'history'){
+          const match = entry.categories.find(c => c.items.some(ci => ci.name === it.name));
+          if (match) it.category = match.category;
+        }
+      });
+    }
+    return entry.checklist;
+  }
+
+  function startEditChecklistTitle(titleEl){
+    const entry = shoppingLog.find(e => e.id === checklistEntryId);
+    if (!entry) return;
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'checklist-title-input';
+    input.value = entry.dateLabel;
+    titleEl.replaceWith(input);
+    input.focus();
+    input.select();
+
+    // input-টা আবার আগের মতো ক্লিকযোগ্য টাইটেল div-এ ফিরিয়ে আনা হয়, নাহলে
+    // পরের বার id দিয়ে এই এলিমেন্ট আর খুঁজে পাওয়া যাবে না।
+    const restoreTitleEl = () => {
+      const div = document.createElement('div');
+      div.className = 'picker-title';
+      div.id = 'checklistTitleText';
+      div.onclick = () => startEditChecklistTitle(div);
+      input.replaceWith(div);
+      return div;
+    };
+
+    let done = false;
+    const commit = () => {
+      if (done) return;
+      done = true;
+      const val = input.value.trim();
+      if (val) entry.dateLabel = val;
+      restoreTitleEl();
+      saveShoppingLog();
+      renderChecklistModal();
+      renderHistoryList();
+      renderChecklistPageList();
+      queuePushToSheet();
+    };
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') input.blur();
+      if (e.key === 'Escape'){
+        done = true;
+        restoreTitleEl();
+        renderChecklistModal();
+      }
+    });
+  }
+
+  function openChecklist(entryId){
+    const entry = shoppingLog.find(e => e.id === entryId);
+    if (!entry) return;
+    ensureChecklist(entry);
+    checklistEntryId = entryId;
+    saveShoppingLog();
+    document.getElementById('checklistCompletedWrap').open = false;
+    document.getElementById('checklistNewName').value = '';
+    document.getElementById('checklistNewPrice').value = '';
+    renderChecklistModal();
+    document.getElementById('checklistModal').classList.add('open');
+    document.body.classList.add('no-scroll');
+  }
+
+  function closeChecklistModal(){
+    document.getElementById('checklistModal').classList.remove('open');
+    document.body.classList.remove('no-scroll');
+    checklistEntryId = null;
+  }
+
+  function renderChecklistModal(){
+    const entry = shoppingLog.find(e => e.id === checklistEntryId);
+    const pendingBox = document.getElementById('checklistPendingList');
+    const doneBox = document.getElementById('checklistCompletedList');
+    const countEl = document.getElementById('checklistCompletedCount');
+    const extraLine = document.getElementById('checklistExtraTotalLine');
+    const grandTotalEl = document.getElementById('checklistGrandTotal');
+    const titleEl = document.getElementById('checklistTitleText');
+    if (!entry || !entry.checklist || !pendingBox || !doneBox) return;
+
+    if (titleEl) titleEl.textContent = entry.dateLabel;
+    if (grandTotalEl) grandTotalEl.textContent = `সর্বমোট: ৳${fmt(entry.grand + manualItemsTotal(entry))}`;
+
+    const items = entry.checklist.items;
+    const pending = items.filter(it => !it.done);
+    const done = items.filter(it => it.done);
+
+    const rowHtml = (it) => {
+      const metaParts = [];
+      if (it.qty) metaParts.push(`${it.qty} ${it.unit || ''}`.trim());
+      const meta = metaParts.length ? `<span class="cl-meta">${metaParts.join(' · ')}</span>` : '';
+      const safeId = it.id.replace(/'/g,"\\'");
+      const nameHtml = it.source === 'manual'
+        ? `<span class="cl-name" ondblclick="event.stopPropagation(); startEditChecklistName(this, '${safeId}')">${it.name}</span>`
+        : `<span class="cl-name">${it.name}</span>`;
+      const priceHtml = it.source === 'manual'
+        ? `<input type="number" class="cl-price-input" placeholder="দাম" min="0" step="0.01" value="${it.price ? it.price : ''}" onclick="event.stopPropagation(); this.select();" onfocus="this.select()" onchange="updateChecklistItemPrice('${safeId}', this.value)">`
+        : (it.price ? `<span class="cl-meta">৳${fmt(it.price)}</span>` : '');
+      const delBtn = it.source === 'manual'
+        ? `<button type="button" class="cl-del-btn" title="মুছুন" onclick="event.stopPropagation(); deleteChecklistItem('${safeId}')">✕</button>`
+        : '';
+      return `<div class="checklist-item${it.done ? ' done' : ''}">
+        <input type="checkbox" ${it.done ? 'checked' : ''} onchange="toggleChecklistItem('${safeId}')">
+        ${nameHtml}
+        ${meta}
+        ${priceHtml}
+        ${delBtn}
+      </div>`;
+    };
+
+    // ক্যাটাগরি অনুযায়ী ভাগ করে দেখানো হয় (মূল হিস্টরির ক্যাটাগরি-ক্রম অনুসরণ করে);
+    // ম্যানুয়ালি যোগ করা আইটেমগুলো সবসময় শেষে আলাদা "☑" গ্রুপে থাকে।
+    const groupByCategory = (list) => {
+      if (list.length === 0) return '';
+      const catOrder = entry.categories.map(c => c.category);
+      const groups = {};
+      const manualItems = [];
+      list.forEach(it => {
+        if (it.source === 'manual'){ manualItems.push(it); return; }
+        const cat = it.category || 'অন্যান্য';
+        if (!groups[cat]) groups[cat] = [];
+        groups[cat].push(it);
+      });
+      const orderedCats = catOrder.filter(c => groups[c]);
+      Object.keys(groups).forEach(c => { if (!orderedCats.includes(c)) orderedCats.push(c); });
+      let html = orderedCats.map(cat => `<div class="cl-cat-label">— ${cat} —</div>${groups[cat].map(rowHtml).join('')}`).join('');
+      if (manualItems.length) html += `<div class="cl-cat-label">— ☑ —</div>${manualItems.map(rowHtml).join('')}`;
+      return html;
+    };
+
+    pendingBox.innerHTML = pending.length
+      ? groupByCategory(pending)
+      : (items.length === 0
+          ? `<div class="checklist-empty">এখনো কোনো জিনিস যোগ করা হয়নি</div>`
+          : `<div class="checklist-empty">সব জিনিস কেনা হয়ে গেছে 🎉</div>`);
+    doneBox.innerHTML = done.length
+      ? groupByCategory(done)
+      : `<div class="checklist-empty">এখনো কিছু সম্পন্ন হয়নি</div>`;
+    countEl.textContent = done.length;
+
+    // প্রোগ্রেস বার/লেবেল ("X/Y কেনা হয়েছে")
+    const progressBar = document.getElementById('checklistProgressBar');
+    const progressLabel = document.getElementById('checklistProgressLabel');
+    const total = items.length;
+    const pct = total > 0 ? Math.round((done.length / total) * 100) : 0;
+    if (progressBar) progressBar.style.width = pct + '%';
+    if (progressLabel) progressLabel.textContent = `${done.length}/${total} কেনা হয়েছে`;
+
+    // হিস্টরি লিস্টের কার্ডেও (পপআপ ছাড়াই) ছোট প্রোগ্রেস ব্যাজ আপডেট
+    updateHistoryChecklistBadge(entry.id);
+
+    // ম্যানুয়ালি যোগ করা আইটেমগুলোর দাম — মূল হিস্টরির সর্বমোট থেকে আলাদা, শুধু এখানেই দেখানো হয়
+    const manualItems = items.filter(it => it.source === 'manual');
+    const extraTotal = manualItems.reduce((sum, it) => sum + (parseFloat(it.price) || 0), 0);
+    if (extraLine){
+      if (manualItems.length > 0){
+        extraLine.style.display = 'block';
+        extraLine.textContent = `☑ (${manualItems.length}টি) — মোট: ৳${fmt(extraTotal)}`;
+      } else {
+        extraLine.style.display = 'none';
+      }
+    }
+  }
+
+  function updateHistoryChecklistBadge(entryId){
+    const badge = document.getElementById(`histChecklistBadge-${entryId}`);
+    const clBadge = document.getElementById(`clPageBadge-${entryId}`);
+    if (!badge && !clBadge) return;
+    const entry = shoppingLog.find(e => e.id === entryId);
+    if (!entry || !entry.checklist || entry.checklist.items.length === 0){
+      if (badge) badge.style.display = 'none';
+      if (clBadge) clBadge.style.display = 'none';
+      return;
+    }
+    const total = entry.checklist.items.length;
+    const doneCount = entry.checklist.items.filter(it => it.done).length;
+    if (badge){ badge.textContent = `${doneCount}/${total}`; badge.style.display = 'inline-block'; }
+    if (clBadge){ clBadge.textContent = `${doneCount}/${total}`; clBadge.style.display = 'inline-block'; }
+  }
+
+  function addChecklistItem(){
+    const entry = shoppingLog.find(e => e.id === checklistEntryId);
+    if (!entry || !entry.checklist) return;
+    const nameInput = document.getElementById('checklistNewName');
+    const priceInput = document.getElementById('checklistNewPrice');
+    const name = nameInput.value.trim();
+    if (!name){ nameInput.focus(); return; }
+    const priceVal = parseFloat(priceInput.value);
+    const price = isNaN(priceVal) ? 0 : priceVal;
+
+    entry.checklist.items.push({
+      id: 'cl_' + entry.id + '_m' + Date.now(),
+      name, qty:'', unit:'', price, done:false, source:'manual'
+    });
+
+    nameInput.value = '';
+    priceInput.value = '';
+    saveShoppingLog();
+    renderChecklistModal();
+    renderHistoryManualSection(entry.id);
+    queuePushToSheet();
+    nameInput.focus();
+  }
+
+  function startEditChecklistName(spanEl, itemId){
+    const entry = shoppingLog.find(e => e.id === checklistEntryId);
+    if (!entry || !entry.checklist) return;
+    const item = entry.checklist.items.find(i => i.id === itemId);
+    if (!item) return;
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'cl-name-input';
+    input.value = item.name;
+    spanEl.replaceWith(input);
+    input.focus();
+    input.select();
+
+    let done = false;
+    const commit = () => {
+      if (done) return;
+      done = true;
+      const val = input.value.trim();
+      if (val) item.name = val;
+      saveShoppingLog();
+      renderChecklistModal();
+      renderHistoryManualSection(entry.id);
+      queuePushToSheet();
+    };
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') input.blur();
+      if (e.key === 'Escape'){ done = true; renderChecklistModal(); }
+    });
+  }
+
+  function updateChecklistItemPrice(itemId, value){
+    const entry = shoppingLog.find(e => e.id === checklistEntryId);
+    if (!entry || !entry.checklist) return;
+    const item = entry.checklist.items.find(i => i.id === itemId);
+    if (!item) return;
+    const val = parseFloat(value);
+    item.price = isNaN(val) ? 0 : val;
+    saveShoppingLog();
+    renderChecklistModal();
+    renderHistoryManualSection(entry.id);
+    queuePushToSheet();
+  }
+
+  function deleteChecklistItem(itemId){
+    const entry = shoppingLog.find(e => e.id === checklistEntryId);
+    if (!entry || !entry.checklist) return;
+    const item = entry.checklist.items.find(i => i.id === itemId);
+    if (!item) return;
+    if (!confirm(`"${item.name}" ডিলিট করতে চান?`)) return;
+    entry.checklist.items = entry.checklist.items.filter(i => i.id !== itemId);
+    saveShoppingLog();
+    renderChecklistModal();
+    renderHistoryManualSection(entry.id);
+    queuePushToSheet();
+  }
+
+  function toggleChecklistItem(itemId){
+    const entry = shoppingLog.find(e => e.id === checklistEntryId);
+    if (!entry || !entry.checklist) return;
+    const item = entry.checklist.items.find(i => i.id === itemId);
+    if (!item) return;
+    item.done = !item.done;
+    saveShoppingLog();
+    renderChecklistModal();
+    renderHistoryManualSection(entry.id);
+    queuePushToSheet();
+  }
+
+  function deleteHistoryEntry(id){
+    if (!confirm('এই হিস্টরি এন্ট্রি মুছে ফেলতে চান?')) return;
+    shoppingLog = shoppingLog.filter(e => e.id !== id);
+    saveShoppingLog();
+    renderHistoryList();
+    renderChecklistPageList();
+    queuePushToSheet();
+  }
+
+  function copyHistoryEntry(id, btnIdOverride){
+    const entry = shoppingLog.find(e => e.id === id);
+    const btnId = btnIdOverride || `histCopyBtn-${id}`;
+    if (!entry){ flashButtonLabel(btnId, '⚠️ পাওয়া যায়নি'); return; }
+    let lines = [];
+    lines.push(entry.dateLabel);
+    lines.push('');
+    entry.categories.forEach(c => {
+      lines.push(`— ${c.category} —`);
+      c.items.forEach(it => {
+        lines.push(it.unit
+          ? `${it.name} — ${it.qty} ${it.unit} = ৳${fmt(it.sub)}`
+          : it.name);
+      });
+      if (c.catTotal > 0) lines.push(`মোট: ৳${fmt(c.catTotal)}`);
+      lines.push('');
+    });
+    const manualItems = entry.checklist ? entry.checklist.items.filter(it => it.source === 'manual') : [];
+    if (manualItems.length > 0){
+      lines.push('— ☑ —');
+      manualItems.forEach(it => lines.push(`${it.name} = ৳${fmt(it.price)}`));
+      lines.push(`মোট: ৳${fmt(manualItemsTotal(entry))}`);
+      lines.push('');
+    }
+    lines.push('-------------------------');
+    lines.push(`সর্বমোট: ৳${fmt(entry.grand + manualItemsTotal(entry))}`);
+    copyTextToClipboard(lines.join('\n'))
+      .then(() => flashButtonLabel(btnId, '✅ কপি হয়ে গেছে'))
+      .catch(() => flashButtonLabel(btnId, '⚠️ কপি ব্যর্থ হয়েছে'));
+  }
+
+  function clearAllHistory(){
+    if (shoppingLog.length === 0) return;
+    if (!confirm('পুরো হিস্টরি মুছে ফেলতে চান? এটি ফিরিয়ে আনা যাবে না।')) return;
+    shoppingLog = [];
+    saveShoppingLog();
+    renderHistoryList();
+    queuePushToSheet();
+  }
+
+  function renderSummary(){
+    const body = document.getElementById('summaryBody');
+    const byCategory = groupCartByCategory();
+    const cats = sortCatsOtherLast(Object.keys(byCategory));
+
+    if (cats.length === 0 && otherItems.length === 0){
+      body.innerHTML = `<div class="cart-empty">এখনো কিছু যোগ করা হয়নি</div>`;
+      document.getElementById('grandTotal').textContent = '0.00';
+      document.getElementById('grandOtherNote').style.display = 'none';
+      return;
+    }
+
+    let grand = 0;
+    let html = '';
+    cats.forEach(cat => {
+      let catTotal = 0;
+      let rows = '';
+      byCategory[cat].forEach(n => {
+        const it = priceList[n];
+        const qty = quantities[n];
+        const sub = qty * it.price;
+        catTotal += sub;
+        const disp = getDisplayQtyUnit(qty, it.unit);
+        const safeName = n.replace(/'/g,"\\'");
+        rows += `<div class="cart-item">
+          <div class="cart-item-top">
+            <span class="cart-item-name">${n}</span>
+            <button class="del-btn" onclick="removeFromCart('${safeName}')">✕</button>
+          </div>
+          <div class="cart-item-meta">
+            <span class="qty">${disp.qty} ${disp.unit}</span>
+            <span class="price">৳${fmt(it.price)}/${it.unit || 'একক'}</span>
+            <span class="sub">৳${fmt(sub)}</span>
+          </div>
+        </div>`;
+      });
+      grand += catTotal;
+      html += `<div class="cart-cat-head">🏷️ ${cat}</div>`;
+      html += rows;
+      html += `<div class="cart-cat-subtotal"><span>মোট</span><span class="val">৳${fmt(catTotal)}</span></div>`;
+    });
+
+    if (otherItems.length > 0){
+      let rows = '';
+      otherItems.forEach(o => {
+        rows += `<div class="cart-item">
+          <div class="cart-item-top">
+            <span class="cart-item-name">${o.text}</span>
+            <button class="del-btn" onclick="removeOtherItem(${o.id})">✕</button>
+          </div>
+        </div>`;
+      });
+      html += `<div class="cart-cat-head">🏷️ অন্যান্য (দাম ছাড়া)</div>`;
+      html += rows;
+      html += `<div style="text-align:center; font-size:0.75rem; color:#9a9a86; border-top:1px dashed var(--line); margin-top:10px; padding-top:8px;">— এই আইটেমগুলো সর্বমোটে যোগ হয়নি —</div>`;
+    }
+
+    body.innerHTML = html;
+    document.getElementById('grandTotal').textContent = fmt(grand);
+    document.getElementById('grandOtherNote').style.display = otherItems.length > 0 ? 'block' : 'none';
+  }
+
+  function removeFromCart(name){
+    delete quantities[name];
+    renderSummary();
+  }
+
+  function clearQuantities(){
+    if (Object.keys(quantities).length === 0 && otherItems.length === 0) return;
+    if (!confirm('পুরো লিস্ট (সব যোগ করা জিনিস) মুছে ফেলতে চান?')) return;
+    quantities = {};
+    otherItems = [];
+    renderSummary();
+  }
+
+  function copyTextToClipboard(text){
+    return new Promise((resolve, reject) => {
+      const tryFallback = () => {
+        try{
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.top = '0';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          ta.setSelectionRange(0, text.length);
+          const ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          ok ? resolve() : reject(new Error('execCommand copy failed'));
+        } catch(e){
+          reject(e);
+        }
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(resolve).catch(tryFallback);
+      } else {
+        tryFallback();
+      }
+    });
+  }
+
+  function flashButtonLabel(btnId, tempText, duration){
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    if (!btn.dataset.originalLabel) btn.dataset.originalLabel = btn.innerHTML;
+    if (btn._flashTimer) clearTimeout(btn._flashTimer);
+    btn.innerHTML = tempText;
+    btn._flashTimer = setTimeout(() => {
+      btn.innerHTML = btn.dataset.originalLabel;
+      btn._flashTimer = null;
+    }, duration || 1400);
+  }
+
+  function copyNameQtyOnly(){
+    const byCategory = groupCartByCategory();
+    const cats = sortCatsOtherLast(Object.keys(byCategory));
+    if (cats.length === 0 && otherItems.length === 0){ flashButtonLabel('copyNoPriceBtn', '⚠️ কিছু যোগ করা হয়নি'); return; }
+    let grand = 0;
+    let lines = [];
+    cats.forEach(cat => {
+      lines.push(`— ${cat} —`);
+      byCategory[cat].forEach(n => {
+        const it = priceList[n];
+        const qty = quantities[n];
+        const sub = qty * it.price;
+        grand += sub;
+        const disp = getDisplayQtyUnit(qty, it.unit);
+        lines.push(`${n} — ${disp.qty} ${disp.unit}`);
+      });
+      lines.push('');
+    });
+    if (otherItems.length > 0){
+      lines.push('— অন্যান্য (দাম ছাড়া) —');
+      otherItems.forEach(o => lines.push(o.text));
+      lines.push('');
+    }
+    copyTextToClipboard(lines.join('\n'))
+      .then(() => flashButtonLabel('copyNoPriceBtn', '✅ কপি হয়ে গেছে'))
+      .catch(() => flashButtonLabel('copyNoPriceBtn', '⚠️ কপি ব্যর্থ হয়েছে'));
+    saveCartToHistory();
+  }
+
+  function copySummary(){
+    const byCategory = groupCartByCategory();
+    const cats = sortCatsOtherLast(Object.keys(byCategory));
+    if (cats.length === 0 && otherItems.length === 0){ flashButtonLabel('copyWithPriceBtn', '⚠️ কিছু সিলেক্ট করা হয়নি'); return; }
+    let grand = 0;
+    let lines = ['আজকের বাজার হিসাব', '-------------------------'];
+    cats.forEach(cat => {
+      let catTotal = 0;
+      lines.push(`— ${cat} —`);
+      byCategory[cat].forEach(n => {
+        const it = priceList[n];
+        const qty = quantities[n];
+        const sub = qty * it.price;
+        catTotal += sub;
+        grand += sub;
+        const disp = getDisplayQtyUnit(qty, it.unit);
+        lines.push(`${n} — ${disp.qty} ${disp.unit} x ৳${fmt(it.price)} = ৳${fmt(sub)}`);
+      });
+      lines.push(`মোট: ৳${fmt(catTotal)}`);
+      lines.push('');
+    });
+    if (otherItems.length > 0){
+      lines.push('— অন্যান্য (দাম ছাড়া) —');
+      otherItems.forEach(o => lines.push(o.text));
+      lines.push('');
+    }
+    lines.push('-------------------------');
+    lines.push(`সর্বমোট: ৳${fmt(grand)}${otherItems.length > 0 ? ' (*অন্যান্য বাদে)' : ''}`);
+    copyTextToClipboard(lines.join('\n'))
+      .then(() => flashButtonLabel('copyWithPriceBtn', '✅ হিসাব কপি হয়ে গেছে'))
+      .catch(() => flashButtonLabel('copyWithPriceBtn', '⚠️ কপি ব্যর্থ হয়েছে'));
+    saveCartToHistory();
+  }
+
+  renderPriceList();
+  renderSelectDropdown();
+  renderSummary();
+
+  if (scriptUrl){
+    setSyncStatus('⬇️ শিট থেকে আনা হচ্ছে...', 'busy');
+    pullFromSheet(false);
+  } else {
+    setSyncStatus('🔌 সিঙ্ক সেট করা নেই', '');
+  }
+
+  // Service worker রেজিস্টার করা — এটাই অ্যাপটাকে (HTML/CSS/JS/icons) অফলাইনে
+  // খোলা ও চালানোর ক্ষমতা দেয়। ডেটা (priceList/priceHistory/shoppingLog) এমনিতেই
+  // localStorage-এ থাকে, তাই সেটার জন্য আলাদা কিছু লাগে না।
+  if ('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./bazar-sw.js').catch((err) => {
+        console.error('Service worker registration failed:', err);
+      });
+    });
+  }
+</script>
+</body>
+</html>
