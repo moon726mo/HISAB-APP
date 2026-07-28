@@ -12,37 +12,41 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@500;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* ── RESET ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 :root {
-  --bg:        #f5f7ff;
+  --bg:        #FBF6EA;
   --bg2:       #ffffff;
-  --bg3:       #eef0fb;
+  --bg3:       #F1EEE2;
   --card:      #ffffff;
-  --card2:     #f0f2ff;
-  --border:    rgba(79,110,247,0.15);
-  --accent:    #4f6ef7;
-  --accent2:   #3a57e8;
+  --card2:     #F1EEE2;
+  --border:    rgba(27,67,50,0.15);
+  --accent:    #1B4332;
+  --accent2:   #2D6A4F;
+  --gold:      #C89116;
   --green:     #16a34a;
   --yellow:    #d97706;
   --red:       #dc2626;
   --purple:    #9333ea;
   --teal:      #0d9488;
   --orange:    #ea580c;
-  --text:      #1a1f3d;
-  --text2:     #4a5280;
-  --text3:     #9399bf;
+  --text:      #20301F;
+  --text2:     #5b6b58;
+  --text3:     #8a9088;
   --font:      'Hind Siliguri', sans-serif;
+  --heading-font: 'Baloo Da 2', 'Hind Siliguri', sans-serif;
   --mono:      'Space Mono', monospace;
   --radius:    16px;
   --radius-sm: 10px;
-  --shadow:    0 2px 16px rgba(79,110,247,0.08);
+  --shadow:    0 2px 16px rgba(27,67,50,0.10);
   --nav-h:     64px;
   --safe-bot:  env(safe-area-inset-bottom, 0px);
 }
+
+h1, h2, h3, .top-bar h1 { font-family: var(--heading-font); }
 
 html, body { height: 100%; }
 body {
@@ -103,7 +107,7 @@ body {
 .pending-badge {
   position: absolute; top: -3px; right: -3px;
   width: 16px; height: 16px; border-radius: 50%;
-  background: var(--orange); color: #fff;
+  background: var(--gold); color: #fff;
   font-size: 9px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   display: none;
@@ -174,7 +178,7 @@ body {
 
 /* ── DASHBOARD ── */
 .balance-card {
-  background: linear-gradient(135deg, #4f6ef7 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 100%);
   border-radius: var(--radius);
   padding: 20px 18px 18px;
   margin-bottom: 12px;
@@ -292,7 +296,7 @@ body {
 
 .submit-btn {
   width: 100%; padding: 14px;
-  background: linear-gradient(135deg, var(--accent), #7c3aed);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
   color: #fff; border: none;
   border-radius: var(--radius-sm);
   font-size: 15px; font-weight: 700;
@@ -467,7 +471,7 @@ body {
 .month-row:last-child { margin-bottom: 0; }
 .month-row:active { background: var(--bg3); transform: scale(0.99); }
 .month-row.selected {
-  background: linear-gradient(135deg, #4f6ef722, #7c3aed11);
+  background: linear-gradient(135deg, #1B433222, #2D6A4F11);
   border-color: var(--accent);
 }
 .month-row-left { display: flex; align-items: center; gap: 10px; }
@@ -1901,7 +1905,7 @@ function runSearch(q) {
   if (q || _currentCatFilter) {
     const total = results.reduce((s, e) => s + (+e.amount||0), 0);
     const totalCard = `
-      <div class="card" style="margin-bottom:10px;background:linear-gradient(135deg,#4f6ef711,#7c3aed11);border-color:var(--accent);">
+      <div class="card" style="margin-bottom:10px;background:linear-gradient(135deg,#1B433211,#2D6A4F11);border-color:var(--accent);">
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <div>
             <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">🔍 সার্চ ফলাফল</div>
@@ -1962,7 +1966,7 @@ function applyDateRange() {
     : from ? `${from.split('-').reverse().join('/')} থেকে` : `${to.split('-').reverse().join('/')} পর্যন্ত`;
 
   const totalCard = `
-    <div class="card" style="margin-bottom:10px;background:linear-gradient(135deg,#4f6ef711,#7c3aed11);border-color:var(--accent);">
+    <div class="card" style="margin-bottom:10px;background:linear-gradient(135deg,#1B433211,#2D6A4F11);border-color:var(--accent);">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div>
           <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">📅 ${rangeLabel}</div>
