@@ -2,7 +2,7 @@
 // v8: BASE PATH DYNAMIC — যেকোনো repo name এ কাজ করবে।
 //     sw.js যে ফোল্ডারে থাকবে, সেটাই স্বয়ংক্রিয়ভাবে base path হিসেবে নেবে।
 
-const CACHE_VERSION = 'v8';
+const CACHE_VERSION = 'v9';
 const CACHE_NAME    = 'expense-tracker-' + CACHE_VERSION;
 const FONT_CACHE    = 'expense-tracker-fonts-v1';
 
