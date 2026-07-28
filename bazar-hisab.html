@@ -427,14 +427,14 @@
   .picker-item-menu .pr-unit, .picker-item-menu .pr{ font-size:1rem; padding:4px 6px; }
 
   .item-menu-popup{
-    position:fixed; background:#fff; border-radius:12px; width:190px; box-sizing:border-box;
+    position:fixed; background:#fff; border-radius:12px; width:250px; box-sizing:border-box;
     box-shadow:0 12px 34px rgba(0,0,0,0.28); border:1px solid rgba(27,67,50,0.08);
-    z-index:400; overflow:hidden; padding:8px;
+    z-index:400; overflow:hidden; padding:12px;
   }
   .item-menu-popup .menu-row{
     display:grid; grid-template-columns:1fr 96px; align-items:center; gap:8px;
-    padding:12px 14px; cursor:pointer; font-size:0.88rem; color:var(--ink);
-    border:1px solid var(--line); border-radius:8px; margin-bottom:8px;
+    padding:16px 16px; cursor:pointer; font-size:0.95rem; color:var(--ink);
+    border:1px solid var(--line); border-radius:8px; margin-bottom:10px;
     box-sizing:border-box; width:100%; overflow:hidden;
   }
   .item-menu-popup .menu-row:last-child{ margin-bottom:0; }
@@ -448,7 +448,7 @@
   .item-menu-split{ display:flex; gap:8px; margin-bottom:0; }
   .item-menu-split .split-btn{
     flex:1; display:flex; align-items:center; justify-content:center;
-    padding:12px 10px; cursor:pointer; font-size:0.88rem;
+    padding:16px 12px; cursor:pointer; font-size:0.95rem;
     border:1px solid var(--line); border-radius:8px;
   }
   .item-menu-split .split-btn:active, .item-menu-split .split-btn:hover{ background:#F1EEE2; }
@@ -457,6 +457,10 @@
   .item-menu-popup select.pr-edit-unit, .item-menu-popup input.pr-edit{
     margin:0; width:100%; max-width:100%; min-width:0; box-sizing:border-box;
     padding:5px 6px; font-size:0.8rem; border-radius:6px;
+  }
+  .item-menu-popup input.name-edit-box{
+    padding:16px 16px; font-size:0.95rem; border-radius:8px;
+    border:1px solid var(--line); margin-bottom:10px; font-family:'Hind Siliguri', sans-serif;
   }
   .picker-none{ padding:24px 16px; text-align:center; color:#9a9a86; font-style:italic; }
   #itemPickerModal.picker-overlay{ align-items:stretch; padding-top:0; }
@@ -1274,16 +1278,18 @@
     if (!name || !getCategories().includes(name) || !catMenuBtnEl){ closeCategoryItemMenu(); return; }
     const safe = name.replace(/'/g,"\\'");
     popup.innerHTML = `
-      <div class="menu-row" onclick="event.stopPropagation(); editCategoryNamePopup('${safe}')">
-        <span class="menu-label">নাম পরিবর্তন</span>
-        <span class="menu-value" id="catPopupNameVal">${name}</span>
-      </div>
+      <input type="text" class="pr-edit name-edit-box" id="catPopupNameEdit"
+          value="${name}"
+          onclick="event.stopPropagation()"
+          onkeydown="if(event.key==='Enter'){event.stopPropagation(); saveCategoryRename('${safe}');}">
       <div class="item-menu-split">
         <div class="split-btn danger" onclick="event.stopPropagation(); deleteCategory('${safe}')">ডিলিট</div>
         <div class="split-btn save" onclick="event.stopPropagation(); saveCategoryRename('${safe}')">সেভ</div>
       </div>
     `;
     positionPickerPopup(popup, catMenuBtnEl);
+    const input = document.getElementById('catPopupNameEdit');
+    if (input){ input.focus(); input.select(); }
   }
 
   document.addEventListener('click', function(e){
@@ -1291,22 +1297,6 @@
     if (!popup || popup.style.display === 'none') return;
     if (!popup.contains(e.target)) closeCategoryItemMenu();
   });
-
-  // নাম পরিবর্তন popup-এর ভেতরেই শুধু ইনপুটে স্টেজ হয় — Enter/ব্লার না দেওয়া পর্যন্ত
-  // আসল রিনেম (saveCategoryRename) ঘটে না।
-  function editCategoryNamePopup(name){
-    const view = document.getElementById('catPopupNameVal');
-    if (!view) return;
-    const safe = name.replace(/'/g,"\\'");
-    view.outerHTML = `<input type="text" class="pr-edit" id="catPopupNameEdit"
-        value="${name}"
-        onclick="event.stopPropagation()"
-        onkeydown="if(event.key==='Enter'){event.stopPropagation(); saveCategoryRename('${safe}');}">`;
-    const input = document.getElementById('catPopupNameEdit');
-    input.focus();
-    input.select();
-    positionPickerPopup(document.getElementById('categoryItemMenuPopup'), catMenuBtnEl);
-  }
 
   function saveCategoryRename(oldName){
     const input = document.getElementById('catPopupNameEdit');
@@ -1946,10 +1936,10 @@
     const it = priceList[name];
     const safe = name.replace(/'/g,"\\'");
     popup.innerHTML = `
-      <div class="menu-row" onclick="event.stopPropagation(); editPickerNamePopup('${safe}')">
-        <span class="menu-label">নাম পরিবর্তন</span>
-        <span class="menu-value" id="popupNameVal">${name}</span>
-      </div>
+      <input type="text" class="pr-edit name-edit-box" id="popupNameEdit"
+          value="${name}"
+          onclick="event.stopPropagation()"
+          onkeydown="if(event.key==='Enter'){event.stopPropagation(); savePopupChanges('${safe}');}">
       <div class="menu-row" onclick="event.stopPropagation(); editPickerUnitPopup('${safe}')">
         <span class="menu-label">একক</span>
         <span class="menu-value" id="popupUnitVal">${it.unit}</span>
@@ -1996,21 +1986,6 @@
     deleteFromPriceList(name);
     if (pickerOpenMenuKey === name) closePickerItemMenu();
     renderPickerList();
-  }
-
-  // Editing নাম inside the popup only stages the change in the input — nothing is
-  // committed to priceList until "সেভ" is tapped (savePopupChanges করে rename করে)।
-  function editPickerNamePopup(name){
-    const view = document.getElementById('popupNameVal');
-    if (!view || !priceList[name]) return;
-    view.outerHTML = `<input type="text" class="pr-edit" id="popupNameEdit"
-        value="${name}"
-        onclick="event.stopPropagation()"
-        onkeydown="if(event.key==='Enter'){event.stopPropagation(); savePopupChanges('${name.replace(/'/g,"\\'")}');}">`;
-    const input = document.getElementById('popupNameEdit');
-    input.focus();
-    input.select();
-    positionPickerPopup(document.getElementById('pickerItemMenuPopup'), pickerMenuBtnEl);
   }
 
   // Editing একক/দাম inside the popup only stages the change in the input/select.
