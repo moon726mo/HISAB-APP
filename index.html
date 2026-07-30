@@ -2190,31 +2190,37 @@ function saveNewCategory() {
 // INIT
 // ════════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', () => {
-  updateStatusUI();
-  initAddForm();
-  renderDashboard();
-  updatePendingBadge();
-
-  // First time - prompt for script URL
-  if (!getScriptUrl()) {
-    setTimeout(() => showToast('⚙️ Settings এ Apps Script URL দিলে Google Sheets Sync হবে।', 'info', 5000), 1500);
-  }
-
-  if (isOnline && getScriptUrl()) {
-    // App → Sheet: pending sync
+  // প্রথমে browser-কে হালকা top-bar/page paint করতে দাও,
+  // তারপর ভারী হিসাব-নিকাশ শুরু হবে — এতে status bar দ্রুত settle হয়
+  requestAnimationFrame(() => {
     setTimeout(() => {
-      const local = getExpenses();
-      runSync(getPendingExpenses());
-    }, 2000);
+      updateStatusUI();
+      initAddForm();
+      renderDashboard();
+      updatePendingBadge();
 
-    // Sheet → App: backup check (app খোলার পরে)
-    setTimeout(() => checkSheetForBackup(true), 5000);
+      // First time - prompt for script URL
+      if (!getScriptUrl()) {
+        setTimeout(() => showToast('⚙️ Settings এ Apps Script URL দিলে Google Sheets Sync হবে।', 'info', 5000), 1500);
+      }
 
-    // Sheet → App: প্রতি ৫ মিনিটে auto backup check
-    setInterval(() => {
-      if (isOnline && getScriptUrl()) checkSheetForBackup(true);
-    }, 5 * 60 * 1000);
-  }
+      if (isOnline && getScriptUrl()) {
+        // App → Sheet: pending sync
+        setTimeout(() => {
+          const local = getExpenses();
+          runSync(getPendingExpenses());
+        }, 2000);
+
+        // Sheet → App: backup check (app খোলার পরে)
+        setTimeout(() => checkSheetForBackup(true), 5000);
+
+        // Sheet → App: প্রতি ৫ মিনিটে auto backup check
+        setInterval(() => {
+          if (isOnline && getScriptUrl()) checkSheetForBackup(true);
+        }, 5 * 60 * 1000);
+      }
+    }, 0);
+  });
 });
 </script>
 <script>
