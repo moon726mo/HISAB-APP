@@ -3,7 +3,7 @@
 // localStorage-এ থাকা ডেটা (priceList, priceHistory, shoppingLog) এমনিতেই অফলাইনে কাজ করে —
 // এই ফাইলটা শুধু নিশ্চিত করে যে পেজটা নিজেই (HTML/CSS/JS/icons) অফলাইনে লোড হবে।
 
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const CACHE_NAME = 'bazar-hisab-cache-' + CACHE_VERSION;
 
 const APP_SHELL = [
