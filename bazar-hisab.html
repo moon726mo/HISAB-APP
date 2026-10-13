@@ -168,6 +168,8 @@
   .trend-summary{ display:flex; justify-content:space-between; font-size:0.8rem; color:#5b6b58; margin-top:8px; }
   .trend-summary .up{ color:var(--brick); font-weight:700; }
   .trend-summary .down{ color:var(--green-2); font-weight:700; }
+  .trend-from-to{ font-family:'JetBrains Mono', monospace; font-size:0.72rem; color:#8a8f80; white-space:nowrap; }
+  .trend-from-to .trend-pct-up, .trend-from-to .trend-pct-down{ font-family:'Hind Siliguri', sans-serif; font-size:0.74rem; }
   .trend-pct-up{ color:var(--brick); font-weight:700; font-size:0.78rem; white-space:nowrap; }
   .trend-pct-down{ color:var(--green-2); font-weight:700; font-size:0.78rem; white-space:nowrap; }
   .trend-pct-flat{ color:#7a8a76; font-weight:600; font-size:0.78rem; white-space:nowrap; }
@@ -243,6 +245,27 @@
   }
   .cat-chip-add:hover{ background:var(--green-2); border-color:var(--green-2); color:#fff; }
 
+  /* picker: 3 equal-width controls in one row */
+  .picker-row3{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; margin:0 16px 10px; }
+  .picker-row3 > div{ min-width:0; }
+  .picker-row3 select, .picker-row3 input, .picker-row3 .cat-drop-btn{ font-size:0.9rem; padding:10px 8px; }
+  .cat-drop-btn{
+    width:100%; border:1.5px solid var(--line); border-radius:10px; background:#FCFBF6;
+    font-family:'Hind Siliguri', sans-serif; font-weight:600; color:var(--ink); cursor:pointer;
+    display:flex; align-items:center; justify-content:space-between; gap:4px; text-align:left;
+  }
+  .cat-drop-btn .cd-label{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; }
+  .cat-drop-btn .cd-arrow{ font-size:0.7rem; color:#7a8a76; }
+  .picker-row3 .sel-wrap{ position:relative; }
+  .picker-row3 .sel-wrap select{ -webkit-appearance:none; appearance:none; padding-right:24px; }
+  .picker-row3 .sel-wrap .cd-arrow{ position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:0.7rem; color:#7a8a76; pointer-events:none; }
+  .cat-drop-btn:hover, .cat-drop-btn.open{ border-color:var(--green-2); background:#fff; }
+  #catDropPanel{
+    position:fixed; z-index:450; display:none; background:#fff; border-radius:12px;
+    box-shadow:0 12px 34px rgba(0,0,0,0.28); border:1px solid rgba(27,67,50,0.08);
+    padding:12px; box-sizing:border-box; max-height:60vh; overflow-y:auto;
+  }
+  #catDropPanel .cat-chips{ margin:0; }
   .item-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:12px; margin-top:16px; }
   .item-card{
     border:1.8px solid var(--line); border-radius:14px; padding:14px; background:#FCFBF6;
@@ -296,7 +319,6 @@
 
   .actions-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; }
   .actions-row .btn{ min-width:0; }
-  .actions-row .btn:nth-child(3){ grid-column:1 / -1; }
 
   @media print{
     .bottom-nav, header.top, .item-grid, .actions-row{ display:none !important; }
@@ -454,6 +476,12 @@
   .item-menu-split .split-btn:active, .item-menu-split .split-btn:hover{ background:#F1EEE2; }
   .item-menu-split .split-btn.danger{ color:var(--brick); font-weight:600; }
   .item-menu-split .split-btn.save{ color:var(--green-2); font-weight:600; }
+  .item-menu-split .split-btn.copy{ color:#2a6f97; font-weight:600; }
+  .item-menu-split .split-btn.move{ color:#b7791f; font-weight:600; }
+  .cat-chooser-title{ font-size:0.85rem; color:#7a8a76; margin-bottom:8px; word-break:break-word; }
+  .cat-chooser-list{ max-height:240px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
+  .cat-chooser-list .split-btn{ flex:none; padding:12px; border:1px solid var(--line); border-radius:8px; cursor:pointer; display:flex; justify-content:center; }
+  .cat-chooser-list .split-btn:hover, .cat-chooser-list .split-btn:active{ background:#F1EEE2; }
   .item-menu-popup select.pr-edit-unit, .item-menu-popup input.pr-edit{
     margin:0; width:100%; max-width:100%; min-width:0; box-sizing:border-box;
     padding:5px 6px; font-size:0.8rem; border-radius:6px;
@@ -463,6 +491,9 @@
     border:1px solid var(--line); margin-bottom:10px; font-family:'Hind Siliguri', sans-serif;
   }
   .picker-none{ padding:24px 16px; text-align:center; color:#9a9a86; font-style:italic; }
+  #templateModal.picker-overlay{ align-items:stretch; padding-top:0; }
+  #templateModal .picker-sheet{ max-height:100vh; max-height:100dvh; height:100vh; height:100dvh; border-radius:0; }
+  #templateModal .picker-list{ flex:1 1 auto; }
   #itemPickerModal.picker-overlay{ align-items:stretch; padding-top:0; }
   #itemPickerModal .picker-sheet{ max-height:100vh; max-height:100dvh; height:100vh; height:100dvh; border-radius:0; }
   #itemPickerModal .picker-list{ flex:1 1 auto; }
@@ -511,6 +542,44 @@
   .checklist-progress-track{ background:#EAE6D6; border-radius:8px; height:8px; overflow:hidden; }
   .checklist-progress-bar{ background:var(--green); height:100%; width:0%; border-radius:8px; transition:width .25s ease; }
   .checklist-progress-label{ margin-top:6px; font-size:0.8rem; color:#5b6b58; font-weight:600; text-align:center; }
+
+  .hist-item-editable{ cursor:pointer; }
+  .hist-item-editable > span:last-child{ border-bottom:1.5px dashed var(--green-2); }
+  .hist-item-editable:active{ background:#F1EEE2; }
+  .he-label{ font-size:0.78rem; color:#7a8a76; margin:0 0 3px 2px; }
+  .he-field{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .he-field input{ flex:1; min-width:0; }
+  .he-field .he-suffix{ font-weight:600; color:var(--green-2); white-space:nowrap; }
+  .he-hint{ font-size:0.78rem; color:#7a8a76; margin:-2px 2px 10px; }
+  .qty-editable{ cursor:pointer; border-bottom:1.5px dashed var(--green-2); padding-bottom:1px; }
+  .qty-editable:active{ opacity:0.6; }
+  .cq-row{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .cq-row input{ flex:1; min-width:0; }
+  .cq-unit{ font-weight:600; color:var(--green-2); white-space:nowrap; padding:6px 8px; border-radius:8px; }
+  .cq-unit.toggleable{ cursor:pointer; border:1.5px dashed var(--green-2); }
+  .tpl-d-bar{ display:flex; gap:8px; padding:2px 0 10px; position:sticky; top:0; background:#FBF6EA; z-index:2; }
+  .tpl-d-bar .btn{ padding:10px 14px; }
+  .tpl-d-bar .tpl-d-all{ flex:1; }
+  .tpl-d-row{ display:flex; align-items:center; gap:12px; padding:12px 8px; border-bottom:1px dashed var(--line); }
+  .tpl-d-row input[type=checkbox]{ width:22px; height:22px; accent-color:var(--green-2); flex-shrink:0; cursor:pointer; }
+  .tpl-d-row .tpl-d-name{ flex:1; min-width:0; font-weight:600; color:var(--ink); cursor:pointer; word-break:break-word; }
+  .tpl-d-row .tpl-d-qty{ white-space:nowrap; color:#5b6b58; }
+  .tpl-d-row .tpl-d-name{ display:block; }
+  .tpl-d-meta{ display:flex; gap:12px; align-items:center; font-family:'JetBrains Mono', monospace; font-size:0.85rem; color:#7a8a76; margin-top:4px; }
+  .tpl-d-sub{ font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--green-2); white-space:nowrap; }
+  .tpl-d-row.gone{ opacity:0.5; }
+  .tpl-actions{ display:flex; gap:8px; padding:4px 16px 10px; }
+  .tpl-actions .btn{ padding:11px 12px; }
+  .tpl-actions .tpl-make{ flex:1; }
+  .tpl-item{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:12px 10px; border-bottom:1px dashed var(--line); border-radius:12px; cursor:pointer;
+  }
+  .tpl-item:active, .tpl-item:hover{ background:#F1EEE2; }
+  .tpl-item .tpl-date{ font-weight:700; color:var(--ink); }
+  .tpl-item .tpl-meta{ font-size:0.8rem; color:#8a8f80; margin-top:2px; }
+  .tpl-item .tpl-total{ font-family:'JetBrains Mono', monospace; color:var(--green-2); font-weight:600; white-space:nowrap; }
+  .tpl-empty{ text-align:center; color:#9a9a86; font-style:italic; padding:30px 10px; }
 </style>
 </head>
 <body>
@@ -522,7 +591,7 @@
       <div id="gearDropdown" class="notif-dropdown">
         <button type="button" class="menu-dropdown-item" onclick="toggleGearDropdown(); switchTab(2);">🏠 হোম</button>
         <button type="button" class="menu-dropdown-item" onclick="toggleGearDropdown(); switchTab(5);">✅ চেকলিস্ট</button>
-        <button type="button" class="menu-dropdown-item" onclick="toggleGearDropdown(); switchTab(4);">📈 মূল্য বৃদ্ধি</button>
+        <button type="button" class="menu-dropdown-item" onclick="toggleGearDropdown(); switchTab(4);">📈 মূল্য উঠানামা</button>
         <button type="button" class="menu-dropdown-item" onclick="toggleGearDropdown(); switchTab(3);">🕘 হিস্টরি</button>
         <button type="button" class="menu-dropdown-item" onclick="toggleGearDropdown(); openSyncSettings();">🔗 URL সিঙ্ক</button>
       </div>
@@ -587,6 +656,7 @@
       <div class="actions-row">
         <button class="btn btn-ghost" id="copyWithPriceBtn" onclick="copySummary()">📋 কপি (দামসহ)</button>
         <button class="btn btn-ghost" id="copyNoPriceBtn" onclick="copyNameQtyOnly()">📝 কপি (দামছাড়া)</button>
+        <button class="btn btn-ghost" id="templateOpenBtn" onclick="openTemplateModal()">📑 টেম্পলেট</button>
         <button class="btn btn-danger" onclick="clearQuantities()">🗑️ ক্লিয়ার</button>
       </div>
     </div>
@@ -614,7 +684,7 @@
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
         <div style="display:flex; align-items:center; gap:6px;">
           <button type="button" class="picker-close" style="position:static;" onclick="switchTab(2)" aria-label="ফিরে যান">←</button>
-          <div class="picker-title">📈 মূল্য বৃদ্ধি</div>
+          <div class="picker-title">📈 মূল্য উঠানামা</div>
         </div>
       </div>
       <div id="trendTopMoversBox"></div>
@@ -649,17 +719,18 @@
 
 <div id="itemPickerModal" class="picker-overlay" onclick="if(event.target===this) closeItemPicker()">
   <div class="picker-sheet">
-    <div class="picker-head">
-      <div class="cat-chips" id="itemPickerCatChips" style="margin:0; flex:1;"></div>
-      <button type="button" class="picker-close" onclick="closeItemPicker()">✕</button>
-    </div>
-    <div class="picker-search-wrap" style="display:flex; gap:8px;">
+    <div class="picker-head" style="gap:8px; padding:14px 16px 10px 16px;">
       <input type="text" id="pickerSearchInput" class="picker-search" autocomplete="off"
-        placeholder="জিনিসের নাম লিখুন..." style="flex:1;" oninput="renderPickerList()">
-      <button type="button" id="pickerSaveBtn" class="btn btn-primary" style="flex-shrink:0;" onclick="saveNewItemFromPicker()">সেভ</button>
+        placeholder="জিনিসের নাম লিখুন..." style="flex:1; min-width:0; margin:0;" oninput="renderPickerList()">
+      <button type="button" id="pickerSaveBtn" class="btn btn-primary" style="flex-shrink:0; width:auto;" onclick="saveNewItemFromPicker()">সেভ</button>
     </div>
-    <div class="row2" style="margin:0 16px 10px;">
+    <div class="picker-row3">
       <div>
+        <button type="button" class="cat-drop-btn" id="catDropBtn" onclick="event.stopPropagation(); toggleCatDrop()">
+          <span class="cd-label" id="catDropLabel">ক্যাটাগরি</span><span class="cd-arrow">▼</span>
+        </button>
+      </div>
+      <div class="sel-wrap">
         <select id="pickerNewItemUnit">
           <option value="কেজি">কেজি (kg)</option>
           <option value="লিটার">লিটার (litre)</option>
@@ -669,7 +740,9 @@
           <option value="প্যাকেট">প্যাকেট (packet)</option>
           <option value="পাতা">পাতা (page)</option>
           <option value="টাকা">টাকা (taka)</option>
+          <option value="বস্তা">বস্তা (sack)</option>
         </select>
+        <span class="cd-arrow">▼</span>
       </div>
       <div>
         <input type="number" id="pickerNewItemPrice" min="0" step="0.01" placeholder="প্রতি একক দাম (৳)">
@@ -679,8 +752,27 @@
   </div>
 </div>
 
+<div id="catDropPanel" onclick="event.stopPropagation()"><div class="cat-chips" id="itemPickerCatChips"></div></div>
+
+<div id="templateModal" class="picker-overlay" onclick="if(event.target===this) closeTemplateModal()">
+  <div class="picker-sheet">
+    <div class="picker-head">
+      <div class="picker-title" id="templateTitle">📑 টেম্পলেট</div>
+      <button type="button" class="picker-close" onclick="closeTemplateModal()">✕</button>
+    </div>
+    <div class="tpl-actions" id="templateActions">
+      <button type="button" class="btn btn-primary tpl-make" onclick="saveTemplateFromToday()">➕ টেম্পলেট বানান</button>
+      <button type="button" class="btn btn-danger" onclick="deleteAllTemplates()">🗑️ ডিলিট</button>
+    </div>
+    <div id="templateList" class="picker-list"></div>
+  </div>
+</div>
+
 <div id="pickerItemMenuPopup" class="item-menu-popup" style="display:none;" onclick="event.stopPropagation()"></div>
 <div id="categoryItemMenuPopup" class="item-menu-popup" style="display:none;" onclick="event.stopPropagation()"></div>
+<div id="histItemEditPopup" class="item-menu-popup" style="display:none;" onclick="event.stopPropagation()"></div>
+<div id="cartQtyMenuPopup" class="item-menu-popup" style="display:none;" onclick="event.stopPropagation()"></div>
+<div id="templateItemMenuPopup" class="item-menu-popup" style="display:none;" onclick="event.stopPropagation()"></div>
 
 <div id="categoryPickerModal" class="picker-overlay" onclick="if(event.target===this) closeCategoryPicker()">
   <div class="picker-sheet">
@@ -736,8 +828,20 @@
   let customCategories = JSON.parse(localStorage.getItem(CATEGORY_KEY) || '[]'); // category names saved even before any item uses them
   let categoryOrder = JSON.parse(localStorage.getItem(CATEGORY_ORDER_KEY) || '[]'); // user's drag-reordered category sequence
   let shoppingLog = JSON.parse(localStorage.getItem(SHOP_LOG_KEY) || '[]'); // [{id, dateLabel, grand, categories:[{category, catTotal, items:[{name,qty,unit,price,sub}]}]}]
+  const TODAY_LIST_KEY = 'bazarHisab_todayList_v1';
   let quantities = {}; // { name: qty } -- current selection in the shopping tab
   let otherItems = []; // [{id, text}] -- free-text "অন্যান্য" entries in the shopping tab
+  // আজকের বাজারের লিস্ট রিফ্রেশ/অ্যাপ বন্ধ করলেও থেকে যাবে — শুধু ক্লিয়ার চাপলে মুছবে
+  try{
+    const saved = JSON.parse(localStorage.getItem(TODAY_LIST_KEY) || 'null');
+    if (saved){
+      if (saved.quantities && typeof saved.quantities === 'object') quantities = saved.quantities;
+      if (Array.isArray(saved.otherItems)) otherItems = saved.otherItems;
+    }
+  }catch(e){}
+  function saveTodayList(){
+    try{ localStorage.setItem(TODAY_LIST_KEY, JSON.stringify({ quantities, otherItems })); }catch(e){}
+  }
   let pickerOpenMenuKey = null; // name of item whose ⋮ menu (একক/দাম/মুছুন) is open in the item picker
   let pickerMenuBtnEl = null; // the ⋮ button element the popup is anchored to
   let priceFilterCat = 'সব';
@@ -917,12 +1021,58 @@
       // Sheet is treated as the source of truth on open, so app matches
       // whatever is currently in the sheet (empty sheet clears local list too,
       // since the same sheet may also be edited from another device).
+      // --- ক্যাটাগরি: শিটের প্রতিটা ট্যাব = একটা ক্যাটাগরি; একই জিনিস একাধিক ট্যাবে থাকলে একাধিক ক্যাটাগরি ---
+      const incomingCats = Array.isArray(data.categories) ? data.categories : null;
+      // পুরনো ফ্ল্যাট শিট (শুধু "সাধারণ" ট্যাব, সব জিনিস তাতে) — তখন এই ডিভাইসের ক্যাটাগরি হারাতে দেওয়া হবে না,
+      // বরং লোকাল ক্যাটাগরি রেখে শিটে নতুন কাঠামোতে পাঠানো হবে।
+      const sheetIsLegacyFlat = !incomingCats || incomingCats.every(c => c === DEFAULT_CAT);
+      let keepLocalCats = false;
+      if (sheetIsLegacyFlat){
+        const localHasCustom = Object.keys(priceList).some(k => getItemCategories(k).some(c => c !== DEFAULT_CAT))
+          || customCategories.length > 0;
+        keepLocalCats = localHasCustom;
+      }
+      Object.keys(incomingList).forEach(k => {
+        const it = incomingList[k];
+        if (keepLocalCats && priceList[k]){
+          it.categories = getItemCategories(k).slice();
+        } else if (!Array.isArray(it.categories) || it.categories.length === 0){
+          it.categories = [it.category || DEFAULT_CAT];
+        }
+        delete it.category;
+      });
+
       priceList = incomingList;
       priceHistory = incomingHistory;
       shoppingLog = incomingShoppingLog;
       savePriceList();
       savePriceHistory();
       saveShoppingLog();
+
+      if (incomingCats && !keepLocalCats){
+        customCategories = incomingCats.slice();
+        categoryOrder = incomingCats.slice();
+        saveCategoryList();
+        saveCategoryOrder();
+      } else if (keepLocalCats){
+        queuePushToSheet(); // লোকাল ক্যাটাগরিগুলো শিটে আলাদা ট্যাব হিসেবে পাঠানো হবে
+      }
+
+      // টেম্পলেট: শিট থেকে এলে সেটাই সত্য। তবে শিটের "টেম্পলেট" ট্যাব খালি আর এই ডিভাইসে
+      // টেম্পলেট আছে, এবং আগে কখনো সিঙ্ক হয়নি — তখন লোকালগুলো রেখে শিটে পাঠানো হবে (হারানো ঠেকাতে)।
+      if (Array.isArray(data.templates)){
+        const neverSynced = !localStorage.getItem(TEMPLATE_SYNCED_KEY);
+        if (data.templates.length === 0 && templates.length > 0 && neverSynced){
+          queuePushToSheet();
+        } else {
+          templates = data.templates;
+          saveTemplatesLocal();
+          if (typeof renderTemplateList === 'function' && document.getElementById('templateModal').classList.contains('open')){
+            if (tplViewId !== null && !templates.some(x => x.id === tplViewId)) tplViewId = null;
+            renderTemplateList();
+          }
+        }
+      }
 
       renderPriceList();
       renderSelectDropdown();
@@ -965,11 +1115,14 @@
           action: 'syncAll',
           priceList: priceList,
           priceHistory: priceHistory,
-          shoppingLog: shoppingLog
+          categories: getCategories(),
+          shoppingLog: shoppingLog,
+          templates: templates
         })
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
+      try{ localStorage.setItem(TEMPLATE_SYNCED_KEY, '1'); }catch(e){}
       setSyncStatus('✅ সিঙ্ক করা আছে', 'ok');
     } catch (err) {
       console.error('Push sync failed:', err);
@@ -1008,14 +1161,30 @@
     savePriceHistory();
   }
 
-  // Migrate any older items saved without a category, and seed price history
+  // Migrate any older items saved with a single `category` string into a `categories`
+  // array, so one item can belong to more than one category at once. Also seed price history.
   Object.keys(priceList).forEach(k => {
-    if (!priceList[k].category) priceList[k].category = DEFAULT_CAT;
+    const it = priceList[k];
+    if (!it.categories || !Array.isArray(it.categories) || it.categories.length === 0){
+      it.categories = [it.category || DEFAULT_CAT];
+    }
+    delete it.category; // replaced by `categories` (array)
     if (!priceHistory[k] || priceHistory[k].length === 0){
       priceHistory[k] = [{ date: todayISO(), price: priceList[k].price }];
     }
   });
+  savePriceList();
   savePriceHistory();
+
+  // একটা জিনিস যেসব ক্যাটাগরিতে সেভ করা আছে তার লিস্ট (সবসময় অন্তত ১টা এন্ট্রি থাকবে)
+  function getItemCategories(name){
+    const it = priceList[name];
+    if (!it) return [DEFAULT_CAT];
+    return (it.categories && it.categories.length) ? it.categories : [DEFAULT_CAT];
+  }
+  function itemHasCategory(name, cat){
+    return getItemCategories(name).includes(cat);
+  }
 
   document.getElementById('todayDate').textContent = new Date().toLocaleDateString('bn-BD', {
     year:'numeric', month:'long', day:'numeric'
@@ -1042,7 +1211,7 @@
   }
   function getCategories(){
     const set = new Set([
-      ...Object.values(priceList).map(it => it.category || DEFAULT_CAT),
+      ...Object.keys(priceList).flatMap(k => getItemCategories(k)),
       ...customCategories
     ]);
     const all = Array.from(set);
@@ -1077,7 +1246,12 @@
     if (!name){ alert('জিনিসের নাম লিখুন'); return; }
     if (isNaN(price) || price < 0){ alert('সঠিক দাম লিখুন'); return; }
 
-    priceList[name] = { unit, price, category };
+    if (priceList[name]){
+      // জিনিসটা আগে থেকেই আছে — শুধু নতুন ক্যাটাগরিটা যোগ হবে, বাকি কিছু (দাম, একক) বদলাবে না
+      if (!priceList[name].categories.includes(category)) priceList[name].categories.push(category);
+    } else {
+      priceList[name] = { unit, price, categories: [category] };
+    }
     savePriceList();
     recordPriceHistory(name, price);
     renderPriceList();
@@ -1103,6 +1277,7 @@
   }
 
   function openCategoryPicker(fromShop){
+    closeCatDrop();
     categoryPickerFromShop = !!fromShop;
     const overlay = document.getElementById('categoryPickerModal');
     const newCatInput = document.getElementById('newCategoryInput');
@@ -1231,9 +1406,8 @@
     if (!confirm(`"${name}" ক্যাটাগরি মুছে ফেলতে চান? এই ক্যাটাগরির জিনিসগুলো "${DEFAULT_CAT}"-এ চলে যাবে।`)) return;
 
     Object.keys(priceList).forEach(k => {
-      if ((priceList[k].category || DEFAULT_CAT) === name){
-        priceList[k].category = DEFAULT_CAT;
-      }
+      const cats = getItemCategories(k).filter(c => c !== name);
+      priceList[k].categories = cats.length ? cats : [DEFAULT_CAT];
     });
     customCategories = customCategories.filter(c => c !== name);
     savePriceList();
@@ -1311,9 +1485,7 @@
       }
 
       Object.keys(priceList).forEach(k => {
-        if ((priceList[k].category || DEFAULT_CAT) === oldName){
-          priceList[k].category = newName;
-        }
+        priceList[k].categories = getItemCategories(k).map(c => c === oldName ? newName : c);
       });
       customCategories = customCategories.filter(c => c !== oldName);
       if (!customCategories.includes(newName)) customCategories.push(newName);
@@ -1400,7 +1572,38 @@
       html += `<button type="button" class="cat-chip cat-chip-add" onclick="${addBtnHandler}" title="নতুন ক্যাটাগরি যোগ করুন">+</button>`;
     }
     box.innerHTML = html;
+    if (containerId === 'itemPickerCatChips') updateCatDropLabel();
   }
+
+  function updateCatDropLabel(){
+    const l = document.getElementById('catDropLabel');
+    if (l) l.textContent = (shopFilterCat && shopFilterCat !== 'সব') ? shopFilterCat : 'সব ক্যাটাগরি';
+  }
+  function toggleCatDrop(){
+    const panel = document.getElementById('catDropPanel');
+    if (panel.style.display === 'block'){ closeCatDrop(); return; }
+    const btn = document.getElementById('catDropBtn');
+    const r = btn.getBoundingClientRect();
+    const sheet = btn.closest('.picker-sheet').getBoundingClientRect();
+    panel.style.visibility = 'hidden';
+    panel.style.display = 'block';
+    const w = sheet.width - 32;
+    panel.style.width = w + 'px';
+    panel.style.left = (sheet.left + 16) + 'px';
+    panel.style.top = (r.bottom + 6) + 'px';
+    panel.style.visibility = 'visible';
+    btn.classList.add('open');
+  }
+  function closeCatDrop(){
+    const panel = document.getElementById('catDropPanel');
+    if (panel) panel.style.display = 'none';
+    const btn = document.getElementById('catDropBtn');
+    if (btn) btn.classList.remove('open');
+  }
+  document.addEventListener('click', function(e){
+    const panel = document.getElementById('catDropPanel');
+    if (panel && panel.style.display === 'block' && !panel.contains(e.target)) closeCatDrop();
+  });
 
   function renderPriceList(){
     const box = document.getElementById('priceListBox');
@@ -1410,7 +1613,7 @@
 
     let keys = Object.keys(priceList).sort();
     if (priceFilterCat !== 'সব'){
-      keys = keys.filter(k => (priceList[k].category || DEFAULT_CAT) === priceFilterCat);
+      keys = keys.filter(k => itemHasCategory(k, priceFilterCat));
     }
 
     if (Object.keys(priceList).length === 0){
@@ -1455,6 +1658,46 @@
     panel.innerHTML = buildTrendHTML(name);
   }
 
+  /* ---------- গ্রাফের ডটে ক্লিক করলে দাম ও তারিখের টুলটিপ ---------- */
+  function removeTrendTip(svg){
+    const old = svg.querySelector('.trend-tip');
+    if (old) old.remove();
+  }
+  function showTrendTip(el, x, y, price, label, w){
+    const svg = el.ownerSVGElement;
+    const same = svg.querySelector('.trend-tip');
+    const sameKey = x + '|' + y;
+    if (same && same.getAttribute('data-key') === sameKey){ same.remove(); return; }
+    removeTrendTip(svg);
+    const bw = 190, bh = 54;
+    let bx = x - bw / 2;
+    if (bx < 4) bx = 4;
+    if (bx + bw > w - 4) bx = w - bw - 4;
+    let by = y - bh - 14;
+    if (by < 2) by = y + 14;
+    const NS = 'http://www.w3.org/2000/svg';
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'trend-tip');
+    g.setAttribute('data-key', sameKey);
+    g.style.pointerEvents = 'none';
+    const rect = document.createElementNS(NS, 'rect');
+    rect.setAttribute('x', bx); rect.setAttribute('y', by);
+    rect.setAttribute('width', bw); rect.setAttribute('height', bh);
+    rect.setAttribute('rx', 8); rect.setAttribute('fill', '#1B4332');
+    const t1 = document.createElementNS(NS, 'text');
+    t1.setAttribute('x', bx + bw / 2); t1.setAttribute('y', by + 23);
+    t1.setAttribute('text-anchor', 'middle'); t1.setAttribute('font-size', '20');
+    t1.setAttribute('font-weight', '700'); t1.setAttribute('fill', '#F4C430');
+    t1.textContent = '৳' + fmt(price);
+    const t2 = document.createElementNS(NS, 'text');
+    t2.setAttribute('x', bx + bw / 2); t2.setAttribute('y', by + 44);
+    t2.setAttribute('text-anchor', 'middle'); t2.setAttribute('font-size', '15');
+    t2.setAttribute('fill', '#fff');
+    t2.textContent = label;
+    g.appendChild(rect); g.appendChild(t1); g.appendChild(t2);
+    svg.appendChild(g);
+  }
+
   function buildTrendHTML(name, histOverride){
     const hist = histOverride || getHistFromLog(name);
     if (hist.length < 2){
@@ -1476,9 +1719,12 @@
     });
 
     const linePath = points.map((p, i) => (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
-    const dots = points.map(p =>
-      `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4.5" fill="#1B4332"></circle>`
-    ).join('');
+    const dots = points.map(p => {
+      const lbl = `${p.date}${p.time ? ' ' + p.time : ''}`;
+      const cx = p.x.toFixed(1), cy = p.y.toFixed(1);
+      return `<circle cx="${cx}" cy="${cy}" r="4.5" fill="#1B4332" style="pointer-events:none;"></circle>` +
+             `<circle cx="${cx}" cy="${cy}" r="16" fill="transparent" style="cursor:pointer;" onclick="event.stopPropagation(); showTrendTip(this, ${cx}, ${cy}, ${p.price}, '${lbl}', ${w})"></circle>`;
+    }).join('');
     const firstLabel = points[0];
     const lastLabel = points[points.length - 1];
 
@@ -1489,7 +1735,7 @@
     const arrow = diff > 0 ? '▲' : (diff < 0 ? '▼' : '—');
 
     return `
-      <svg viewBox="0 0 ${w} ${h}" class="trend-chart-svg" style="width:100%; height:auto; display:block;">
+      <svg viewBox="0 0 ${w} ${h}" class="trend-chart-svg" style="width:100%; height:auto; display:block;" onclick="removeTrendTip(this)">
         <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${h-padB}" stroke="#D8CBA3" stroke-width="1.4"/>
         <line x1="${padL}" y1="${h-padB}" x2="${w-padR}" y2="${h-padB}" stroke="#D8CBA3" stroke-width="1.4"/>
         <text x="4" y="${padT+10}" font-size="15" fill="#5b6b58">৳${fmt(maxP)}</text>
@@ -1500,8 +1746,8 @@
         <text x="${lastLabel.x}" y="${h-10}" font-size="13" fill="#7a8a76" text-anchor="end">${lastLabel.date}${lastLabel.time ? ' '+lastLabel.time : ''}</text>
       </svg>
       <div class="trend-summary">
-        <span>প্রথম দাম: ৳${fmt(first)} (${hist[0].date}${hist[0].time ? ' '+hist[0].time : ''})</span>
-        <span>এখনকার দাম: ৳${fmt(last)}</span>
+        <span>প্রথম দাম: ৳${fmt(first)}<br><small style="color:#8a8f80;">📅 ${hist[0].date}${hist[0].time ? ' '+hist[0].time : ''}</small></span>
+        <span>এখনকার দাম: ৳${fmt(last)}<br><small style="color:#8a8f80;">📅 ${hist[hist.length-1].date}${hist[hist.length-1].time ? ' '+hist[hist.length-1].time : ''}</small></span>
         <span class="${trendClass}">${arrow} ${Math.abs(pct).toFixed(1)}%</span>
       </div>
     `;
@@ -1529,41 +1775,22 @@
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - days);
     const cutoffISO = cutoff.toISOString().slice(0, 10);
-    return hist.filter(p => p.date >= cutoffISO);
+    // সময়ের আগের শেষ দামটা বেসলাইন হিসেবে ধরা হয়, যাতে "আগে কত ছিল → এখন কত" দেখানো যায়
+    const inRange = hist.filter(p => p.date >= cutoffISO);
+    const before = hist.filter(p => p.date < cutoffISO);
+    const baseline = before.length ? before[before.length - 1] : null;
+    return baseline ? [baseline, ...inRange] : inRange;
   }
 
-  // মূল্য বৃদ্ধি (ট্রেন্ড) পেজের সব হিসাব এখন শুধু আসল "হিস্ট্রি" (shoppingLog, অর্থাৎ
-  // যেই এন্ট্রিগুলো আসলেই বাজার/শপিং করে সেভ করা হয়েছে) থেকে বের করা হয় — দাম এডিট/টেস্ট
-  // করার সময় priceHistory-তে যা রেকর্ড হয়, সেটা আর ট্রেন্ডে যোগ হয় না। ফলে হিস্ট্রি থেকে
-  // একটা এন্ট্রি ডিলিট করলে ট্রেন্ডও সাথে সাথে আপডেট হয়ে যাবে।
+  // মূল্য উঠানামা (ট্রেন্ড) পেজের সব হিসাব এখন priceHistory থেকে হয় — অর্থাৎ ইউজার যখনই
+  // প্রাইস লিস্টে কোনো জিনিসের দাম বদলায় (বা নতুন জিনিস যোগ করে), সেই দাম থেকেই ট্রেন্ড বের হয়।
+  // শপিং হিস্ট্রি (shoppingLog) আর ট্রেন্ডে ব্যবহার হয় না।
+  // priceHistory আগে থেকেই Google Sheet-এর সাথে সিঙ্ক হয়, তাই Apps Script বদলাতে হয় না।
   function getHistFromLog(name){
-    const entries = shoppingLog
-      .filter(e => Array.isArray(e.categories) && e.categories.length)
-      .slice()
-      .sort((a, b) => a.id - b.id); // পুরনো থেকে নতুন — সময় অনুযায়ী
-
-    const hist = [];
-    let lastDate = null;
-    entries.forEach(e => {
-      let price = null;
-      for (const c of e.categories){
-        if (c.category === 'অন্যান্য (দাম ছাড়া)') continue; // এগুলোর দাম থাকে না
-        const found = (c.items || []).find(it => it.name === name && it.price > 0);
-        if (found){ price = found.price; break; }
-      }
-      if (price === null) return;
-
-      const d = new Date(e.id);
-      const dateISO = d.toISOString().slice(0, 10);
-      const point = { date: dateISO, price };
-      if (lastDate === dateISO){
-        // একই দিনে একাধিক শপিং এন্ট্রি হলে সময় দেখিয়ে আলাদা করা হয়
-        point.time = d.toLocaleTimeString('bn-BD', { hour:'2-digit', minute:'2-digit' });
-      }
-      lastDate = dateISO;
-      hist.push(point);
-    });
-    return hist;
+    const hist = Array.isArray(priceHistory[name]) ? priceHistory[name] : [];
+    return hist
+      .filter(p => p && typeof p.price === 'number' && p.price > 0)
+      .map(p => ({ ...p }));
   }
 
   function getFilteredHist(name){
@@ -1676,9 +1903,15 @@
 
     let keys = Object.keys(priceList).sort();
     if (trendFilterCat !== 'সব'){
-      keys = keys.filter(k => (priceList[k].category || DEFAULT_CAT) === trendFilterCat);
+      keys = keys.filter(k => itemHasCategory(k, trendFilterCat));
     }
     if (q) keys = keys.filter(k => k.toLowerCase().includes(q));
+
+    // নির্দিষ্ট সময় (আজকের দিন/১ সপ্তাহ/৩০/৯০ দিন) বাছলে শুধু ওই সময়ে যাদের দাম বদলেছে তারাই দেখাবে;
+    // "সব সময়"-এ সব জিনিস থাকবে।
+    if (trendTimeRange !== 'all'){
+      keys = keys.filter(k => getFilteredHist(k).length >= 2);
+    }
 
     if (trendSortMode === 'up' || trendSortMode === 'down'){
       const withPct = keys.filter(k => getTrendPct(k, getFilteredHist(k)) !== null);
@@ -1695,7 +1928,9 @@
       return;
     }
     if (keys.length === 0){
-      box.innerHTML = `<div class="empty-note">এই ফিল্টারে কিছু পাওয়া যায়নি</div>`;
+      box.innerHTML = trendTimeRange !== 'all'
+        ? `<div class="empty-note">এই সময়ে কোনো জিনিসের দাম বদলায়নি</div>`
+        : `<div class="empty-note">এই ফিল্টারে কিছু পাওয়া যায়নি</div>`;
       return;
     }
 
@@ -1704,8 +1939,13 @@
       const safeKey = k.replace(/'/g,"\\'");
       const trendInfo = getTrendPct(k, getFilteredHist(k));
       let badge = '';
+      let fromTo = '';
       if (trendInfo){
         const { diff, pct } = trendInfo;
+        const absDiff = Math.abs(diff);
+        const diffTxt = diff > 0 ? `<span class="trend-pct-up">৳${fmt(absDiff)} বেড়েছে</span>`
+                      : (diff < 0 ? `<span class="trend-pct-down">৳${fmt(absDiff)} কমেছে</span>` : '');
+        fromTo = `<div class="trend-from-to">৳${fmt(trendInfo.first)} → ৳${fmt(trendInfo.last)}${diffTxt ? ' · ' + diffTxt : ''}</div>`;
         const cls = diff > 0 ? 'trend-pct-up' : (diff < 0 ? 'trend-pct-down' : 'trend-pct-flat');
         const arrow = diff > 0 ? '▲' : (diff < 0 ? '▼' : '—');
         badge = `<span class="${cls}">${arrow} ${Math.abs(pct).toFixed(1)}%</span>`;
@@ -1713,9 +1953,12 @@
       return `<div class="plist-row">
         <div class="plist-item" style="cursor:pointer;" onclick="toggleTrend2('${safeKey}')">
           <span class="nm">${k} <span style="color:#9a9a86; font-weight:400;">(${it.unit})</span></span>
-          <span style="display:flex; align-items:center; gap:10px;">
-            <span class="pr" style="cursor:default; border-bottom:none;">৳${fmt(it.price)}</span>
-            ${badge}
+          <span style="display:flex; flex-direction:column; align-items:flex-end; gap:2px;">
+            <span style="display:flex; align-items:center; gap:10px;">
+              <span class="pr" style="cursor:default; border-bottom:none;">৳${fmt(it.price)}</span>
+              ${badge}
+            </span>
+            ${fromTo}
           </span>
         </div>
         <div class="trend-panel" id="trend2-${cssId(k)}" style="display:none;"></div>
@@ -1776,6 +2019,7 @@
 
   function setItemPickerCatFilter(cat){
     shopFilterCat = cat;
+    closeCatDrop();
     renderSelectDropdown();
     renderCatChips('itemPickerCatChips', shopFilterCat, 'setItemPickerCatFilter', 'openCategoryPicker(true)');
     renderPickerList();
@@ -1786,7 +2030,7 @@
 
     let keys = Object.keys(priceList).sort();
     if (shopFilterCat !== 'সব'){
-      keys = keys.filter(k => (priceList[k].category || DEFAULT_CAT) === shopFilterCat);
+      keys = keys.filter(k => itemHasCategory(k, shopFilterCat));
     }
     shopItemKeys = keys;
 
@@ -1873,10 +2117,12 @@
     renderPickerList();
     overlay.classList.add('open');
     document.body.classList.add('no-scroll');
-    // no .focus() here on purpose — keyboard should only open once the user taps the search box
+    // focus synchronously inside the tap gesture so the phone keyboard opens immediately
+    try{ search.focus({preventScroll:true}); }catch(e){ search.focus(); }
   }
 
   function closeItemPicker(){
+    closeCatDrop();
     document.getElementById('itemPickerModal').classList.remove('open');
     document.body.classList.remove('no-scroll');
     closePickerItemMenu();
@@ -1948,12 +2194,63 @@
         <span class="menu-label">দাম</span>
         <span class="menu-value" id="popupPriceVal">৳${fmt(it.price)}</span>
       </div>
+      <div class="item-menu-split" style="margin-bottom:10px;">
+        <div class="split-btn copy" onclick="event.stopPropagation(); showPickerCatChooser('${safe}','copy')">কপি</div>
+        <div class="split-btn move" onclick="event.stopPropagation(); showPickerCatChooser('${safe}','move')">মুভ</div>
+      </div>
       <div class="item-menu-split">
         <div class="split-btn danger" onclick="event.stopPropagation(); deleteFromPickerList('${safe}')">ডিলিট</div>
         <div class="split-btn save" onclick="event.stopPropagation(); savePopupChanges('${safe}')">সেভ</div>
       </div>
     `;
     positionPickerPopup(popup, pickerMenuBtnEl);
+  }
+
+  // ---- কপি / মুভ: জিনিসটা অন্য ক্যাটাগরিতে কপি বা মুভ করা ----
+  function showPickerCatChooser(name, mode){
+    const popup = document.getElementById('pickerItemMenuPopup');
+    if (!popup || !priceList[name]) return;
+    const safe = name.replace(/'/g,"\\'");
+    const have = getItemCategories(name);
+    const cats = getCategories().filter(c => !have.includes(c));
+    const title = mode === 'copy' ? 'কোন ক্যাটাগরিতে কপি করবেন?' : 'কোন ক্যাটাগরিতে মুভ করবেন?';
+    const list = cats.length
+      ? cats.map(c => {
+          const sc = c.replace(/'/g,"\\'");
+          return `<div class="split-btn" onclick="event.stopPropagation(); applyPickerCatAction('${safe}','${sc}','${mode}')">${c}</div>`;
+        }).join('')
+      : `<div class="picker-none" style="padding:12px;">অন্য কোনো ক্যাটাগরি নেই</div>`;
+    popup.innerHTML = `
+      <div class="cat-chooser-title"><b>${name}</b><br>${title}</div>
+      <div class="cat-chooser-list">${list}</div>
+      <div class="item-menu-split">
+        <div class="split-btn" onclick="event.stopPropagation(); renderPickerItemMenuPopup()">← ফিরে যান</div>
+      </div>`;
+    positionPickerPopup(popup, pickerMenuBtnEl);
+  }
+
+  function applyPickerCatAction(name, target, mode){
+    const it = priceList[name];
+    if (!it) { closePickerItemMenu(); return; }
+    let cats = getItemCategories(name).slice();
+    if (!cats.includes(target)) cats.push(target);
+    if (mode === 'move'){
+      // বর্তমান ক্যাটাগরি (ফিল্টার) থেকে সরানো হবে; "সব" দেখালে আগের সব ক্যাটাগরি বাদ দিয়ে শুধু নতুনটায় থাকবে
+      if (shopFilterCat && shopFilterCat !== 'সব'){
+        cats = cats.filter(c => c !== shopFilterCat);
+      } else {
+        cats = [target];
+      }
+      if (cats.length === 0) cats = [target];
+    }
+    it.categories = cats;
+    savePriceList();
+    queuePushToSheet();
+    renderPriceList();
+    renderSelectDropdown();
+    renderPickerList();
+    renderCatChips('itemPickerCatChips', shopFilterCat, 'setItemPickerCatFilter', 'openCategoryPicker(true)');
+    closePickerItemMenu();
   }
 
   function positionPickerPopup(popup, btnEl){
@@ -1995,7 +2292,7 @@
     const view = document.getElementById('popupUnitVal');
     if (!view || !priceList[name]) return;
     const current = priceList[name].unit;
-    const units = ['কেজি','লিটার','পিস','ডজন','গ্রাম','প্যাকেট','পাতা','টাকা'];
+    const units = ['কেজি','লিটার','পিস','ডজন','গ্রাম','প্যাকেট','পাতা','টাকা','বস্তা'];
     const options = units.map(u => `<option value="${u}"${u===current?' selected':''}>${u}</option>`).join('');
     view.outerHTML = `<select class="pr-edit-unit" id="popupUnitEdit" onclick="event.stopPropagation()">${options}</select>`;
     const sel = document.getElementById('popupUnitEdit');
@@ -2084,10 +2381,28 @@
     const category = (shopFilterCat && shopFilterCat !== 'সব') ? shopFilterCat : DEFAULT_CAT;
 
     if (!name){ flashButtonLabel('pickerSaveBtn', '⚠️ নাম লিখুন'); return; }
-    if (priceList[name]){ flashButtonLabel('pickerSaveBtn', '⚠️ আগে থেকেই আছে'); return; }
+
+    if (priceList[name]){
+      // জিনিসটা অন্য একটা ক্যাটাগরিতে আগে থেকেই সেভ করা আছে —
+      // দাম/একক অপরিবর্তিত থাকবে, শুধু এই নতুন ক্যাটাগরিতেও দেখাবে
+      if (itemHasCategory(name, category)){
+        flashButtonLabel('pickerSaveBtn', '⚠️ এই ক্যাটাগরিতে আগে থেকেই আছে');
+        return;
+      }
+      priceList[name].categories.push(category);
+      savePriceList();
+      renderPriceList();
+      queuePushToSheet();
+
+      document.getElementById('pickerNewItemPrice').value = '';
+      renderSelectDropdown();
+      pickShopItem(name);
+      return;
+    }
+
     if (isNaN(price) || price < 0){ flashButtonLabel('pickerSaveBtn', '⚠️ সঠিক দাম লিখুন'); return; }
 
-    priceList[name] = { unit, price, category };
+    priceList[name] = { unit, price, categories: [category] };
     savePriceList();
     recordPriceHistory(name, price);
     renderPriceList();
@@ -2188,7 +2503,7 @@
     const names = Object.keys(quantities).filter(n => priceList[n]);
     const byCategory = {};
     names.forEach(n => {
-      const cat = priceList[n].category || DEFAULT_CAT;
+      const cat = getItemCategories(n)[0];
       if (!byCategory[cat]) byCategory[cat] = [];
       byCategory[cat].push(n);
     });
@@ -2272,6 +2587,119 @@
     openChecklist(entry.id);
   }
 
+  /* ---------- হিস্টরিতে জিনিসের পরিমাণ/মোট দাম এডিট → প্রাইস লিস্টের দাম অটো আপডেট ---------- */
+  let heCtx = null; // {entryId, ci, ii}
+  function closeHistItemEdit(){
+    heCtx = null;
+    const p = document.getElementById('histItemEditPopup');
+    if (p) p.style.display = 'none';
+  }
+  function histBaseQty(name, unit, qty){
+    // হিস্টরিতে ১ কেজির কম হলে গ্রামে সেভ থাকে; প্রাইস লিস্টের দাম কেজি প্রতি
+    const pl = priceList[name];
+    if (unit === 'গ্রাম' && pl && pl.unit === 'কেজি') return qty / 1000;
+    return qty;
+  }
+  function openHistItemEdit(rowEl, entryId, ci, ii){
+    const entry = shoppingLog.find(e => e.id === entryId);
+    const it = entry && entry.categories[ci] && entry.categories[ci].items[ii];
+    if (!it || !it.unit) return;
+    if (heCtx && heCtx.entryId === entryId && heCtx.ci === ci && heCtx.ii === ii){ closeHistItemEdit(); return; }
+    heCtx = { entryId, ci, ii };
+    const popup = document.getElementById('histItemEditPopup');
+    const nm = String(it.name).replace(/</g,'&lt;');
+    popup.innerHTML = `
+      <div style="font-weight:700; color:var(--green); margin-bottom:8px;">${nm}</div>
+      <div class="he-label">পরিমাণ</div>
+      <div class="he-field">
+        <input type="number" inputmode="decimal" min="0" step="0.01" class="pr-edit name-edit-box" id="heQtyInput" value="${it.qty}"
+          oninput="updateHistEditHint()" onclick="event.stopPropagation()"
+          onkeydown="if(event.key==='Enter'){event.stopPropagation(); saveHistItemEdit();}">
+        <span class="he-suffix">${it.unit}</span>
+      </div>
+      <div class="he-label">মোট দাম</div>
+      <div class="he-field">
+        <span class="he-suffix">৳</span>
+        <input type="number" inputmode="decimal" min="0" step="0.01" class="pr-edit name-edit-box" id="heTotalInput" value="${+(+it.sub).toFixed(2)}"
+          oninput="updateHistEditHint()" onclick="event.stopPropagation()"
+          onkeydown="if(event.key==='Enter'){event.stopPropagation(); saveHistItemEdit();}">
+      </div>
+      <div class="he-hint" id="heHint"></div>
+      <div class="item-menu-split">
+        <div class="split-btn" onclick="event.stopPropagation(); closeHistItemEdit()">বাতিল</div>
+        <div class="split-btn save" onclick="event.stopPropagation(); saveHistItemEdit()">সেভ</div>
+      </div>`;
+    positionCartQtyPopup(popup, rowEl);
+    updateHistEditHint();
+    const q = document.getElementById('heQtyInput');
+    if (q){ q.focus(); q.select(); }
+  }
+  function updateHistEditHint(){
+    const hint = document.getElementById('heHint');
+    if (!hint || !heCtx) return;
+    const entry = shoppingLog.find(e => e.id === heCtx.entryId);
+    const it = entry && entry.categories[heCtx.ci].items[heCtx.ii];
+    if (!it) return;
+    const q = parseFloat(document.getElementById('heQtyInput').value);
+    const t = parseFloat(document.getElementById('heTotalInput').value);
+    if (isNaN(q) || q <= 0 || isNaN(t) || t < 0){ hint.textContent = ''; return; }
+    const base = histBaseQty(it.name, it.unit, q);
+    const pl = priceList[it.name];
+    const unitName = pl ? pl.unit : it.unit;
+    hint.textContent = `নতুন দাম: ৳${fmt(Math.round(t / base * 100) / 100)}/${unitName}`;
+  }
+  function saveHistItemEdit(){
+    if (!heCtx) return;
+    const entry = shoppingLog.find(e => e.id === heCtx.entryId);
+    const cat = entry && entry.categories[heCtx.ci];
+    const it = cat && cat.items[heCtx.ii];
+    if (!it){ closeHistItemEdit(); return; }
+    const q = parseFloat(document.getElementById('heQtyInput').value);
+    const t = parseFloat(document.getElementById('heTotalInput').value);
+    if (isNaN(q) || q <= 0){ alert('সঠিক পরিমাণ লিখুন'); return; }
+    if (isNaN(t) || t < 0){ alert('সঠিক মোট দাম লিখুন'); return; }
+
+    const base = histBaseQty(it.name, it.unit, q);
+    const newUnitPrice = Math.round(t / base * 100) / 100;
+
+    // ১) হিস্টরি এন্ট্রি আপডেট
+    it.qty = q;
+    it.price = newUnitPrice;
+    it.sub = t;
+    cat.catTotal = cat.items.reduce((a, x) => a + (x.sub || 0), 0);
+    entry.grand = entry.categories
+      .filter(c => c.category !== 'অন্যান্য (দাম ছাড়া)')
+      .reduce((a, c) => a + (c.catTotal || 0), 0);
+    if (entry.checklist && Array.isArray(entry.checklist.items)){
+      entry.checklist.items.forEach(ci => {
+        if (ci.source === 'history' && ci.name === it.name){ ci.qty = q; ci.price = newUnitPrice; }
+      });
+    }
+    saveShoppingLog();
+
+    // ২) অ্যাপের প্রাইস লিস্টের দাম অটো আপডেট (+ ট্রেন্ডের জন্য প্রাইস হিস্টরি)
+    const name = it.name;
+    if (priceList[name]){
+      priceList[name].price = newUnitPrice;
+      savePriceList();
+      recordPriceHistory(name, newUnitPrice);
+      if (quantities[name] !== undefined) renderSummary();
+      renderPriceList();
+      renderSelectDropdown();
+      renderTrendList();
+    }
+    queuePushToSheet();
+
+    closeHistItemEdit();
+    renderHistoryList();
+    if (typeof renderChecklistPageList === 'function') renderChecklistPageList();
+  }
+  document.addEventListener('click', function(e){
+    const popup = document.getElementById('histItemEditPopup');
+    if (!popup || popup.style.display === 'none') return;
+    if (!popup.contains(e.target)) closeHistItemEdit();
+  });
+
   function renderHistoryList(){
     const box = document.getElementById('historyListBox');
     if (!box) return;
@@ -2285,10 +2713,10 @@
       return;
     }
     box.innerHTML = shoppingLog.map(entry => {
-      const body = entry.categories.map(c => {
-        const rows = c.items.map(it =>
+      const body = entry.categories.map((c, ci) => {
+        const rows = c.items.map((it, ii) =>
           it.unit
-            ? `<div class="hist-item"><span>${it.name} — ${it.qty} ${it.unit}</span><span>৳${fmt(it.sub)}</span></div>`
+            ? `<div class="hist-item hist-item-editable" title="পরিমাণ/দাম বদলান" onclick="event.stopPropagation(); openHistItemEdit(this, ${entry.id}, ${ci}, ${ii})"><span>${it.name} — ${it.qty} ${it.unit}</span><span>৳${fmt(it.sub)}</span></div>`
             : `<div class="hist-item"><span>${it.name}</span><span></span></div>`
         ).join('');
         return `<div class="hist-cat">— ${c.category} —</div>${rows}<div class="hist-cat-total">মোট: ৳${fmt(c.catTotal)}</div>`;
@@ -2774,6 +3202,7 @@
   }
 
   function renderSummary(){
+    saveTodayList();
     const body = document.getElementById('summaryBody');
     const byCategory = groupCartByCategory();
     const cats = sortCatsOtherLast(Object.keys(byCategory));
@@ -2803,7 +3232,7 @@
             <button class="del-btn" onclick="removeFromCart('${safeName}')">✕</button>
           </div>
           <div class="cart-item-meta">
-            <span class="qty">${disp.qty} ${disp.unit}</span>
+            <span class="qty qty-editable" title="পরিমাণ বদলান" onclick="event.stopPropagation(); openCartQtyEdit(this, '${safeName}')">${disp.qty} ${disp.unit}</span>
             <span class="price">৳${fmt(it.price)}/${it.unit || 'একক'}</span>
             <span class="sub">৳${fmt(sub)}</span>
           </div>
@@ -2835,9 +3264,375 @@
     document.getElementById('grandOtherNote').style.display = otherItems.length > 0 ? 'block' : 'none';
   }
 
+  /* ---------- আজকের বাজারে পরিমাণ এডিট (শেয়ার্ড .item-menu-popup ব্যবহার করে) ---------- */
+  let cqName = null;
+  let cqBtnEl = null;
+  let cqMode = 'cart'; // 'cart' (আজকের বাজার) | 'tpl' (টেম্পলেটের ভেতরের পরিমাণ)
+  let cqUnitMode = 'base'; // 'base' (জিনিসের নিজের একক) | 'gram' (শুধু কেজি-আইটেমের জন্য)
+
+  function closeCartQtyEdit(){
+    cqName = null; cqBtnEl = null; cqMode = 'cart';
+    const popup = document.getElementById('cartQtyMenuPopup');
+    if (popup) popup.style.display = 'none';
+  }
+
+  function openCartQtyEdit(btnEl, name){
+    if (cqName === name){ closeCartQtyEdit(); return; }
+    if (!priceList[name] || quantities[name] === undefined) return;
+    cqName = name;
+    cqMode = 'cart';
+    cqBtnEl = btnEl;
+    const disp = getDisplayQtyUnit(quantities[name], priceList[name].unit);
+    cqUnitMode = (priceList[name].unit === 'কেজি' && disp.unit === 'গ্রাম') ? 'gram' : 'base';
+    renderCartQtyEdit(disp.qty);
+  }
+
+  function openTplQtyEdit(btnEl, i){
+    const t = templates.find(x => x.id === tplViewId);
+    const r = tplDetailRows[i];
+    if (!t || !r || r.type !== 'item' || !priceList[r.name]) return;
+    if (cqName === r.name && cqMode === 'tpl'){ closeCartQtyEdit(); return; }
+    cqName = r.name;
+    cqMode = 'tpl';
+    cqBtnEl = btnEl;
+    const disp = getDisplayQtyUnit(t.quantities[r.name], priceList[r.name].unit);
+    cqUnitMode = (priceList[r.name].unit === 'কেজি' && disp.unit === 'গ্রাম') ? 'gram' : 'base';
+    renderCartQtyEdit(disp.qty);
+  }
+
+  function renderCartQtyEdit(initialVal){
+    const popup = document.getElementById('cartQtyMenuPopup');
+    const it = priceList[cqName];
+    if (!popup || !it || !cqBtnEl){ closeCartQtyEdit(); return; }
+    const isKg = it.unit === 'কেজি';
+    const unitLabel = isKg ? (cqUnitMode === 'gram' ? 'গ্রাম' : 'কেজি') : (it.unit || 'একক');
+    const prev = document.getElementById('cartQtyEditInput');
+    const val = (initialVal !== undefined) ? initialVal : (prev ? prev.value : '');
+    popup.innerHTML = `
+      <div class="cq-row">
+        <input type="number" inputmode="decimal" min="0" step="0.01" class="pr-edit name-edit-box" id="cartQtyEditInput"
+          value="${val}" placeholder="পরিমাণ" onclick="event.stopPropagation()"
+          onkeydown="if(event.key==='Enter'){event.stopPropagation(); saveCartQtyEdit();}">
+        <span class="cq-unit${isKg ? ' toggleable' : ''}" ${isKg ? 'onclick="event.stopPropagation(); toggleCartQtyUnit()"' : ''}>${unitLabel}</span>
+      </div>
+      <div class="item-menu-split">
+        <div class="split-btn" onclick="event.stopPropagation(); closeCartQtyEdit()">বাতিল</div>
+        <div class="split-btn save" onclick="event.stopPropagation(); saveCartQtyEdit()">সেভ</div>
+      </div>
+    `;
+    positionCartQtyPopup(popup, cqBtnEl, cqMode === 'tpl' ? document.querySelector('#templateModal .picker-sheet') : null);
+    const input = document.getElementById('cartQtyEditInput');
+    if (input){ input.focus(); input.select(); }
+  }
+
+  // পরিমাণ (বাম দিকে থাকে) এর ঠিক নিচে, বাম-সমান করে বসবে; স্ক্রিনের বাইরে গেলে ভেতরে টেনে আনবে
+  function positionCartQtyPopup(popup, anchorEl, boundsEl){
+    const rect = anchorEl.getBoundingClientRect();
+    const margin = 8;
+    popup.style.visibility = 'hidden';
+    popup.style.display = 'block';
+    const pw = popup.offsetWidth;
+    const ph = popup.offsetHeight;
+    const vw = document.documentElement.clientWidth || window.innerWidth;
+    const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+    // বাউন্ডস (যেমন টেম্পলেট পপআপের শীট) থাকলে তার ভেতরেই থাকবে, না থাকলে পুরো স্ক্রিনের ভেতরে
+    let minX = margin, maxX = vw - margin;
+    if (boundsEl){
+      const b = boundsEl.getBoundingClientRect();
+      minX = Math.max(minX, b.left + margin);
+      maxX = Math.min(maxX, b.right - margin);
+    }
+    let left = rect.left;
+    if (left + pw > maxX) left = rect.right - pw; // ডানে জায়গা না থাকলে ডান-সমান করে বসবে
+    if (left + pw > maxX) left = maxX - pw;
+    if (left < minX) left = minX;
+    let top = rect.bottom + 6;
+    if (top + ph > vh - margin){
+      top = rect.top - ph - 6;
+      if (top < margin) top = margin;
+    }
+    popup.style.left = left + 'px';
+    popup.style.top = top + 'px';
+    popup.style.visibility = 'visible';
+  }
+
+  function toggleCartQtyUnit(){
+    const input = document.getElementById('cartQtyEditInput');
+    const cur = parseFloat(input ? input.value : '');
+    let newVal = '';
+    if (!isNaN(cur)){
+      // মান একই রেখে ইউনিট বদলালে সংখ্যাটাও রূপান্তর হবে (১ কেজি ⇄ ১০০০ গ্রাম)
+      newVal = (cqUnitMode === 'gram') ? +(cur / 1000).toFixed(3) : Math.round(cur * 1000);
+    }
+    cqUnitMode = (cqUnitMode === 'gram') ? 'base' : 'gram';
+    renderCartQtyEdit(newVal);
+  }
+
+  function saveCartQtyEdit(){
+    const name = cqName;
+    const input = document.getElementById('cartQtyEditInput');
+    if (!name || !priceList[name] || !input){ closeCartQtyEdit(); return; }
+    const v = parseFloat(input.value);
+    if (isNaN(v) || v <= 0){ alert('সঠিক পরিমাণ লিখুন'); input.focus(); return; }
+    const factor = (priceList[name].unit === 'কেজি' && cqUnitMode === 'gram') ? 0.001 : 1;
+    if (cqMode === 'tpl'){
+      const t = templates.find(x => x.id === tplViewId);
+      if (!t){ closeCartQtyEdit(); return; }
+      t.quantities[name] = v * factor;
+      saveTemplates();
+      // জিনিসটা আগে থেকেই আজকের বাজারে থাকলে সেখানকার পরিমাণও মিলিয়ে দেওয়া হচ্ছে
+      if (quantities[name] !== undefined){ quantities[name] = v * factor; renderSummary(); }
+      closeCartQtyEdit();
+      renderTemplateDetail();
+      return;
+    }
+    quantities[name] = v * factor;
+    closeCartQtyEdit();
+    renderSummary();
+  }
+
+  document.addEventListener('click', function(e){
+    const popup = document.getElementById('cartQtyMenuPopup');
+    if (!popup || popup.style.display === 'none') return;
+    if (!popup.contains(e.target)) closeCartQtyEdit();
+  });
+
   function removeFromCart(name){
     delete quantities[name];
     renderSummary();
+  }
+
+  // ===== টেম্পলেট =====
+  const TEMPLATE_KEY = 'bazarHisab_templates_v1';
+  const TEMPLATE_SYNCED_KEY = 'bazarHisab_templatesSynced_v1';
+  let templates = [];
+  try{ templates = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'); }catch(e){ templates = []; }
+  function saveTemplatesLocal(){ localStorage.setItem(TEMPLATE_KEY, JSON.stringify(templates)); }
+  function saveTemplates(){ saveTemplatesLocal(); queuePushToSheet(); } // লোকাল সেভ + Google Sheet-এর "টেম্পলেট" ট্যাবে সিঙ্ক
+
+  function openTemplateModal(){
+    tplViewId = null;
+    renderTemplateList();
+    document.getElementById('templateModal').classList.add('open');
+    document.body.classList.add('no-scroll');
+  }
+  function closeTemplateModal(){
+    closeTemplateMenu();
+    closeCartQtyEdit();
+    tplViewId = null;
+    document.getElementById('templateModal').classList.remove('open');
+    document.body.classList.remove('no-scroll');
+  }
+  let tplViewId = null;       // এখন যে টেম্পলেটের ভেতরটা দেখা হচ্ছে (null = লিস্ট ভিউ)
+  let tplDetailRows = [];     // ডিটেইল ভিউয়ের সারিগুলো [{type:'item'|'other', name|text}]
+
+  function openTemplate(id){
+    tplViewId = id;
+    renderTemplateList();
+    const box = document.getElementById('templateList');
+    if (box) box.scrollTop = 0;
+  }
+  function backToTemplates(){
+    closeCartQtyEdit();
+    tplViewId = null;
+    renderTemplateList();
+  }
+
+  function renderTemplateDetail(){
+    const t = templates.find(x => x.id === tplViewId);
+    const box = document.getElementById('templateList');
+    if (!t){ tplViewId = null; renderTemplateList(); return; }
+    document.getElementById('templateActions').style.display = 'none';
+    document.getElementById('templateTitle').textContent = '📑 ' + (t.name || t.dateLabel);
+
+    tplDetailRows = [];
+    Object.keys(t.quantities).sort().forEach(n => tplDetailRows.push({ type:'item', name:n }));
+    t.otherItems.forEach(o => tplDetailRows.push({ type:'other', text:o.text }));
+
+    const esc = x => String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    let html = `<div class="tpl-d-bar">
+      <button type="button" class="btn btn-ghost" onclick="backToTemplates()">← পেছনে</button>
+      <button type="button" class="btn btn-primary tpl-d-all" onclick="addAllTemplateItems()">সব</button>
+    </div>`;
+    if (tplDetailRows.length === 0){
+      html += '<div class="tpl-empty">এই টেম্পলেটে কিছু নেই</div>';
+    }
+    tplDetailRows.forEach((r, i) => {
+      if (r.type === 'item'){
+        const it = priceList[r.name];
+        if (!it){
+          html += `<div class="tpl-d-row gone"><input type="checkbox" disabled><div class="tpl-d-name">${esc(r.name)} <small>(প্রাইস লিস্টে নেই)</small></div></div>`;
+          return;
+        }
+        const disp = getDisplayQtyUnit(t.quantities[r.name], it.unit);
+        const sub = t.quantities[r.name] * it.price;
+        const checked = quantities[r.name] !== undefined ? ' checked' : '';
+        html += `<div class="tpl-d-row">
+          <input type="checkbox" id="tplChk-${i}"${checked} onchange="toggleTemplateRow(${i}, this.checked)">
+          <div style="flex:1; min-width:0;">
+            <label class="tpl-d-name" for="tplChk-${i}">${esc(r.name)}</label>
+            <div class="tpl-d-meta">
+              <span class="qty-editable" title="পরিমাণ বদলান" onclick="event.stopPropagation(); openTplQtyEdit(this, ${i})">${disp.qty} ${disp.unit}</span>
+              <span>৳${fmt(it.price)}/${it.unit || 'একক'}</span>
+            </div>
+          </div>
+          <span class="tpl-d-sub">৳${fmt(sub)}</span>
+        </div>`;
+      } else {
+        const checked = otherItems.some(o => o.text === r.text) ? ' checked' : '';
+        html += `<div class="tpl-d-row">
+          <input type="checkbox" id="tplChk-${i}"${checked} onchange="toggleTemplateRow(${i}, this.checked)">
+          <label class="tpl-d-name" for="tplChk-${i}">${esc(r.text)} <small style="color:#9a9a86; font-weight:400;">(অন্যান্য)</small></label>
+        </div>`;
+      }
+    });
+    box.innerHTML = html;
+  }
+
+  function toggleTemplateRow(i, checked){
+    const t = templates.find(x => x.id === tplViewId);
+    const r = tplDetailRows[i];
+    if (!t || !r) return;
+    if (r.type === 'item'){
+      if (checked){
+        if (priceList[r.name]) quantities[r.name] = t.quantities[r.name];
+      } else {
+        delete quantities[r.name];
+      }
+    } else {
+      if (checked){
+        if (!otherItems.some(o => o.text === r.text)) otherItems.push({ id: Date.now() + Math.random(), text: r.text });
+      } else {
+        otherItems = otherItems.filter(o => o.text !== r.text);
+      }
+    }
+    renderSummary();
+  }
+
+  function addAllTemplateItems(){
+    const t = templates.find(x => x.id === tplViewId);
+    if (!t) return;
+    Object.keys(t.quantities).forEach(n => { if (priceList[n]) quantities[n] = t.quantities[n]; });
+    t.otherItems.forEach(o => {
+      if (!otherItems.some(x => x.text === o.text)) otherItems.push({ id: Date.now() + Math.random(), text: o.text });
+    });
+    renderSummary();
+    renderTemplateDetail();
+  }
+
+  function renderTemplateList(){
+    if (tplViewId !== null){ renderTemplateDetail(); return; }
+    document.getElementById('templateActions').style.display = '';
+    document.getElementById('templateTitle').textContent = '📑 টেম্পলেট';
+    const box = document.getElementById('templateList');
+    if (templates.length === 0){
+      box.innerHTML = '<div class="tpl-empty">কোনো টেম্পলেট নেই। "টেম্পলেট বানান" চাপলে আজকের বাজারের লিস্ট সেভ হবে।</div>';
+      return;
+    }
+    box.innerHTML = templates.map(t => {
+      const count = Object.keys(t.quantities).length + t.otherItems.length;
+      const title = t.name || t.dateLabel;
+      const meta = t.name ? `${t.dateLabel} · ${count} টি জিনিস` : `${count} টি জিনিস`;
+      return `<div class="tpl-item" onclick="openTemplate(${t.id})">
+        <div><div class="tpl-date">${t.name ? '📑' : '📅'} ${title.replace(/</g,'&lt;')}</div><div class="tpl-meta">${meta}</div></div>
+        <button type="button" class="picker-dots-btn" title="নাম পরিবর্তন, মুছুন" onclick="event.stopPropagation(); toggleTemplateMenu(this, ${t.id})">⋮</button>
+      </div>`;
+    }).join('');
+  }
+
+  /* ---------- টেম্পলেটের ⋮ মেনু (ক্যাটাগরির মেনুর মতোই: নাম পরিবর্তন / ডিলিট) ---------- */
+  let tplMenuOpenId = null;
+  let tplMenuBtnEl = null;
+  function toggleTemplateMenu(btnEl, id){
+    if (tplMenuOpenId === id){ closeTemplateMenu(); return; }
+    tplMenuOpenId = id;
+    tplMenuBtnEl = btnEl;
+    renderTemplateMenu();
+  }
+  function closeTemplateMenu(){
+    tplMenuOpenId = null;
+    tplMenuBtnEl = null;
+    const popup = document.getElementById('templateItemMenuPopup');
+    if (popup) popup.style.display = 'none';
+  }
+  function renderTemplateMenu(){
+    const popup = document.getElementById('templateItemMenuPopup');
+    const t = templates.find(x => x.id === tplMenuOpenId);
+    if (!popup || !t || !tplMenuBtnEl){ closeTemplateMenu(); return; }
+    popup.innerHTML = `
+      <input type="text" class="pr-edit name-edit-box" id="tplPopupNameEdit" autocomplete="off"
+          value="${(t.name || t.dateLabel).replace(/"/g,'&quot;')}"
+          onclick="event.stopPropagation()"
+          onkeydown="if(event.key==='Enter'){event.stopPropagation(); saveTemplateRename(${t.id});}">
+      <div class="item-menu-split">
+        <div class="split-btn danger" onclick="event.stopPropagation(); deleteTemplate(${t.id})">ডিলিট</div>
+        <div class="split-btn save" onclick="event.stopPropagation(); saveTemplateRename(${t.id})">সেভ</div>
+      </div>
+    `;
+    positionPickerPopup(popup, tplMenuBtnEl);
+    const input = document.getElementById('tplPopupNameEdit');
+    if (input){ input.focus(); input.select(); }
+  }
+  document.addEventListener('click', function(e){
+    const popup = document.getElementById('templateItemMenuPopup');
+    if (!popup || popup.style.display === 'none') return;
+    if (!popup.contains(e.target)) closeTemplateMenu();
+  });
+  function saveTemplateRename(id){
+    const t = templates.find(x => x.id === id);
+    const input = document.getElementById('tplPopupNameEdit');
+    if (!t || !input){ closeTemplateMenu(); return; }
+    const v = input.value.trim();
+    if (!v){ alert('টেম্পলেটের নাম লিখুন'); return; }
+    t.name = (v === t.dateLabel) ? '' : v;
+    saveTemplates();
+    closeTemplateMenu();
+    renderTemplateList();
+  }
+  function deleteTemplate(id){
+    if (!confirm('এই টেম্পলেট ডিলিট করতে চান?')) return;
+    templates = templates.filter(x => x.id !== id);
+    saveTemplates();
+    closeTemplateMenu();
+    renderTemplateList();
+  }
+  function saveTemplateFromToday(){
+    const names = Object.keys(quantities).filter(n => priceList[n]);
+    if (names.length === 0 && otherItems.length === 0){
+      alert('আজকের বাজারে কিছু যোগ করা নেই, তাই টেম্পলেট বানানো যাচ্ছে না');
+      return;
+    }
+    let total = 0;
+    names.forEach(n => { total += quantities[n] * priceList[n].price; });
+    const q = {};
+    names.forEach(n => { q[n] = quantities[n]; });
+    templates.unshift({
+      id: Date.now(),
+      dateLabel: new Date().toLocaleString('bn-BD', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }),
+      quantities: q,
+      otherItems: otherItems.map(o => ({ id:o.id, text:o.text })),
+      total
+    });
+    saveTemplates();
+    renderTemplateList();
+  }
+  function applyTemplate(id){
+    const t = templates.find(x => x.id === id);
+    if (!t) return;
+    if ((Object.keys(quantities).length > 0 || otherItems.length > 0) &&
+        !confirm('আজকের বাজারের বর্তমান লিস্ট বদলে এই টেম্পলেটের লিস্ট বসবে। ঠিক আছে?')) return;
+    quantities = {};
+    Object.keys(t.quantities).forEach(n => { if (priceList[n]) quantities[n] = t.quantities[n]; });
+    otherItems = t.otherItems.map((o, i) => ({ id: Date.now() + i, text: o.text }));
+    renderSummary();
+    closeTemplateModal();
+  }
+  function deleteAllTemplates(){
+    if (templates.length === 0) return;
+    if (!confirm('সব টেম্পলেট ডিলিট করতে চান?')) return;
+    templates = [];
+    saveTemplates();
+    renderTemplateList();
   }
 
   function clearQuantities(){
@@ -2974,6 +3769,90 @@
       });
     });
   }
+
+  /* ================= ফোনের ব্যাক বাটন: পপআপ/মোডাল বন্ধ করবে, পুরো অ্যাপ নয় ================= */
+  (function(){
+    const layers = [
+      // overlays (class "open")
+      { id:'itemPickerModal',        type:'cls', close:()=>closeItemPicker() },
+      { id:'templateModal',          type:'cls', close:()=>closeTemplateModal() },
+      { id:'categoryPickerModal',    type:'cls', close:()=>closeCategoryPicker() },
+      { id:'checklistModal',         type:'cls', close:()=>closeChecklistModal() },
+      // পেজ/ট্যাব (হোম ছাড়া) — back দিলে হোমে ফিরবে
+      { id:'tabPage3',               type:'cls', cls:'active', close:()=>switchTab(2) },
+      { id:'tabPage4',               type:'cls', cls:'active', close:()=>switchTab(2) },
+      { id:'tabPage5',               type:'cls', cls:'active', close:()=>switchTab(2) },
+      // হেডার ড্রপডাউন
+      { id:'gearDropdown',           type:'cls', close:()=>document.getElementById('gearDropdown').classList.remove('open') },
+      { id:'notifDropdown',          type:'cls', close:()=>document.getElementById('notifDropdown').classList.remove('open') },
+      // ছোট পপআপ (display:block)
+      { id:'catDropPanel',           type:'dsp', close:()=>closeCatDrop() },
+      { id:'pickerItemMenuPopup',    type:'dsp', close:()=>closePickerItemMenu() },
+      { id:'categoryItemMenuPopup',  type:'dsp', close:()=>closeCategoryItemMenu() },
+      { id:'histItemEditPopup',      type:'dsp', close:()=>closeHistItemEdit() },
+      { id:'cartQtyMenuPopup',       type:'dsp', close:()=>closeCartQtyEdit() },
+      { id:'templateItemMenuPopup',  type:'dsp', close:()=>closeTemplateMenu() }
+    ];
+    const stack = [];      // খোলা লেয়ারগুলো (খোলার ক্রমে)
+    let histDepth = 0;     // আমরা কতগুলো history entry পুশ করেছি
+    let ignorePop = 0;
+    let reconcileTimer = null;
+
+    function isOpen(l){
+      const el = document.getElementById(l.id);
+      if (!el) return false;
+      return l.type === 'cls' ? el.classList.contains(l.cls || 'open') : el.style.display === 'block';
+    }
+    function forceClose(l){
+      const el = document.getElementById(l.id);
+      if (!el) return;
+      if (l.type === 'cls') el.classList.remove(l.cls || 'open'); else el.style.display = 'none';
+    }
+    function sync(){
+      layers.forEach(l => {
+        const open = isOpen(l);
+        const idx = stack.indexOf(l);
+        if (open && idx === -1){
+          stack.push(l);
+          try{ history.pushState({ layer:l.id }, ''); histDepth++; }catch(e){}
+        } else if (!open && idx !== -1){
+          stack.splice(idx, 1);
+        }
+      });
+      scheduleReconcile();
+    }
+    // বাটন/বাইরে ট্যাপ করে বন্ধ হলে বাড়তি history entry মুছে ফেলা
+    function scheduleReconcile(){
+      if (reconcileTimer) return;
+      reconcileTimer = setTimeout(() => {
+        reconcileTimer = null;
+        const extra = histDepth - stack.length;
+        if (extra > 0){
+          histDepth -= extra;
+          ignorePop++;
+          try{ history.go(-extra); }catch(e){ ignorePop--; }
+        }
+      }, 0);
+    }
+
+    window.addEventListener('popstate', function(){
+      if (ignorePop > 0){ ignorePop--; return; }
+      if (histDepth > 0) histDepth--;
+      const top = stack.pop();
+      if (top){
+        try{ top.close(); }catch(e){}
+        if (isOpen(top)) forceClose(top);
+        // বন্ধ হওয়া লেয়ারের সাথে সম্পর্কিত অন্য লেয়ারও বন্ধ হয়ে থাকতে পারে
+        sync();
+      }
+    });
+
+    const mo = new MutationObserver(sync);
+    layers.forEach(l => {
+      const el = document.getElementById(l.id);
+      if (el) mo.observe(el, { attributes:true, attributeFilter:['class','style'] });
+    });
+  })();
 </script>
 </body>
 </html>
