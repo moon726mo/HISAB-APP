@@ -5053,39 +5053,99 @@ window.addEventListener('DOMContentLoaded', () => {
     const r = document.createRange(); r.setStart(S[0], S[1]); r.setEnd(E[0], E[1]);
     const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
   }
+  const FULL_URL = new RegExp('^' + URL_SRC + '$', 'i');
+  let composing = false;
+  // লিংক বানানো: DOM ভেঙে নতুন করে না সাজিয়ে শুধু প্রয়োজনীয় জায়গা বদলায়; কার্সর node+offset দিয়ে ট্র্যাক করা হয়
+  // (আগে টেক্সট-অফসেট দিয়ে কার্সর ফেরানো হতো — লিংকের শেষ ও পরের লাইনের শুরুর অফসেট এক হওয়ায় কার্সর লিংকের ভেতরে/উপরের লাইনে চলে যেত)
   function linkify(force) {
     const b = body(); if (!b) return;
-    const hasA = b.querySelector('a.ne-link');
-    if (!hasA && !new RegExp(URL_SRC, 'i').test(b.textContent)) return;
-    const sel = getSelection(), focused = document.activeElement === b && sel.rangeCount && b.contains(sel.anchorNode);
-    let saved = null, caret = -1;
-    if (focused) { const r = sel.getRangeAt(0); saved = [offOf(r.startContainer, r.startOffset), offOf(r.endContainer, r.endOffset)]; if (sel.isCollapsed && !force) caret = saved[0]; }
-    // পুরনো লিংক: ক্যারেট যেটার ভেতরে/শেষে আছে (এবং এখনো পুরো URL) সেটা রাখো, বাকি খুলে ফেলো
+    if (composing) { clearTimeout(linkT); linkT = setTimeout(() => linkify(force), 600); return; }
+    if (!b.querySelector('a.ne-link') && !new RegExp(URL_SRC, 'i').test(b.textContent)) return;
+    const sel = getSelection();
+    const focused = document.activeElement === b && sel.rangeCount && b.contains(sel.anchorNode);
+    let P = null, changed = false;
+    if (focused) { const r = sel.getRangeAt(0); P = [{ n: r.startContainer, o: r.startOffset }, { n: r.endContainer, o: r.endOffset }]; }
+    const collapsed = !!P && sel.isCollapsed;
+    const each = f => { if (P) P.forEach(f); };
+    const idxOf = n => Array.prototype.indexOf.call(n.parentNode.childNodes, n);
+
+    // ১) পুরনো লিংক: এখনো পুরো URL হলে রাখো, নাহলে লিংক খুলে সাধারণ টেক্সট করো
     b.querySelectorAll('a.ne-link').forEach(a => {
-      const t = a.textContent, full = new RegExp('^' + URL_SRC + '$', 'i').test(t);
-      const r = document.createRange(); r.selectNodeContents(b); r.setEndBefore(a);
-      const st = r.toString().length, keep = full && caret >= 0 && caret >= st && caret <= st + t.length;
-      if (keep) a.href = hrefOf(trimUrl(t)); else a.replaceWith(...a.childNodes);
+      const t = a.textContent;
+      if (FULL_URL.test(t)) { const h = hrefOf(trimUrl(t)); if (a.getAttribute('href') !== h) a.href = h; return; }
+      const par = a.parentNode, idx = idxOf(a), cnt = a.childNodes.length;
+      each(p => {
+        if (p.n === a) { p.n = par; p.o = idx + Math.min(p.o, cnt); }
+        else if (p.n === par && p.o > idx) p.o += cnt - 1;
+      });
+      while (a.firstChild) par.insertBefore(a.firstChild, a);
+      par.removeChild(a); changed = true;
     });
-    b.normalize();
-    const w = document.createTreeWalker(b, NodeFilter.SHOW_TEXT), nodes = []; let n, acc = 0, skipped = false;
-    while ((n = w.nextNode())) { nodes.push([n, acc]); acc += n.data.length; }
-    nodes.forEach(([t, base]) => {
-      if (t.parentNode.closest && t.parentNode.closest('a.ne-link')) return;
-      const txt = t.data, re = new RegExp(URL_SRC, 'gi'); let m, last = 0, frag = null;
-      while ((m = re.exec(txt))) {
-        const u = trimUrl(m[0]), st = m.index, en = st + u.length;
-        if (caret >= 0 && caret >= base + st && caret <= base + en) { skipped = true; continue; }   // এখনো লিখছে
-        frag = frag || document.createDocumentFragment();
-        if (st > last) frag.append(txt.slice(last, st));
-        const a = document.createElement('a'); a.className = 'ne-link'; a.href = hrefOf(u); a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = u;
-        frag.append(a); last = en;
+
+    // ২) পাশাপাশি টেক্সট node জোড়া লাগাও (যাতে URL দুই node এ ভাগ না হয়)
+    const merge = el => {
+      for (let c = el.firstChild; c;) {
+        const nx = c.nextSibling;
+        if (c.nodeType === 3 && nx && nx.nodeType === 3) {
+          const i = idxOf(nx);
+          each(p => {
+            if (p.n === nx) { p.n = c; p.o += c.data.length; }
+            else if (p.n === el && p.o > i) p.o--;
+          });
+          c.appendData(nx.data); el.removeChild(nx); changed = true; continue;
+        }
+        if (c.nodeType === 1) merge(c);
+        c = nx;
       }
-      if (frag) { if (last < txt.length) frag.append(txt.slice(last)); t.replaceWith(frag); }
+    };
+    merge(b);
+
+    // ৩) নতুন URL কে লিংক বানাও
+    const w = document.createTreeWalker(b, NodeFilter.SHOW_TEXT), nodes = []; let n, again = false;
+    while ((n = w.nextNode())) nodes.push(n);
+    nodes.forEach(t => {
+      const pe = t.parentNode;
+      if (!pe || (pe.closest && pe.closest('a.ne-link'))) return;
+      const re = new RegExp(URL_SRC, 'gi'), found = []; let m;
+      while ((m = re.exec(t.data))) { const u = trimUrl(m[0]); found.push([m.index, m.index + u.length]); }
+      for (let i = found.length - 1; i >= 0; i--) {
+        const st = found[i][0], en = found[i][1];
+        // এখনো এই URL এর ভেতরে/শেষে লিখছে → এখন ধরো না
+        if (!force && collapsed && P[0].n === t && P[0].o >= st && P[0].o <= en) { again = true; continue; }
+        const tail = en < t.data.length ? t.splitText(en) : null;
+        const mid = st > 0 ? t.splitText(st) : t;
+        each(p => {
+          if (p.n !== t) return;
+          if (tail && p.o > en) { p.n = tail; p.o -= en; }
+          else if (st > 0 && p.o > st) { p.n = mid; p.o -= st; }
+        });
+        const a = document.createElement('a');
+        a.className = 'ne-link'; a.href = hrefOf(mid.data); a.target = '_blank'; a.rel = 'noopener noreferrer';
+        mid.parentNode.insertBefore(a, mid); a.appendChild(mid);
+        // কার্সর লিংকের একদম শেষে থাকলে লিংকের বাইরে রাখো
+        each(p => {
+          if (p.n === mid && p.o === mid.data.length) {
+            let nx = a.nextSibling;
+            if (!nx || nx.nodeType !== 3) { nx = document.createTextNode(''); a.parentNode.insertBefore(nx, a.nextSibling); }
+            p.n = nx; p.o = 0;
+          }
+        });
+        changed = true;
+      }
     });
-    if (saved) { try { putCaret(saved[0], saved[1]); } catch (e) {} }
-    if (skipped && focused) { clearTimeout(linkT); linkT = setTimeout(() => linkify(), 1500); }
+
+    // ৪) DOM বদলালে কার্সর/সিলেকশন ঠিক জায়গায় ফেরাও
+    if (changed && P) {
+      try {
+        const r = document.createRange();
+        r.setStart(P[0].n, P[0].o); r.setEnd(P[1].n, P[1].o);
+        sel.removeAllRanges(); sel.addRange(r);
+      } catch (e) {}
+    }
+    if (again && focused) { clearTimeout(linkT); linkT = setTimeout(() => linkify(), 1500); }
   }
+  body().addEventListener('compositionstart', () => { composing = true; });
+  body().addEventListener('compositionend', () => { composing = false; clearTimeout(linkT); linkT = setTimeout(() => linkify(), 400); });
   body().addEventListener('click', e => {
     const a = e.target.closest && e.target.closest('a.ne-link'); if (!a) return;
     const sel = getSelection(); if (sel && !sel.isCollapsed) return;      // টেক্সট সিলেক্ট করছে — খুলো না
@@ -5314,7 +5374,16 @@ window.addEventListener('DOMContentLoaded', () => {
   });
   $('neTitle').addEventListener('input', autosave);
   $('neTitle').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); body().focus(); } });
-  body().addEventListener('input', () => { syncEmpty(); autosave(); clearTimeout(linkT); linkT = setTimeout(() => linkify(), 700); });
+  body().addEventListener('input', () => {
+    syncEmpty(); autosave();
+    // কার্সর যে লিংকের ভেতরে আছে সেটা আর পুরো URL না থাকলে (যেমন Enter চেপে/স্পেস দিয়ে লিখলে) সাথে সাথে লিংক খুলে ফেলো — লেখা যেন লিংকের সাথে না লাগে
+    try {
+      const s = getSelection(), an = s.anchorNode, el = an && (an.nodeType === 1 ? an : an.parentNode);
+      const a = el && el.closest && el.closest('a.ne-link');
+      if (a && !FULL_URL.test(a.textContent)) { clearTimeout(linkT); linkify(); return; }
+    } catch (e) {}
+    clearTimeout(linkT); linkT = setTimeout(() => linkify(), 700);
+  });
   body().addEventListener('paste', e => {
     const cd = e.clipboardData; if (!cd) return;
     const files = [...(cd.files || [])].filter(f => f.type.startsWith('image/'));
