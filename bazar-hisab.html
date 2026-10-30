@@ -7,16 +7,16 @@
 
 <!-- PWA -->
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#F6F7F5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#EEF1EE" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0B0F0D" media="(prefers-color-scheme: dark)">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@500;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@500;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     color-scheme: light dark;
-    --bg:#F6F7F5; --bg2:#FFFFFF; --bg3:#EFF1EE; --card:#FFFFFF;
+    --bg:#EEF1EE; --bg2:#FFFFFF; --bg3:#EFF1EE; --card:#FFFFFF;
     --line:rgba(17,24,21,0.09); --border:rgba(17,24,21,0.09);
     --accent:#1B4332; --accent2:#2D6A4F; --gold:#C89116;
     --text:#121A16; --text2:#55615A; --text3:#8A958F;
@@ -25,7 +25,7 @@
     --float:0 8px 28px rgba(17,24,21,0.16);
     --hero-a:#1B4332; --hero-b:#163828;
     --chart-axis:rgba(17,24,21,0.18); --tip-bg:#121A16; --tip-fg:#fff; --tip-val:#F2C14E;
-    --font-num:'Inter','Hind Siliguri',system-ui,sans-serif;
+    --font-num:'Noto Sans Bengali','Hind Siliguri',system-ui,sans-serif;
     /* পুরনো নামগুলো নতুন টোকেনে ম্যাপ করা */
     --paper:var(--bg); --ink:var(--text); --green:var(--accent); --green-2:var(--accent2);
     --mustard:var(--gold); --mustard-light:#fff; --shadow:transparent;
@@ -504,6 +504,13 @@
     padding:16px 16px; font-size:0.95rem; border-radius:8px;
     border:1px solid var(--line); margin-bottom:10px; font-family:'Hind Siliguri', sans-serif;
   }
+  /* ক্যাটাগরির নামে অঙ্ক (যেমন "বাজার ১") স্পষ্ট দেখাতে Noto Sans Bengali */
+  #categoryPickerList .picker-item .nm, .cat-chip, .cd-label, .hist-cat span, .cart-cat-head span, .cl-cat-label, #catDropPanel .cat-chip{
+    font-family:'Noto Sans Bengali','Hind Siliguri',sans-serif;
+  }
+  .pg-more{ display:flex; justify-content:center; padding:12px 0 8px; overflow-anchor:none; }
+  .pg-btn{ border:1px solid var(--hair); background:var(--surface-2); color:var(--text); font:inherit; font-size:0.85rem; font-weight:600; padding:9px 20px; border-radius:999px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .pg-btn:active{ transform:scale(.97); }
   .picker-none{ padding:24px 16px; text-align:center; color:var(--text3); font-style:italic; }
   #templateModal.picker-overlay{ align-items:stretch; padding-top:0; }
   #templateModal .picker-sheet{ max-height:100vh; max-height:100dvh; height:100vh; height:100dvh; border-radius:0; }
@@ -669,6 +676,23 @@
   .history-entry{ background:var(--card); border:1px solid var(--line); border-radius:14px; }
   .history-entry[open]{ background:var(--bg3); border-color:var(--accent2); }
   .hist-checklist-badge{ background:var(--pill); color:var(--accent2); }
+  .home-hist{ margin-top:14px; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:14px 14px 10px; }
+  .hh-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:2px; }
+  .hh-title{ font-weight:700; color:var(--text); font-size:1rem; }
+  .hh-all{ background:none; border:none; color:var(--accent2); font:inherit; font-size:0.82rem; font-weight:600; cursor:pointer; padding:4px 2px; }
+  .hh-hint{ color:var(--text3); font-size:0.74rem; margin:0 0 10px; }
+  .hh-item{ display:flex; justify-content:space-between; align-items:center; gap:10px; width:100%; text-align:left; font:inherit; color:var(--text);
+    background:var(--bg3); border:1px solid var(--line); border-radius:14px; padding:11px 13px; margin-bottom:8px; cursor:pointer;
+    -webkit-tap-highlight-color:transparent; transition:border-color .15s ease, transform .1s ease; }
+  .hh-item:hover{ border-color:var(--accent2); }
+  .hh-item:active{ transform:scale(.985); }
+  .hh-item .hh-date{ font-weight:600; font-size:0.9rem; }
+  .hh-item .hh-sub{ color:var(--text3); font-size:0.76rem; margin-top:2px; }
+  .hh-item{ user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+  .hh-item.del-mode{ border-color:var(--brick); background:rgba(200,70,60,.08); }
+  .hh-item .hh-del{ display:inline-flex; align-items:center; gap:6px; background:var(--brick); color:#fff; font-weight:700; font-size:0.85rem; padding:8px 14px; border-radius:12px; white-space:nowrap; }
+  .hh-item .hh-del .ic{ width:16px; height:16px; }
+  .hh-item .hh-total{ font-family:var(--font-num); font-weight:600; color:var(--accent2); white-space:nowrap; }
   .trend-panel{ background:var(--bg3); border:1px solid var(--line); }
   .mover-card{ background:var(--bg2); border:1px solid var(--line); border-radius:14px; }
   .mover-card:hover{ border-color:var(--accent2); box-shadow:none; transform:none; }
@@ -713,6 +737,412 @@
     height:var(--vvh, 100dvh); max-height:var(--vvh, 100dvh);
   }
   .item-menu-popup{ max-height:calc(var(--vvh, 100dvh) - 16px); overflow-y:auto; }
+
+  /* ===== প্রিমিয়াম পলিশ: সারফেস টোন, কনট্রাস্ট, টাইপোগ্রাফি, স্পেসিং, ডেপথ, চিপ ===== */
+  :root{
+    --surface-1:#FFFFFF; --surface-2:#F3F5F2; --surface-3:#E9EDE9;
+    --hair:rgba(17,24,21,0.08);
+    --brick-line:rgba(180,65,47,0.38);
+    --text3:#6B7771;
+    --card-shadow:0 1px 2px rgba(17,24,21,0.04), 0 14px 28px -18px rgba(17,24,21,0.22);
+    --card-sheen:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0) 55%);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0B0F0D; --card:#151A17; --bg2:#1B211D; --bg3:#1F2621;
+      --surface-1:#151A17; --surface-2:#1B211D; --surface-3:#232A25;
+      --hair:rgba(255,255,255,0.07);
+      --brick-line:rgba(248,113,113,0.42);
+      --text2:#B6C1BA; --text3:#8E9A93;
+      --card-shadow:0 1px 0 rgba(255,255,255,0.045) inset, 0 16px 30px -18px rgba(0,0,0,0.75);
+      --card-sheen:linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0) 55%);
+    }
+  }
+
+  /* কার্ড: হালকা গ্রেডিয়েন্ট + সফট বর্ডার + সামান্য ছায়া */
+  .card, .receipt-shell, .home-hist{
+    background:var(--card-sheen), var(--surface-1);
+    border:1px solid var(--hair); border-radius:20px; box-shadow:var(--card-shadow);
+  }
+  .card{ padding:20px 18px; }
+  .receipt-shell{ margin-top:18px; padding:20px 18px; }
+  .home-hist{ margin-top:18px; padding:18px 16px 10px; }
+
+  /* সারফেস: ইনপুট/সিলেক্টর/বাটন একই গাঢ় টোনের কাছাকাছি, রং শুধু প্রাইমারিতে */
+  .card .cat-drop-btn, .card .item-picker-btn, .card .qty-unit-box{
+    background:var(--surface-2); border:1px solid var(--hair); border-radius:14px;
+  }
+  .card .cat-drop-btn:hover, .card .cat-drop-btn.open, .card .item-picker-btn:hover{ background:var(--surface-3); border-color:var(--hair); }
+  .btn{ padding:13px 16px; border-radius:14px; }
+  .btn-ghost{ background:var(--surface-2); color:var(--text); border:1px solid var(--hair); }
+  .btn-ghost:hover, .btn-ghost:active{ background:var(--surface-3); }
+  .btn-danger{ background:transparent; color:var(--brick); border:1px solid var(--brick-line); }
+  .btn-danger:hover, .btn-danger:active{ background:var(--brick-soft); }
+  .btn-primary{ box-shadow:inset 0 1px 0 rgba(255,255,255,0.14); }
+  .row2{ gap:12px; }
+  .actions-row{ gap:12px; margin-top:20px; }
+
+  /* কনট্রাস্ট: সেকেন্ডারি টেক্সট আরও পরিষ্কার */
+  input::placeholder{ color:var(--text3); opacity:1; }
+  .qty-unit-box span, .item-picker-btn .ipb-arrow, .cat-drop-btn .cd-arrow{ color:var(--text2); }
+  .receipt-head .date, .cart-item-meta .price, .hh-hint, .hh-item .hh-sub{ color:var(--text2); }
+  .cart-empty, .empty-note{ font-style:normal; color:var(--text2); }
+
+  /* টাইপোগ্রাফি: সব শিরোনাম একই ফন্ট (Hind Siliguri) ও ৭০০ ওজনে */
+  h1, h2, h3, .brand, .receipt-head .store, .cart-cat-head, .grand .lbl, .hh-title, .picker-title{
+    font-family:'Hind Siliguri', system-ui, sans-serif; letter-spacing:0;
+  }
+  .receipt-head .store, .hh-title, .card h2{ font-weight:700; font-size:1.15rem; color:var(--text); }
+  .cart-cat-head{ font-weight:700; font-size:0.9rem; color:var(--text); border-bottom:1px solid var(--hair); }
+  .cart-item-name{ font-weight:600; }
+
+  /* হায়ারার্কি: সেকেন্ডারি লিংক ও ✕ মিউটেড, সরানোর সময়ই লাল */
+  .hh-all{ color:var(--text2); }
+  .hh-all::after{ content:" ›"; }
+  .del-btn{ color:var(--text3); width:28px; height:28px; padding:0; display:inline-flex; align-items:center; justify-content:center; font-size:0.8rem; border-radius:9px; opacity:0.9; }
+  .del-btn:hover, .del-btn:active{ color:var(--brick); background:var(--brick-soft); opacity:1; }
+  .cart-cat-subtotal{ font-style:normal; color:var(--text2); padding:10px 2px 8px; }
+
+  /* স্পেসিং: সারিগুলোতে শ্বাস নেওয়ার জায়গা */
+  .receipt-head{ padding-bottom:14px; margin-bottom:6px; border-bottom:1px solid var(--hair); }
+  .cart-cat-head{ padding:14px 2px 8px; margin-top:8px; }
+  .cart-item{ padding:14px 2px; border-bottom:1px solid var(--hair); }
+  .cart-item-meta{ gap:6px 10px; margin-top:8px; align-items:center; }
+  .grand{ margin-top:18px; padding:18px 20px; }
+
+  /* চিপ/পিল: পরিমাণের ডটেড আন্ডারলাইন বাদ */
+  .cart-item-meta .qty-editable, .qty-editable{
+    border-bottom:none; padding:3px 11px; border-radius:999px;
+    background:var(--pill); color:var(--accent); font-weight:600; font-size:0.78rem;
+  }
+
+  /* আগের বাজার কার্ড + হিস্টরি এন্ট্রি */
+  .hh-item{ background:var(--surface-2); border:1px solid var(--hair); border-radius:16px; padding:14px 15px; margin-bottom:10px; }
+  .hh-item:hover, .hh-item:active{ background:var(--surface-3); border-color:var(--hair); }
+  .hh-item.del-mode{ border-color:var(--brick); background:var(--brick-soft); }
+  .history-entry{ background:var(--surface-2); border:1px solid var(--hair); border-radius:16px; padding:14px 15px; }
+  .history-entry[open]{ background:var(--surface-3); border-color:var(--hair); }
+
+  /* ===== ইন্টারঅ্যাকশন + পার্সোনালিটি ===== */
+  /* অ্যাকশন বাটন: একটাই প্রাইমারি, বাকিগুলো হালকা আইকন-বাটন */
+  .actions-row{ grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; margin-top:20px; }
+  .actions-row #copyWithPriceBtn{
+    grid-column:1 / -1; padding:15px 16px; font-weight:700; font-size:1rem;
+    background:var(--pill); color:var(--accent); border:1px solid transparent;
+  }
+  .actions-row #copyWithPriceBtn:active{ background:var(--pill); filter:brightness(.95); }
+  .actions-row .btn:not(#copyWithPriceBtn){
+    flex-direction:column; gap:5px; padding:10px 4px 8px; background:transparent; border:1px solid transparent;
+    color:var(--text2); font-size:0.78rem; font-weight:600; line-height:1.25; text-align:center; border-radius:14px;
+  }
+  .actions-row .btn:not(#copyWithPriceBtn) .ic{ width:1.4em; height:1.4em; }
+  .actions-row .btn-ghost:not(#copyWithPriceBtn):active{ background:var(--surface-2); }
+  .actions-row .btn-danger{ color:var(--brick); }
+  .actions-row .btn-danger:active{ background:var(--brick-soft); }
+
+  /* ফিক্স ১: প্রাইমারি কপি বাটন — স্পষ্ট সবুজ টিন্ট, আর "disabled"-এর মতো নয় */
+  .actions-row #copyWithPriceBtn{
+    background:rgba(45,106,79,0.24); color:var(--accent);
+    border:1px solid rgba(45,106,79,0.40);
+  }
+  .actions-row #copyWithPriceBtn:active{ background:rgba(45,106,79,0.32); filter:none; }
+  @media (prefers-color-scheme: dark){
+    .actions-row #copyWithPriceBtn{ background:rgba(95,211,154,0.22); border-color:rgba(95,211,154,0.45); }
+    .actions-row #copyWithPriceBtn:active{ background:rgba(95,211,154,0.30); }
+  }
+
+  /* ফিক্স ৪: ক্লিয়ার বাটন লাল — আগের নিয়মটা :not(#id)-এর কারণে বেশি স্পেসিফিসিটি পেয়ে লালকে হারিয়ে দিচ্ছিল */
+  .actions-row .btn.btn-danger:not(#copyWithPriceBtn){ color:var(--brick); }
+  .actions-row .btn.btn-danger:not(#copyWithPriceBtn):active{ background:var(--brick-soft); }
+
+  /* হিরো কার্ড: হালকা গ্রেডিয়েন্ট + প্যাটার্ন + রিং ডেকর */
+  .grand{
+    position:relative; overflow:hidden;
+    background:
+      radial-gradient(120% 160% at 100% 0%, rgba(255,255,255,0.16), rgba(255,255,255,0) 55%),
+      repeating-linear-gradient(135deg, rgba(255,255,255,0.016) 0 2px, rgba(255,255,255,0) 2px 16px),
+      linear-gradient(160deg, var(--hero-a) 0%, var(--hero-b) 100%);
+  }
+  .grand::after{
+    content:""; position:absolute; right:-38px; bottom:-52px; width:150px; height:150px; border-radius:50%;
+    border:1px solid rgba(255,255,255,0.12);
+    box-shadow:0 0 0 22px rgba(255,255,255,0.035), 0 0 0 44px rgba(255,255,255,0.02);
+    pointer-events:none;
+  }
+  .grand > *{ position:relative; z-index:1; }
+
+  /* ক্যাটাগরি আইকন */
+  .cart-cat-head{ display:flex; align-items:center; gap:9px; }
+  .cat-ic{ width:26px; height:26px; border-radius:8px; background:var(--pill); color:var(--accent); display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .cat-ic svg{ width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* ফাঁকা অবস্থা */
+  .cart-empty{ display:flex; flex-direction:column; align-items:center; gap:6px; padding:26px 10px 22px; text-align:center; }
+  .ce-art{ width:92px; height:92px; margin-bottom:4px; }
+  .ce-title{ font-weight:700; color:var(--text); font-size:1rem; }
+  .ce-sub{ color:var(--text2); font-size:0.8rem; line-height:1.5; max-width:260px; }
+
+  /* স্টেপার */
+  .qty-step{ display:inline-flex; align-items:center; gap:2px; background:var(--surface-2); border:1px solid var(--hair); border-radius:999px; padding:2px; }
+  .qs-btn{ width:28px; height:28px; padding:0; border:none; border-radius:50%; background:transparent; color:var(--text);
+    font-family:var(--font-num); font-size:1.1rem; line-height:1; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
+    transition:background .12s ease, transform .1s ease; -webkit-tap-highlight-color:transparent; }
+  .qs-btn:active{ background:var(--pill); color:var(--accent); transform:scale(.88); }
+  .qty-step .qty-editable{ background:transparent; color:var(--text); padding:2px 6px; min-width:44px; text-align:center; border-radius:8px; }
+
+  /* সোয়াইপ-টু-ডিলিট */
+  .cart-item{ position:relative; overflow:hidden; padding:0; touch-action:pan-y; border-bottom:1px solid var(--hair); }
+  .ci-fg{ position:relative; background:var(--surface-1); padding:14px 2px; transition:transform .22s cubic-bezier(.2,.8,.2,1); will-change:transform; }
+  .ci-bg{ position:absolute; inset:0; display:flex; align-items:center; justify-content:flex-end; padding-right:22px; background:var(--brick-soft); color:var(--brick); transition:background .15s ease, color .15s ease; }
+  .ci-bg .ic{ width:1.35em; height:1.35em; }
+  .cart-item.ci-armed .ci-bg{ background:var(--brick); color:#fff; }
+  @keyframes ciIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+  .cart-item.ci-new .ci-fg{ animation:ciIn .32s cubic-bezier(.2,.8,.2,1) backwards; }
+
+  /* আনডু বার */
+  .undo-bar{
+    position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translate(-50%, 24px); opacity:0; pointer-events:none;
+    display:flex; align-items:center; gap:14px; max-width:calc(100vw - 28px); padding:10px 10px 10px 16px;
+    background:#1B231F; color:#fff; border:1px solid rgba(255,255,255,0.08); border-radius:14px; box-shadow:var(--float);
+    font-size:0.86rem; z-index:9000; transition:opacity .2s ease, transform .25s cubic-bezier(.2,.8,.2,1);
+  }
+  .undo-bar.show{ opacity:1; transform:translate(-50%, 0); pointer-events:auto; }
+  .undo-bar .ub-msg{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .undo-bar .ub-btn{ border:none; background:rgba(95,211,154,0.16); color:#8FDBB0; font:inherit; font-weight:700; padding:7px 12px; border-radius:10px; cursor:pointer; white-space:nowrap; }
+
+  /* ===== ডিজাইন পলিশ ৩ ===== */
+  /* ১) কমপ্যাক্ট রো: ওপরে নাম + দাম + ✕, নিচে ছোট স্টেপার + ইউনিট দাম */
+  .ci-fg{
+    display:grid; grid-template-columns:1fr auto auto; column-gap:8px; row-gap:6px;
+    align-items:center; padding:9px 2px; background:transparent;
+  }
+  .cart-item-top, .cart-item-meta{ display:contents; }
+  .cart-item-name{ grid-row:1; grid-column:1; font-size:0.95rem; line-height:1.3; }
+  .cart-item-meta .sub{ grid-row:1; grid-column:2; margin:0; font-size:0.95rem; }
+  .ci-fg .del-btn{ grid-row:1; grid-column:3; }
+  .qty-step{ grid-row:2; grid-column:1; justify-self:start; }
+  .cart-item-meta .price{ grid-row:2; grid-column:2 / 4; justify-self:end; font-size:0.76rem; }
+  .qty-step .qs-btn{ width:26px; height:26px; font-size:1rem; }
+  .qty-step .qty-editable{ font-size:0.8rem; min-width:40px; padding:2px 4px; }
+  /* সোয়াইপের সময়ই শুধু ব্যাকগ্রাউন্ড সলিড — নইলে কার্ডের গ্রেডিয়েন্টে সূক্ষ্ম দাগ পড়ে */
+  .ci-bg{ opacity:0; }
+  .cart-item.ci-swiping .ci-bg{ opacity:1; }
+  .cart-item.ci-swiping .ci-fg{ background:var(--surface-1); }
+
+  /* ২) "যোগ করো" আরও গাঢ় ও জোরালো */
+  .btn.add-pill{
+    background:linear-gradient(160deg,#256B4F 0%,#1B4332 100%); color:#fff; font-weight:700;
+    box-shadow:0 8px 18px -8px rgba(27,67,50,0.65), inset 0 1px 0 rgba(255,255,255,0.18);
+    opacity:1;
+  }
+  .btn.add-pill:hover{ opacity:1; }
+  .btn.add-pill:active{ filter:brightness(.92); }
+  @media (prefers-color-scheme: dark){
+    .btn.add-pill{ background:linear-gradient(160deg,#6FE0AB 0%,#3FB985 100%); color:#06150D; box-shadow:0 8px 18px -8px rgba(95,211,154,0.45), inset 0 1px 0 rgba(255,255,255,0.25); }
+  }
+
+  /* ৩) স্টিকি মোট বার */
+  .wrap{ padding-bottom:64px; }
+  .sticky-total{
+    position:fixed; left:50%; bottom:calc(14px + env(safe-area-inset-bottom));
+    transform:translate(-50%, 30px); opacity:0; pointer-events:none;
+    display:flex; align-items:baseline; gap:8px; padding:11px 22px; border-radius:999px;
+    border:1px solid rgba(255,255,255,0.10); font:inherit; color:#fff; cursor:pointer;
+    background:linear-gradient(160deg,var(--hero-a) 0%,var(--hero-b) 100%);
+    box-shadow:var(--float); z-index:60; white-space:nowrap;
+    transition:opacity .2s ease, transform .25s cubic-bezier(.2,.8,.2,1);
+  }
+  .sticky-total.show{ opacity:1; transform:translate(-50%, 0); pointer-events:auto; }
+  .sticky-total .st-l, .sticky-total .st-c{ font-size:0.82rem; opacity:0.8; }
+  .sticky-total .st-v{ font-size:1.1rem; font-weight:700; }
+
+  /* ৪) ক্যাটাগরি সাবটোটাল পরিষ্কার */
+  .cart-cat-subtotal{ justify-content:flex-end; align-items:baseline; gap:10px; padding:2px 2px 6px; }
+  .cart-cat-subtotal span:first-child{ font-size:0.78rem; color:var(--text2); }
+  .cart-cat-subtotal .val{ color:var(--text); font-weight:700; font-size:0.95rem; }
+
+  /* ===== ডিজাইন পলিশ ২ ===== */
+  /* ২) দাম শান্ত: সবুজ শুধু মোট খরচ ও প্রাইমারি বাটনে */
+  .cart-item-meta .sub{ color:var(--text); font-weight:600; }
+  .cart-cat-subtotal .val{ color:var(--text2); font-weight:600; }
+  .hh-item .hh-total, .hist-total, .tpl-total, .tpl-d-sub{ color:var(--text); font-weight:600; }
+
+  /* ৩) লাইন কম: গ্যাপ আর ক্যাটাগরি লেবেল দিয়েই ভাগ */
+  .cart-item{ border-bottom:none; }
+  .ci-fg{ padding:11px 2px; }
+  .cart-cat-head{ border-bottom:none; margin-top:20px; padding:4px 2px 4px; }
+  .cart-cat-head:first-child{ margin-top:6px; }
+  .cart-cat-subtotal{ padding:4px 2px 6px; }
+  .cart-cat-subtotal span:first-child{ font-size:0.76rem; color:var(--text3); }
+
+  /* ৪) স্টেপারে পপ অ্যানিমেশন */
+  @keyframes qtyPop{ 0%{ transform:scale(.78); } 55%{ transform:scale(1.14); } 100%{ transform:scale(1); } }
+  .qty-pop{ display:inline-block; animation:qtyPop .26s cubic-bezier(.2,.9,.3,1.3); }
+
+  /* ৫) টপ কার্ড: সার্চ-বার + পিল */
+  .item-picker-btn.search-bar{
+    width:100%; justify-content:flex-start; gap:10px; border-radius:999px; padding:14px 18px;
+    background:var(--surface-2); border:1px solid var(--hair); color:var(--text2);
+  }
+  .item-picker-btn.search-bar .ic{ width:1.2em; height:1.2em; color:var(--text2); }
+  .item-picker-btn.search-bar .ipb-label{ flex:1; text-align:left; }
+  .card .qty-unit-box{ border-radius:999px; padding:0 18px; }
+  .add-pill{ border-radius:999px !important; padding:13px 16px; }
+  .other-input{
+    margin-top:10px; border-radius:999px; background:transparent; border:1px dashed var(--hair);
+    padding:11px 18px; font-size:0.9rem;
+  }
+  .other-input:focus{ background:var(--surface-2); border-style:solid; }
+
+  /* ৬) ক্যাটাগরি আইকনে আলাদা রং */
+  .cat-ic.k-pill  { background:rgba(59,130,196,.14); color:#2B6CB0; }
+  .cat-ic.k-leaf  { background:rgba(45,106,79,.14);  color:#2D6A4F; }
+  .cat-ic.k-apple { background:rgba(214,80,60,.13);  color:#C2412D; }
+  .cat-ic.k-fish  { background:rgba(14,150,170,.14); color:#0E8EA0; }
+  .cat-ic.k-milk  { background:rgba(110,110,200,.14);color:#5B5BC0; }
+  .cat-ic.k-wheat { background:rgba(200,145,22,.16); color:#A87612; }
+  @media (prefers-color-scheme: dark){
+    .cat-ic.k-pill  { background:rgba(96,165,250,.18); color:#7FB5F0; }
+    .cat-ic.k-leaf  { background:rgba(95,211,154,.16); color:#5FD39A; }
+    .cat-ic.k-apple { background:rgba(248,113,113,.17);color:#F5897A; }
+    .cat-ic.k-fish  { background:rgba(34,211,238,.15); color:#4FD1E0; }
+    .cat-ic.k-milk  { background:rgba(165,165,240,.17);color:#A5A5F0; }
+    .cat-ic.k-wheat { background:rgba(224,176,74,.18); color:#E0B04A; }
+  }
+  @media (prefers-reduced-motion: reduce){ .qty-pop{ animation:none; } }
+
+  /* ===== ডিজাইন পলিশ ৪ ===== */
+  /* নতুন ক্যাটাগরি আইকনের রং */
+  .cat-ic.k-utensils{ background:rgba(217,119,43,.15); color:#C2621A; }
+  .cat-ic.k-cart    { background:rgba(192,57,122,.13); color:#B02A6C; }
+  @media (prefers-color-scheme: dark){
+    .cat-ic.k-utensils{ background:rgba(251,146,60,.17); color:#FDA45C; }
+    .cat-ic.k-cart    { background:rgba(244,114,182,.16);color:#F58BBF; }
+  }
+
+  /* রো: নাম+দাম ওপরে, নিচে স্টেপার আর ইউনিট দাম পাশাপাশি; ✕ লুকানো (সোয়াইপ করে মুছুন) */
+  .ci-fg{ grid-template-columns:auto 1fr auto auto; column-gap:0; row-gap:3px; padding:6px 2px; }
+  .cart-item-name{ grid-row:1; grid-column:1 / 3; padding-right:8px; }
+  .cart-item-meta .sub{ grid-row:1; grid-column:3; margin-left:8px; }
+  .ci-fg .del-btn{ display:none; grid-row:1; grid-column:4; margin-left:6px; }
+  @media (hover:hover){ .cart-item:hover .ci-fg .del-btn{ display:inline-flex; } }
+  .qty-step{ grid-row:2; grid-column:1; justify-self:start; }
+  .cart-item-meta .price{ grid-row:2; grid-column:2 / 5; justify-self:start; margin-left:10px; font-size:0.78rem; color:var(--text2); }
+  .qty-step .qs-btn{ width:24px; height:24px; }
+  .cart-cat-head{ margin-top:14px; }
+  .cart-cat-head:first-child{ margin-top:4px; }
+
+  /* স্টিকি বারের গোনা: একটু স্পষ্ট */
+  .sticky-total .st-c{ font-size:0.9rem; opacity:0.95; font-weight:600; }
+
+  /* ===== হিস্টরি পলিশ ===== */
+  .hist-hero{
+    position:relative; overflow:hidden; display:flex; justify-content:space-between; align-items:flex-end;
+    margin:4px 0 14px; padding:16px 18px; border-radius:18px; color:#fff;
+    border:1px solid rgba(255,255,255,0.06);
+    background:
+      radial-gradient(120% 160% at 100% 0%, rgba(255,255,255,0.14), rgba(255,255,255,0) 55%),
+      linear-gradient(160deg, var(--hero-a) 0%, var(--hero-b) 100%);
+  }
+  .hist-hero .hl{ font-size:0.8rem; opacity:0.78; }
+  .hist-hero .hv{ font-size:1.7rem; font-weight:700; letter-spacing:-0.01em; line-height:1.2; margin-top:2px; }
+  .hist-hero .hc{ font-size:0.8rem; background:rgba(255,255,255,0.14); padding:4px 12px; border-radius:999px; white-space:nowrap; }
+  .hist-month{ font-size:0.8rem; font-weight:700; color:var(--text2); letter-spacing:0.02em; margin:16px 4px 8px; }
+  .hist-hero + .hist-month{ margin-top:4px; }
+
+  .history-entry{ padding:13px 14px; margin-bottom:8px; }
+  .history-entry summary{ justify-content:flex-start; gap:8px; }
+  .history-entry .hist-date{ flex:1; min-width:0; font-weight:600; font-size:0.95rem; }
+  .history-entry .hist-total{ color:var(--text); font-weight:700; margin-left:auto; }
+  .history-entry summary::after{
+    content:""; width:7px; height:7px; flex-shrink:0; margin-left:4px; margin-bottom:3px;
+    border-right:2px solid var(--text3); border-bottom:2px solid var(--text3);
+    transform:rotate(45deg); transition:transform .2s ease;
+  }
+  .history-entry[open] summary::after{ transform:rotate(225deg); margin-bottom:-2px; }
+  .hist-checklist-badge{ font-weight:600; }
+
+  .hist-body{ border-top:none; margin-top:6px; padding-top:0; }
+  .hist-cat{ display:flex; align-items:center; gap:8px; font-size:0.88rem; color:var(--text); margin:14px 0 4px; }
+  .hist-cat .cat-ic{ width:22px; height:22px; border-radius:7px; }
+  .hist-cat .cat-ic svg{ width:13px; height:13px; }
+  .hist-item{ padding:6px 2px; font-size:0.9rem; color:var(--text); }
+  .hist-item > span:last-child{ font-weight:600; }
+  .hist-item-editable > span:last-child{ border-bottom:none; }
+  .hist-item-editable{ border-radius:8px; }
+  .hist-item-editable:active{ background:var(--surface-3); }
+  .hist-cat-total{ font-size:0.78rem; color:var(--text2); padding:2px 2px 0; }
+
+  /* ===== মূল্য উঠানামা পলিশ ===== */
+  .mover-card .mover-fire{
+    width:28px; height:28px; border-radius:9px; display:inline-flex; align-items:center; justify-content:center;
+    background:var(--brick-soft); color:var(--brick);
+  }
+  .mover-card .mover-fire.down{ background:rgba(45,106,79,0.13); color:var(--accent2); }
+  .mover-card .mover-fire .ic{ width:16px; height:16px; }
+
+  /* ক্যাটাগরি চিপ: ডানে ফেড = আরও স্ক্রল করা যায় */
+  #trendCatChips{ -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent); mask-image:linear-gradient(90deg,#000 88%,transparent); padding-right:24px; }
+
+  /* সাজান + সময়: এক লাইনে দুটো পিল-সিলেক্টর */
+  .trend-filter-row{ display:flex; gap:8px; margin:0 0 10px; }
+  .trend-filter-row > div{ flex:1; min-width:0; }
+  .sel-pill{ position:relative; }
+  .sel-pill select{
+    -webkit-appearance:none; appearance:none; width:100%; border-radius:999px;
+    background:var(--surface-2); border:1px solid var(--hair); color:var(--text);
+    font-size:0.88rem; font-weight:600; padding:10px 32px 10px 16px;
+  }
+  .sel-pill .sp-arrow{ position:absolute; right:14px; top:50%; transform:translateY(-50%); font-size:0.7rem; color:var(--text2); pointer-events:none; }
+
+  /* সার্চ: হোমের মতো পিল + আইকন */
+  #trendSearchInput{
+    border-radius:999px; background-color:var(--surface-2); border:1px solid var(--hair);
+    padding:12px 18px 12px 44px;
+    background-repeat:no-repeat; background-position:16px center; background-size:18px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A958F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><path d='m21 21-4.3-4.3'/></svg>");
+  }
+
+  /* তালিকা: দাম শান্ত, রো-র মাঝের লাইন নেই, ক্যাটাগরি আইকনসহ */
+  #trendListBox .plist-row{ border-bottom:none; }
+  #trendListBox .plist-item{ padding:9px 6px; border-radius:12px; }
+  #trendListBox .plist-item:active{ background:var(--surface-2); }
+  #trendListBox .plist-item .pr{ color:var(--text); font-weight:600; border-bottom:none; }
+  #trendListBox .plist-item .cat-ic{ width:30px; height:30px; border-radius:10px; }
+  #trendListBox .plist-item .cat-ic svg{ width:16px; height:16px; }
+
+  /* ===== স্ক্রল পারফরম্যান্স ===== */
+  /* খুব লম্বা কার্ডে বড় blur-ছায়া প্রতি ফ্রেমে আবার আঁকা হয় — এই পেজগুলোতে বন্ধ */
+  #tabPage3 .card, #tabPage4 .card, #tabPage5 .card{ box-shadow:none; }
+
+  /* ===== মূল্য তালিকার রো: সব রো একই উচ্চতা ===== */
+  .tr-row{ display:flex; align-items:center; gap:10px; min-height:58px; }
+  .tr-l{ display:flex; align-items:center; gap:10px; min-width:0; flex:1; }
+  .tr-names{ display:flex; flex-direction:column; min-width:0; gap:1px; }
+  .tr-nm{ display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tr-unit{ font-size:0.76rem; color:var(--text2); }
+  .tr-r{ display:flex; flex-direction:column; align-items:flex-end; gap:3px; flex-shrink:0; }
+  .tr-badge{ min-height:20px; display:flex; align-items:center; }
+  .tr-badge .trend-pct-up, .tr-badge .trend-pct-down, .tr-badge .trend-pct-flat{
+    font-size:0.74rem; padding:1px 8px; border-radius:999px; line-height:1.5;
+  }
+  .tr-badge .trend-pct-up{ background:var(--brick-soft); }
+  .tr-badge .trend-pct-down{ background:rgba(45,106,79,0.13); }
+  /* আইকন: শুধু ওষুধ নীল, বাকিগুলো হালকা ধূসর — রং শুধু তথ্য দিলেই */
+  #trendListBox .cat-ic:not(.k-pill){ background:var(--surface-3); color:var(--text2); }
+
+  /* বাংলা অঙ্ক পরিষ্কার দেখাতে: tabular-nums বন্ধ, আর সব সংখ্যায় Noto Sans Bengali */
+  *{ font-variant-numeric:normal !important; font-feature-settings:normal !important; }
+  .qty-editable, .qs-btn, .cart-item-meta, .tpl-d-meta, .hh-total, .hh-sub, .hist-total, .hist-item,
+  .cart-cat-subtotal .val, .receipt-head .date, .grand .val, .mover-pct, .mover-price, .hist-checklist-badge,
+  .checklist-progress-label, .checklist-grand-total, .qty-unit-box input{
+    font-family:var(--font-num);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .cart-item.ci-new .ci-fg{ animation:none; }
+    .ci-fg, .undo-bar, .qs-btn, .ci-bg{ transition:none; }
+  }
 </style>
 </head>
 <body>
@@ -751,21 +1181,21 @@
   <!-- TAB 2: Shopping -->
   <div class="tabpage active" id="tabPage2">
     <div class="card">
-      <div style="display:flex; gap:8px; align-items:stretch;">
-        <button type="button" id="selectItemBtn" class="item-picker-btn" style="width:auto; flex:1 1 0;" onclick="openItemPicker()">
-          <span id="selectItemBtnLabel" class="ipb-label">জিনিস সিলেক্ট করুন</span>
-          <span class="ipb-arrow">▾</span>
-        </button>
+      <button type="button" id="selectItemBtn" class="item-picker-btn search-bar" onclick="openItemPicker()">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span id="selectItemBtnLabel" class="ipb-label">জিনিস খুঁজুন…</span>
+      </button>
+      <div style="display:flex; gap:8px; align-items:stretch; margin-top:10px;">
         <div class="qty-unit-box" style="flex:1 1 0;">
-          <input type="number" id="selectQty" min="0" step="0.01" placeholder="যেমন: 5">
+          <input type="number" id="selectQty" min="0" step="0.01" placeholder="যেমন: ৫">
           <span id="selectUnitBadge" onpointerdown="event.preventDefault()" onclick="toggleSelectQtyUnit()">একক</span>
         </div>
+        <button class="btn btn-primary add-pill" style="flex:1 1 0;" onclick="addSelectedItem()"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg> যোগ করো</button>
       </div>
 
-      <div style="display:flex; gap:8px; align-items:stretch; margin-top:10px;">
-        <input type="text" id="otherItemInput" placeholder="অন্যান্য" style="flex:1 1 0; width:50%;">
-        <button class="btn btn-primary" style="flex:1 1 0; width:50%;" onclick="addSelectedItem()"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg> যোগ করো</button>
-      </div>
+      <input type="text" id="otherItemInput" class="other-input" placeholder="অন্যান্য (দাম ছাড়া) — কমা দিয়ে আলাদা করুন"
+        onkeydown="if(event.key==='Enter'){addSelectedItem();}">
+
 
       <div id="selectPreview" class="empty-note" style="display:none; margin-top:4px;"></div>
 
@@ -792,6 +1222,14 @@
         <button class="btn btn-ghost" id="templateOpenBtn" onclick="openTemplateModal()"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg> টেম্পলেট</button>
         <button class="btn btn-danger" onclick="clearQuantities()"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg> ক্লিয়ার</button>
       </div>
+    </div>
+
+    <div class="home-hist" id="homeHistCard" style="display:none;">
+      <div class="hh-head" style="margin-bottom:10px;">
+        <div class="hh-title">আগের বাজার</div>
+        <button type="button" class="hh-all" onclick="switchTab(3)">সব দেখুন</button>
+      </div>
+      <div id="homeHistList"></div>
     </div>
   </div>
 
@@ -822,8 +1260,10 @@
       </div>
       <div id="trendTopMoversBox"></div>
       <div class="trend-chip-row" id="trendCatChips"></div>
-      <div class="trend-chip-row" id="trendSortChips"></div>
-      <div class="trend-chip-row" id="trendRangeChips"></div>
+      <div class="trend-filter-row">
+        <div id="trendSortChips"></div>
+        <div id="trendRangeChips"></div>
+      </div>
       <div class="picker-search-wrap" style="padding:0 0 10px;">
         <input type="text" id="trendSearchInput" class="picker-search" autocomplete="off"
           placeholder="জিনিসের নাম দিয়ে খুঁজুন..." oninput="renderTrendList()">
@@ -849,6 +1289,11 @@
   </div>
 
 </div>
+
+<button type="button" id="stickyTotal" class="sticky-total" aria-label="মোট খরচ"
+  onclick="document.querySelector('.grand').scrollIntoView({behavior:'smooth', block:'center'})">
+  <span class="st-l">মোট</span><span class="st-v">৳ <span id="stTotal">০.০০</span></span><span class="st-c"><span id="stCount">০</span> টি</span>
+</button>
 
 <div id="itemPickerModal" class="picker-overlay" onclick="if(event.target===this) closeItemPicker()">
   <div class="picker-sheet">
@@ -964,6 +1409,7 @@
   const TODAY_LIST_KEY = 'bazarHisab_todayList_v1';
   let quantities = {}; // { name: qty } -- current selection in the shopping tab
   let otherItems = []; // [{id, text}] -- free-text "অন্যান্য" entries in the shopping tab
+  let lastCartKeys = null; // আগের রেন্ডারের আইটেম-কী; নতুন আইটেমে অ্যানিমেশন দিতে
   // আজকের বাজারের লিস্ট রিফ্রেশ/অ্যাপ বন্ধ করলেও থেকে যাবে — শুধু ক্লিয়ার চাপলে মুছবে
   try{
     const saved = JSON.parse(localStorage.getItem(TODAY_LIST_KEY) || 'null');
@@ -986,6 +1432,83 @@
   let categoryPickerFromShop = false; // true when the category picker was opened from the বাজার করুন item-picker's + button
   let catMenuOpenName = null; // category name whose ⋮ menu (নাম পরিবর্তন/মুছুন) is open
   let catMenuBtnEl = null; // the ⋮ button element the category popup is anchored to
+
+  /* ---------- পেজিনেশন: লম্বা লিস্ট অল্প অল্প করে লোড হয় ----------
+     নিচে স্ক্রল করলে নিজে থেকেই পরের অংশ আসে; না এলে "আরও দেখুন" বাটন চাপলেই হবে।
+     ফিল্টার/সার্চ বদলালে (sig বদলালে) আবার শুরু থেকে দেখাবে; শুধু এডিট/টগলের রি-রেন্ডারে আগের লিমিটই থাকবে। */
+  const pgState = {};
+  function pgReset(key){
+    const st = pgState[key];
+    if (st && st.io){ try{ st.io.disconnect(); }catch(e){} }
+    delete pgState[key];
+  }
+  function pgClear(key){ pgReset(key); }
+  function pgFoot(st, key){
+    if (!st || !st.box) return null;
+    return Array.from(st.box.children).find(el => el.classList && el.classList.contains('pg-more') && el.dataset.pg === key) || null;
+  }
+  function pgFooterHtml(key, remaining){
+    if (remaining <= 0) return '';
+    return `<div class="pg-more" data-pg="${key}"><button type="button" class="pg-btn" onclick="event.stopPropagation(); pgLoadMore('${key}')">আরও দেখুন · ${remaining} টি বাকি</button></div>`;
+  }
+  function pgObserve(key){
+    const st = pgState[key];
+    if (!st) return;
+    if (st.io){ try{ st.io.disconnect(); }catch(e){} st.io = null; }
+    const foot = pgFoot(st, key);
+    if (!foot || !('IntersectionObserver' in window)) return;
+    st.io = new IntersectionObserver(es => {
+      if (es.some(e => e.isIntersecting)) pgLoadMore(key);
+    }, { rootMargin: '300px 0px' });
+    st.io.observe(foot);
+  }
+  // box-এ items-এর প্রথম অংশ দেখায়। rowFn(item, index) → HTML স্ট্রিং
+  // o: { step, sig, pre (লিস্টের আগের HTML), ensure (এই ইনডেক্স পর্যন্ত অবশ্যই দেখাতে হবে) }
+  function pgRender(box, key, items, rowFn, o){
+    o = o || {};
+    const step = o.step || 20;
+    const sig = o.sig === undefined ? '' : String(o.sig);
+    let st = pgState[key];
+    if (!st || st.sig !== sig){
+      pgReset(key);
+      st = pgState[key] = { limit: step, sig: sig };
+    }
+    if (o.ensure !== undefined && o.ensure !== null && o.ensure >= st.limit) st.limit = o.ensure + 1;
+    st.box = box; st.items = items; st.rowFn = rowFn; st.step = step;
+    const n = Math.min(items.length, st.limit);
+    st.shown = n;
+    let html = o.pre || '';
+    for (let i = 0; i < n; i++) html += rowFn(items[i], i);
+    html += pgFooterHtml(key, items.length - n);
+    box.innerHTML = html;
+    pgObserve(key);
+  }
+  // পরের অংশ নিচে জুড়ে দেয় (আগের রো-গুলো যেমন আছে তেমনই থাকে — খোলা প্যানেল বন্ধ হয় না)
+  function pgLoadMore(key, all){
+    const st = pgState[key];
+    if (!st) return;
+    const foot = pgFoot(st, key);
+    if (!foot) return;
+    const from = st.shown;
+    const to = all ? st.items.length : Math.min(st.items.length, from + st.step);
+    if (to > from){
+      let html = '';
+      for (let i = from; i < to; i++) html += st.rowFn(st.items[i], i);
+      foot.insertAdjacentHTML('beforebegin', html);
+      st.shown = to;
+      st.limit = to;
+    }
+    const rem = st.items.length - st.shown;
+    if (rem <= 0){
+      if (st.io){ try{ st.io.disconnect(); }catch(e){} st.io = null; }
+      foot.remove();
+      return;
+    }
+    const btn = foot.querySelector('.pg-btn');
+    if (btn) btn.textContent = `আরও দেখুন · ${rem} টি বাকি`;
+    // ফুটার এখনো স্ক্রিনে থাকলে আবার ট্রিগার হওয়ার জন্য নতুন করে observe
+    if (st.io){ try{ st.io.unobserve(foot); st.io.observe(foot); }catch(e){} }
+  }
 
   /* ---------- Google Sheet auto-sync (two-way) ---------- */
   const SCRIPT_URL_KEY = 'bazarHisab_scriptUrl_v1';
@@ -1323,8 +1846,15 @@
     year:'numeric', month:'long', day:'numeric'
   });
 
+  // পুরো অ্যাপে একটাই সংখ্যা-পদ্ধতি: বাংলা অঙ্ক
+  // যে শব্দে ইংরেজি অক্ষর আছে (যেমন 500mg, 2L, B12) সেটা বদলায় না — ওষুধের ডোজ ল্যাটিনেই থাকে
+  function toBn(s){
+    return String(s).split(/(\s+)/).map(t =>
+      /[A-Za-z]/.test(t) ? t : t.replace(/[0-9]/g, d => '০১২৩৪৫৬৭৮৯'[d])
+    ).join('');
+  }
   function fmt(n){
-    return Number(n).toLocaleString('en-IN', { minimumFractionDigits:2, maximumFractionDigits:2 });
+    return toBn(Number(n).toLocaleString('en-IN', { minimumFractionDigits:2, maximumFractionDigits:2 }));
   }
   // যদি একক কেজি হয় আর পরিমাণ ১ কেজির কম হয়, তাহলে গ্রামে দেখায় (যেমন 0.5 → 500 গ্রাম)
   function getDisplayQtyUnit(qty, unit){
@@ -1364,9 +1894,10 @@
     document.getElementById('tabPage4').classList.toggle('active', n===4);
     document.getElementById('tabPage5').classList.toggle('active', n===5);
     if (n === 2) renderSelectDropdown();
-    if (n === 3) renderHistoryList();
-    if (n === 4) renderTrendList();
-    if (n === 5) renderChecklistPageList();
+    if (n === 3){ pgReset('hist'); renderHistoryList(); }
+    if (n === 4){ pgReset('trend'); renderTrendList(); }
+    if (n === 5){ pgReset('clpage'); renderChecklistPageList(); }
+    if (typeof refreshSticky === 'function') refreshSticky(); // হোম ছাড়া অন্য পেজে স্টিকি মোট বার লুকাবে
   }
 
   /* ---------- TAB 1: Price list management ---------- */
@@ -1881,7 +2412,7 @@
       <div class="trend-summary">
         <span>প্রথম দাম: ৳${fmt(first)}<br><small style="color:var(--text3);">${hist[0].date}${hist[0].time ? ' '+hist[0].time : ''}</small></span>
         <span>এখনকার দাম: ৳${fmt(last)}<br><small style="color:var(--text3);">${hist[hist.length-1].date}${hist[hist.length-1].time ? ' '+hist[hist.length-1].time : ''}</small></span>
-        <span class="${trendClass}">${arrow} ${Math.abs(pct).toFixed(1)}%</span>
+        <span class="${trendClass}">${arrow} ${fmtPct(pct)}</span>
       </div>
     `;
   }
@@ -1948,7 +2479,8 @@
     const movers = Object.keys(priceList).map(name => {
       const hist = getFilteredHist(name);
       const info = getTrendPct(name, hist);
-      if (!info) return null;
+      // ৳৫-এর কম দাম (যেমন টেস্টের ৳১) আর "টাকা" এককের জিনিস টপ মুভারে ধরা হবে না
+      if (!info || info.first < 5 || (priceList[name] && priceList[name].unit === 'টাকা')) return null;
       return {
         name,
         unit: priceList[name] ? priceList[name].unit : '',
@@ -1976,9 +2508,11 @@
       const dirClass = m.diff > 0 ? 'up' : (m.diff < 0 ? 'down' : '');
       const arrow = m.diff > 0 ? '▲' : (m.diff < 0 ? '▼' : '—');
       return `<button type="button" class="mover-card" onclick="scrollToMoverItem('${safeKey}')">
-        <span class="mover-fire"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
+        <span class="mover-fire ${dirClass}">${m.diff < 0
+          ? '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>'
+          : '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>'}</span>
         <span class="mover-nm">${m.name}</span>
-        <span class="mover-pct ${dirClass}">${arrow} ${Math.abs(m.pct).toFixed(1)}%</span>
+        <span class="mover-pct ${dirClass}">${arrow} ${fmtPct(m.pct)}</span>
         <div class="mover-price">৳${fmt(m.first)} → ৳${fmt(m.last)}</div>
       </button>`;
     }).join('') + `</div>`;
@@ -1989,7 +2523,8 @@
     const searchInput = document.getElementById('trendSearchInput');
     if (searchInput) searchInput.value = '';
     renderTrendList();
-    const panel = document.getElementById('trend2-' + cssId(name));
+    let panel = document.getElementById('trend2-' + cssId(name));
+    if (!panel){ pgLoadMore('trend', true); panel = document.getElementById('trend2-' + cssId(name)); }
     if (!panel) return;
     toggleTrend2(name);
     const row = panel.closest('.plist-row');
@@ -2001,12 +2536,12 @@
     if (!box) return;
     const opts = [
       { mode: 'name', label: 'নাম অনুযায়ী' },
-      { mode: 'up', label: '▲ সবচেয়ে বেশি বেড়েছে' },
-      { mode: 'down', label: '▼ সবচেয়ে বেশি কমেছে' }
+      { mode: 'up', label: '▲ বেশি বেড়েছে' },
+      { mode: 'down', label: '▼ বেশি কমেছে' }
     ];
-    box.innerHTML = opts.map(o =>
-      `<button type="button" class="cat-chip${trendSortMode === o.mode ? ' active' : ''}" onclick="setTrendSortMode('${o.mode}')">${o.label}</button>`
-    ).join('');
+    box.innerHTML = '<div class="sel-pill"><select aria-label="সাজান" onchange="setTrendSortMode(this.value)">' +
+      opts.map(o => `<option value="${o.mode}"${trendSortMode === o.mode ? ' selected' : ''}>${o.label}</option>`).join('') +
+      '</select><span class="sp-arrow">▾</span></div>';
   }
 
   function renderTrendRangeChips(){
@@ -2019,9 +2554,9 @@
       { range: '30', label: 'গত ৩০ দিন' },
       { range: '90', label: 'গত ৯০ দিন' }
     ];
-    box.innerHTML = opts.map(o =>
-      `<button type="button" class="cat-chip${trendTimeRange === o.range ? ' active' : ''}" onclick="setTrendTimeRange('${o.range}')">${o.label}</button>`
-    ).join('');
+    box.innerHTML = '<div class="sel-pill"><select aria-label="সময়" onchange="setTrendTimeRange(this.value)">' +
+      opts.map(o => `<option value="${o.range}"${trendTimeRange === o.range ? ' selected' : ''}>${o.label}</option>`).join('') +
+      '</select><span class="sp-arrow">▾</span></div>';
   }
 
   function renderTrendList(){
@@ -2067,7 +2602,7 @@
       return;
     }
 
-    box.innerHTML = keys.map(k => {
+    pgRender(box, 'trend', keys, (k) => {
       const it = priceList[k];
       const safeKey = k.replace(/'/g,"\\'");
       const trendInfo = getTrendPct(k, getFilteredHist(k));
@@ -2081,22 +2616,16 @@
         fromTo = `<div class="trend-from-to">৳${fmt(trendInfo.first)} → ৳${fmt(trendInfo.last)}${diffTxt ? ' · ' + diffTxt : ''}</div>`;
         const cls = diff > 0 ? 'trend-pct-up' : (diff < 0 ? 'trend-pct-down' : 'trend-pct-flat');
         const arrow = diff > 0 ? '▲' : (diff < 0 ? '▼' : '—');
-        badge = `<span class="${cls}">${arrow} ${Math.abs(pct).toFixed(1)}%</span>`;
+        badge = `<span class="${cls}">${arrow} ${fmtPct(pct)}</span>`;
       }
       return `<div class="plist-row">
-        <div class="plist-item" style="cursor:pointer;" onclick="toggleTrend2('${safeKey}')">
-          <span class="nm">${k} <span style="color:var(--text3); font-weight:400;">(${it.unit})</span></span>
-          <span style="display:flex; flex-direction:column; align-items:flex-end; gap:2px;">
-            <span style="display:flex; align-items:center; gap:10px;">
-              <span class="pr" style="cursor:default; border-bottom:none;">৳${fmt(it.price)}</span>
-              ${badge}
-            </span>
-            ${fromTo}
-          </span>
+        <div class="plist-item tr-row" onclick="toggleTrend2('${safeKey}')">
+          <span class="tr-l">${catIconHtml(getItemCategories(k)[0])}<span class="tr-names"><span class="nm tr-nm">${k}</span><span class="tr-unit">${it.unit}</span></span></span>
+          <span class="tr-r"><span class="pr">৳${fmt(it.price)}</span><span class="tr-badge">${badge}</span></span>
         </div>
         <div class="trend-panel" id="trend2-${cssId(k)}" style="display:none;"></div>
       </div>`;
-    }).join('');
+    }, { step: 25, sig: [trendFilterCat, trendSortMode, trendTimeRange, q].join('|') });
   }
 
   function toggleTrend2(name){
@@ -2228,7 +2757,7 @@
         unitBadge.title = info.toggleable ? 'ক্লিক করে কেজি/গ্রাম বদলান' : '';
       }
     } else {
-      label.textContent = 'জিনিস সিলেক্ট করুন';
+      label.textContent = 'জিনিস খুঁজুন…';
       label.classList.remove('chosen');
       if (unitBadge){
         unitBadge.textContent = 'একক';
@@ -2246,6 +2775,7 @@
     document.getElementById('pickerNewItemUnit').value = 'কেজি';
     document.getElementById('pickerNewItemPrice').value = '';
     closePickerItemMenu();
+    pgReset('picker');
     renderCatChips('itemPickerCatChips', shopFilterCat, 'setItemPickerCatFilter', 'openCategoryPicker(true)');
     renderPickerList();
     overlay.classList.add('open');
@@ -2272,7 +2802,7 @@
       list.innerHTML = `<div class="picker-none">কোনো জিনিস পাওয়া যায়নি</div>`;
       return;
     }
-    list.innerHTML = matches.map(k => {
+    pgRender(list, 'picker', matches, (k) => {
       const it = priceList[k];
       const safe = k.replace(/'/g,"\\'");
       const sel = k === selectedShopItem ? ' selected' : '';
@@ -2287,7 +2817,7 @@
           <span class="pr-view">৳${fmt(it.price)}</span>
         </div>
       </div>`;
-    }).join('');
+    }, { step: 30, sig: query + '|' + shopFilterCat });
   }
 
   function togglePickerItemMenu(btnEl, name){
@@ -2553,7 +3083,7 @@
 
     if (!name || !priceList[name]){
       preview.style.display = 'none';
-      qtyInput.placeholder = 'যেমন: 5';
+      qtyInput.placeholder = 'যেমন: ৫';
       return;
     }
     const it = priceList[name];
@@ -2834,6 +3364,7 @@
   });
 
   function renderHistoryList(){
+    renderHomeHistory();
     const box = document.getElementById('historyListBox');
     if (!box) return;
     // কোন কোন এন্ট্রি এখন খোলা আছে সেটা মনে রাখা হচ্ছে, যাতে রি-রেন্ডারের পর
@@ -2845,14 +3376,15 @@
       box.innerHTML = `<div class="empty-note">এখনো কোনো হিস্টরি নেই</div>`;
       return;
     }
-    box.innerHTML = shoppingLog.map(entry => {
+    _histPrevMonth = '';
+    pgRender(box, 'hist', shoppingLog, (entry) => {
       const body = entry.categories.map((c, ci) => {
         const rows = c.items.map((it, ii) =>
           it.unit
             ? `<div class="hist-item hist-item-editable" title="পরিমাণ/দাম বদলান" onclick="event.stopPropagation(); openHistItemEdit(this, ${entry.id}, ${ci}, ${ii})"><span>${it.name} — ${it.qty} ${it.unit}</span><span>৳${fmt(it.sub)}</span></div>`
             : `<div class="hist-item"><span>${it.name}</span><span></span></div>`
         ).join('');
-        return `<div class="hist-cat">— ${c.category} —</div>${rows}<div class="hist-cat-total">মোট: ৳${fmt(c.catTotal)}</div>`;
+        return `<div class="hist-cat">${catIconHtml(c.category)}<span>${c.category}</span></div>${rows}<div class="hist-cat-total">মোট: ৳${fmt(c.catTotal)}</div>`;
       }).join('');
       const clItems = entry.checklist ? entry.checklist.items : [];
       const clDone = clItems.filter(it => it.done).length;
@@ -2861,7 +3393,7 @@
         : `<span id="histChecklistBadge-${entry.id}" class="hist-checklist-badge" style="display:none;"></span>`;
       const openAttr = openIds.has(String(entry.id)) ? ' open' : '';
       const displayTotal = entry.grand + manualItemsTotal(entry);
-      return `<details class="history-entry" data-entry-id="${entry.id}"${openAttr}>
+      return monthHead(entry) + `<details class="history-entry" data-entry-id="${entry.id}"${openAttr}>
         <summary>
           <span class="hist-date">${entry.dateLabel} ${clBadge}</span>
           <span class="hist-total" id="histTotal-${entry.id}">৳${fmt(displayTotal)}</span>
@@ -2874,7 +3406,7 @@
           <button type="button" class="btn btn-danger" onclick="deleteHistoryEntry(${entry.id})"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg> ডিলিট</button>
         </div>
       </details>`;
-    }).join('');
+    }, { step: 12, sig: '', pre: histHeroHtml() });
   }
 
   // চেকলিস্ট পেজ — এখানে শুধু "+" বাটনে ক্লিক করে বানানো (isChecklistOnly)
@@ -2891,14 +3423,14 @@
       box.innerHTML = `<div class="empty-note">এখনো কোনো চেকলিস্ট নেই</div>`;
       return;
     }
-    box.innerHTML = clOnlyEntries.map(entry => {
+    pgRender(box, 'clpage', clOnlyEntries, (entry) => {
       const body = entry.categories.map(c => {
         const rows = c.items.map(it =>
           it.unit
             ? `<div class="hist-item"><span>${it.name} — ${it.qty} ${it.unit}</span><span>৳${fmt(it.sub)}</span></div>`
             : `<div class="hist-item"><span>${it.name}</span><span></span></div>`
         ).join('');
-        return `<div class="hist-cat">— ${c.category} —</div>${rows}<div class="hist-cat-total">মোট: ৳${fmt(c.catTotal)}</div>`;
+        return `<div class="hist-cat">${catIconHtml(c.category)}<span>${c.category}</span></div>${rows}<div class="hist-cat-total">মোট: ৳${fmt(c.catTotal)}</div>`;
       }).join('');
       const clItems = entry.checklist ? entry.checklist.items : [];
       const clDone = clItems.filter(it => it.done).length;
@@ -2923,7 +3455,7 @@
           <button type="button" class="btn btn-danger" onclick="deleteHistoryEntry(${entry.id})"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg> ডিলিট</button>
         </div>
       </details>`;
-    }).join('');
+    }, { step: 12, sig: '' });
   }
 
   // চেকলিস্ট পেজের "✕" বাটন — শুধু চেকলিস্ট পেজ থেকে এন্ট্রিটি সরিয়ে দেয় (isChecklistOnly ফ্ল্যাগ
@@ -3062,6 +3594,7 @@
   }
 
   function openChecklist(entryId){
+    pgReset('clPending'); pgReset('clDone');
     const entry = shoppingLog.find(e => e.id === entryId);
     if (!entry) return;
     ensureChecklist(entry);
@@ -3123,8 +3656,9 @@
 
     // ক্যাটাগরি অনুযায়ী ভাগ করে দেখানো হয় (মূল হিস্টরির ক্যাটাগরি-ক্রম অনুসরণ করে);
     // ম্যানুয়ালি যোগ করা আইটেমগুলো সবসময় শেষে আলাদা "☑" গ্রুপে থাকে।
-    const groupByCategory = (list) => {
-      if (list.length === 0) return '';
+    const groupUnits = (list) => {
+      const units = [];
+      if (list.length === 0) return units;
       const catOrder = entry.categories.map(c => c.category);
       const groups = {};
       const manualItems = [];
@@ -3136,19 +3670,30 @@
       });
       const orderedCats = catOrder.filter(c => groups[c]);
       Object.keys(groups).forEach(c => { if (!orderedCats.includes(c)) orderedCats.push(c); });
-      let html = orderedCats.map(cat => `<div class="cl-cat-label">— ${cat} —</div>${groups[cat].map(rowHtml).join('')}`).join('');
-      if (manualItems.length) html += `<div class="cl-cat-label">— ☑ —</div>${manualItems.map(rowHtml).join('')}`;
-      return html;
+      // ক্যাটাগরির লেবেল তার প্রথম রো-র সাথেই এক ইউনিট — পেজ ভাগ হলেও লেবেল আলাদা পড়ে থাকবে না
+      orderedCats.forEach(cat => {
+        groups[cat].forEach((it, i) => units.push((i === 0 ? `<div class="cl-cat-label">— ${cat} —</div>` : '') + rowHtml(it)));
+      });
+      manualItems.forEach((it, i) => units.push((i === 0 ? `<div class="cl-cat-label">— ☑ —</div>` : '') + rowHtml(it)));
+      return units;
     };
 
-    pendingBox.innerHTML = pending.length
-      ? groupByCategory(pending)
-      : (items.length === 0
-          ? `<div class="checklist-empty">এখনো কোনো জিনিস যোগ করা হয়নি</div>`
-          : `<div class="checklist-empty">সব জিনিস কেনা হয়ে গেছে 🎉</div>`);
-    doneBox.innerHTML = done.length
-      ? groupByCategory(done)
-      : `<div class="checklist-empty">এখনো কিছু সম্পন্ন হয়নি</div>`;
+    const pendingUnits = groupUnits(pending);
+    if (pendingUnits.length){
+      pgRender(pendingBox, 'clPending', pendingUnits, u => u, { step: 25, sig: String(entry.id) });
+    } else {
+      pgClear('clPending');
+      pendingBox.innerHTML = items.length === 0
+        ? `<div class="checklist-empty">এখনো কোনো জিনিস যোগ করা হয়নি</div>`
+        : `<div class="checklist-empty">সব জিনিস কেনা হয়ে গেছে 🎉</div>`;
+    }
+    const doneUnits = groupUnits(done);
+    if (doneUnits.length){
+      pgRender(doneBox, 'clDone', doneUnits, u => u, { step: 25, sig: String(entry.id) });
+    } else {
+      pgClear('clDone');
+      doneBox.innerHTML = `<div class="checklist-empty">এখনো কিছু সম্পন্ন হয়নি</div>`;
+    }
     countEl.textContent = done.length;
 
     // প্রোগ্রেস বার/লেবেল ("X/Y কেনা হয়েছে")
@@ -3285,8 +3830,8 @@
     queuePushToSheet();
   }
 
-  function deleteHistoryEntry(id){
-    if (!confirm('এই হিস্টরি এন্ট্রি মুছে ফেলতে চান?')) return;
+  function deleteHistoryEntry(id, skipConfirm){
+    if (!skipConfirm && !confirm('এই হিস্টরি এন্ট্রি মুছে ফেলতে চান?')) return;
     shoppingLog = shoppingLog.filter(e => e.id !== id);
     saveShoppingLog();
     renderHistoryList();
@@ -3325,6 +3870,101 @@
       .catch(() => flashButtonLabel(btnId, '⚠️ কপি ব্যর্থ হয়েছে'));
   }
 
+  /* ---------- হোম পেজে \"আগের বাজার\" (হিস্টরি থেকে) — ট্যাপ করলে লিস্ট আজকের বাজারে বসে ---------- */
+  const HOME_HIST_LIMIT = 8;
+  function homeHistEntries(){
+    return shoppingLog.filter(e => !e.isChecklistOnly && Array.isArray(e.categories) &&
+      e.categories.some(c => Array.isArray(c.items) && c.items.length > 0));
+  }
+  function renderHomeHistory(){
+    const card = document.getElementById('homeHistCard');
+    const box = document.getElementById('homeHistList');
+    if (!card || !box) return;
+    const list = homeHistEntries();
+    if (list.length === 0){ card.style.display = 'none'; box.innerHTML = ''; return; }
+    card.style.display = '';
+    if (homeHistDelId !== null && !list.some(e => e.id === homeHistDelId)) homeHistDelId = null;
+    box.innerHTML = list.slice(0, HOME_HIST_LIMIT).map(e => {
+      const cnt = e.categories.reduce((a, c) => a + (c.items ? c.items.length : 0), 0);
+      const del = e.id === homeHistDelId;
+      return `<button type="button" class="hh-item${del ? ' del-mode' : ''}" data-id="${e.id}">
+        <span><div class="hh-date">${e.dateLabel}</div><div class="hh-sub">${del ? 'ডিলিট করতে বাটনে চাপুন, বাতিল করতে অন্য কোথাও ট্যাপ করুন' : cnt + ' টি জিনিস'}</div></span>
+        ${del
+          ? '<span class="hh-del" data-del="1"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg> ডিলিট</span>'
+          : '<span class="hh-total">৳' + fmt(e.grand) + '</span>'}
+      </button>`;
+    }).join('');
+  }
+  let homeHistDelId = null;   // কোন কার্ডে এখন "ডিলিট" বাটন দেখাচ্ছে
+  (function(){
+    const LONG_MS = 500;
+    let timer = null, sx = 0, sy = 0, fired = false, bound = false;
+    const stop = () => { if (timer){ clearTimeout(timer); timer = null; } };
+    const box = () => document.getElementById('homeHistList');
+    document.addEventListener('DOMContentLoaded', init);
+    if (document.readyState !== 'loading') init();
+    function init(){
+      const b = box(); if (!b || bound) return; bound = true;
+      b.addEventListener('pointerdown', e => {
+        const it = e.target.closest('.hh-item'); if (!it) return;
+        fired = false; stop(); sx = e.clientX; sy = e.clientY;
+        if (e.target.closest('.hh-del')) return;
+        timer = setTimeout(() => {
+          timer = null; fired = true;
+          homeHistDelId = Number(it.dataset.id);
+          renderHomeHistory();
+          try{ if (navigator.vibrate) navigator.vibrate(15); }catch(_){}
+        }, LONG_MS);
+      });
+      b.addEventListener('pointermove', e => { if (timer && Math.hypot(e.clientX - sx, e.clientY - sy) > 10) stop(); });
+      ['pointerup','pointercancel','pointerleave'].forEach(t => b.addEventListener(t, stop));
+      b.addEventListener('contextmenu', e => e.preventDefault());
+      b.addEventListener('click', e => {
+        if (fired){ fired = false; return; }            // লং-প্রেসের পরের click ধরা হবে না
+        const it = e.target.closest('.hh-item'); if (!it) return;
+        const id = Number(it.dataset.id);
+        if (e.target.closest('.hh-del')){
+          deleteHistoryEntry(id);                        // কনফার্ম চাইবে; হ্যাঁ হলে হিস্টরি থেকেও মুছবে + শিটে সিঙ্ক
+          homeHistDelId = null; renderHomeHistory();     // কনফার্ম বাতিল হলেও ডিলিট মোড বন্ধ হবে
+          return;
+        }
+        if (homeHistDelId !== null){ homeHistDelId = null; renderHomeHistory(); return; }
+        loadHistoryToToday(id);
+      });
+      // বাইরে ট্যাপ করলে ডিলিট মোড বন্ধ
+      document.addEventListener('pointerdown', e => {
+        if (homeHistDelId !== null && !e.target.closest('.hh-item.del-mode')){ homeHistDelId = null; renderHomeHistory(); }
+      }, true);
+    }
+  })();
+  function loadHistoryToToday(id){
+    const entry = shoppingLog.find(e => e.id === id);
+    if (!entry) return;
+    if ((Object.keys(quantities).length > 0 || otherItems.length > 0) &&
+        !confirm('আজকের বাজারের বর্তমান লিস্ট বদলে এই লিস্টের সব জিনিস বসবে। ঠিক আছে?')) return;
+    const q = {};
+    const others = [];
+    let skipped = 0;
+    (entry.categories || []).forEach(c => {
+      (c.items || []).forEach(it => {
+        if (c.category === 'অন্যান্য (দাম ছাড়া)'){
+          others.push({ id: Date.now() + others.length, text: it.name });
+        } else if (priceList[it.name]){
+          const n = Number(it.qty);
+          q[it.name] = histBaseQty(it.name, it.unit, n > 0 ? n : 1);
+        } else {
+          skipped++;
+        }
+      });
+    });
+    quantities = q;
+    otherItems = others;
+    renderSummary();
+    const shell = document.querySelector('.receipt-shell');
+    if (shell && shell.scrollIntoView) shell.scrollIntoView({ behavior:'smooth', block:'start' });
+    if (skipped > 0) alert(skipped + ' টি জিনিস প্রাইস লিস্টে আর নেই, তাই বাদ গেছে');
+  }
+
   function clearAllHistory(){
     if (shoppingLog.length === 0) return;
     if (!confirm('পুরো হিস্টরি মুছে ফেলতে চান? এটি ফিরিয়ে আনা যাবে না।')) return;
@@ -3341,17 +3981,24 @@
     const cats = sortCatsOtherLast(Object.keys(byCategory));
 
     if (cats.length === 0 && otherItems.length === 0){
-      body.innerHTML = `<div class="cart-empty">এখনো কিছু যোগ করা হয়নি</div>`;
-      document.getElementById('grandTotal').textContent = '0.00';
+      body.innerHTML = emptyCartHtml();
+      setGrandTotal(0);
+      updateStickyTotal(0, 0);
+      lastCartKeys = new Set();
       document.getElementById('grandOtherNote').style.display = 'none';
       return;
     }
 
     let grand = 0;
-    let html = '';
+    const units = [];
+    let firstNewIdx = -1;
+    const curKeys = new Set();
+    const wasKeys = lastCartKeys;
+    // প্রতিটা আইটেম এক ইউনিট; ক্যাটাগরির হেডার প্রথম ইউনিটে, সাবটোটাল শেষ ইউনিটে জোড়া —
+    // তাই পেজ ভাগ হলেও মোট হিসাব সবসময় সব আইটেম ধরেই হয়
     cats.forEach(cat => {
       let catTotal = 0;
-      let rows = '';
+      const catUnits = [];
       byCategory[cat].forEach(n => {
         const it = priceList[n];
         const qty = quantities[n];
@@ -3359,41 +4006,61 @@
         catTotal += sub;
         const disp = getDisplayQtyUnit(qty, it.unit);
         const safeName = n.replace(/'/g,"\\'");
-        rows += `<div class="cart-item">
-          <div class="cart-item-top">
-            <span class="cart-item-name">${n}</span>
-            <button class="del-btn" onclick="removeFromCart('${safeName}')">✕</button>
+        curKeys.add('i:' + n);
+        const isNew = wasKeys && !wasKeys.has('i:' + n);
+        if (isNew && firstNewIdx < 0) firstNewIdx = units.length + catUnits.length;
+        catUnits.push(`<div class="cart-item${isNew ? ' ci-new' : ''}" data-kind="item" data-key="${encodeURIComponent(n)}">
+          <div class="ci-bg" aria-hidden="true">${TRASH_ICON}</div>
+          <div class="ci-fg">
+            <div class="cart-item-top">
+              <span class="cart-item-name">${n}</span>
+              <button class="del-btn" aria-label="মুছুন" onclick="removeFromCart('${safeName}')">✕</button>
+            </div>
+            <div class="cart-item-meta">
+              <span class="qty-step">
+                <button type="button" class="qs-btn" aria-label="কমান" onclick="event.stopPropagation(); stepCartQty('${safeName}', -1)">−</button>
+                <span class="qty qty-editable" title="পরিমাণ বদলান" onclick="event.stopPropagation(); openCartQtyEdit(this, '${safeName}')">${disp.qty} ${disp.unit}</span>
+                <button type="button" class="qs-btn" aria-label="বাড়ান" onclick="event.stopPropagation(); stepCartQty('${safeName}', 1)">+</button>
+              </span>
+              <span class="price">৳${fmt(it.price)}/${it.unit || 'একক'}</span>
+              <span class="sub">৳${fmt(sub)}</span>
+            </div>
           </div>
-          <div class="cart-item-meta">
-            <span class="qty qty-editable" title="পরিমাণ বদলান" onclick="event.stopPropagation(); openCartQtyEdit(this, '${safeName}')">${disp.qty} ${disp.unit}</span>
-            <span class="price">৳${fmt(it.price)}/${it.unit || 'একক'}</span>
-            <span class="sub">৳${fmt(sub)}</span>
-          </div>
-        </div>`;
+        </div>`);
       });
       grand += catTotal;
-      html += `<div class="cart-cat-head">${cat}</div>`;
-      html += rows;
-      html += `<div class="cart-cat-subtotal"><span>মোট</span><span class="val">৳${fmt(catTotal)}</span></div>`;
+      if (!catUnits.length) return;
+      catUnits[0] = `<div class="cart-cat-head">${catIconHtml(cat)}<span>${cat}</span></div>` + catUnits[0];
+      catUnits[catUnits.length - 1] += `<div class="cart-cat-subtotal"><span>মোট</span><span class="val">৳${fmt(catTotal)}</span></div>`;
+      catUnits.forEach(u => units.push(u));
     });
 
     if (otherItems.length > 0){
-      let rows = '';
+      const otherUnits = [];
       otherItems.forEach(o => {
-        rows += `<div class="cart-item">
-          <div class="cart-item-top">
-            <span class="cart-item-name">${o.text}</span>
-            <button class="del-btn" onclick="removeOtherItem(${o.id})">✕</button>
+        curKeys.add('o:' + o.id);
+        const isNewO = wasKeys && !wasKeys.has('o:' + o.id);
+        if (isNewO && firstNewIdx < 0) firstNewIdx = units.length + otherUnits.length;
+        otherUnits.push(`<div class="cart-item${isNewO ? ' ci-new' : ''}" data-kind="other" data-key="${o.id}">
+          <div class="ci-bg" aria-hidden="true">${TRASH_ICON}</div>
+          <div class="ci-fg">
+            <div class="cart-item-top">
+              <span class="cart-item-name">${o.text}</span>
+              <button class="del-btn" aria-label="মুছুন" onclick="removeOtherItem(${o.id})">✕</button>
+            </div>
           </div>
-        </div>`;
+        </div>`);
       });
-      html += `<div class="cart-cat-head">অন্যান্য (দাম ছাড়া)</div>`;
-      html += rows;
-      html += `<div style="text-align:center; font-size:0.75rem; color:var(--text3); border-top:1px dashed var(--line); margin-top:10px; padding-top:8px;">— এই আইটেমগুলো সর্বমোটে যোগ হয়নি —</div>`;
+      otherUnits[0] = `<div class="cart-cat-head">${catIconHtml('অন্যান্য')}<span>অন্যান্য (দাম ছাড়া)</span></div>` + otherUnits[0];
+      otherUnits[otherUnits.length - 1] += `<div style="text-align:center; font-size:0.75rem; color:var(--text3); border-top:1px dashed var(--line); margin-top:10px; padding-top:8px;">— এই আইটেমগুলো সর্বমোটে যোগ হয়নি —</div>`;
+      otherUnits.forEach(u => units.push(u));
     }
 
-    body.innerHTML = html;
-    document.getElementById('grandTotal').textContent = fmt(grand);
+    // নতুন যোগ করা আইটেম লিমিটের বাইরে পড়লেও যেন দেখা যায় (ensure)
+    pgRender(body, 'cart', units, u => u, { step: 30, sig: 'cart', ensure: firstNewIdx >= 0 ? firstNewIdx : null });
+    lastCartKeys = curKeys;
+    setGrandTotal(grand);
+    updateStickyTotal(grand, Object.keys(quantities).filter(n => priceList[n]).length + otherItems.length);
     document.getElementById('grandOtherNote').style.display = otherItems.length > 0 ? 'block' : 'none';
   }
 
@@ -3535,6 +4202,179 @@
     renderSummary();
   }
 
+  /* ---------- আইকন, ফাঁকা অবস্থার ছবি ও মোট টাকার অ্যানিমেশন ---------- */
+  const TRASH_ICON = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>';
+  const CAT_ICONS = {
+    pill:   '<path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/>',
+    leaf:   '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+    apple:  '<path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/>',
+    fish:   '<path d="M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6Z"/><path d="M18 12v.5"/><path d="M16 17.93a9.77 9.77 0 0 1 0-11.86"/><path d="M7 10.67C7 8 5.58 5.97 2.73 5.5c-1 1.5-1 5 .23 6.5-1.24 1.5-1.24 5-.23 6.5C5.58 18.03 7 16 7 13.33"/>',
+    milk:   '<path d="M8 2h8"/><path d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2"/><path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0"/>',
+    wheat:  '<path d="M2 22 16 8"/><path d="M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.47a3.5 3.5 0 0 1 0-4.94Z"/><path d="M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.47a3.5 3.5 0 0 1 0-4.94Z"/><path d="M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.47a3.5 3.5 0 0 1 0-4.94Z"/><path d="M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"/>',
+    cart:   '<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>',
+    utensils:'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>',
+    basket: '<path d="m15 11-1 9"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4"/><path d="m5 11 4-7"/><path d="m9 11 1 9"/>'
+  };
+  function catIconSvg(cat){
+    const c = String(cat || '');
+    let k = 'basket';
+    if (/ওষুধ|ঔষধ|মেডিসিন|ফার্মেসি|medicine/i.test(c)) k = 'pill';
+    else if (/সবজি|শাক|তরকারি|কাঁচা/.test(c)) k = 'leaf';
+    else if (/ফল/.test(c)) k = 'apple';
+    else if (/মাছ|মাংস|গোশত|গোস্ত|চিকেন|মুরগি/.test(c)) k = 'fish';
+    else if (/দুধ|ডিম|দই|ডেইরি|বেবি/.test(c)) k = 'milk';
+    else if (/চাল|ডাল|আটা|ময়দা|মুদি|তেল|মসলা|নুডুলস|চিনি|লবণ/.test(c)) k = 'wheat';
+    else if (/খাবার|নাস্তা|স্ন্যাক|ফাস্ট|পানীয়|ড্রিংক|রান্না/.test(c)) k = 'utensils';
+    else if (/বাজার|শপিং|কেনাকাটা/.test(c)) k = 'cart';
+    return '<svg data-k="' + k + '" viewBox="0 0 24 24" aria-hidden="true">' + CAT_ICONS[k] + '</svg>';
+  }
+  function catIconHtml(cat){
+    const svg = catIconSvg(cat);
+    const m = svg.match(/data-k="(\w+)"/);
+    return '<span class="cat-ic k-' + (m ? m[1] : 'basket') + '">' + svg + '</span>';
+  }
+  function emptyCartHtml(){
+    return '<div class="cart-empty">' +
+      '<svg class="ce-art" viewBox="0 0 96 96" fill="none" aria-hidden="true">' +
+        '<circle cx="48" cy="48" r="44" style="fill:var(--pill)"/>' +
+        '<path d="M30 44h36l-4.2 20.2a5 5 0 0 1-4.9 3.8H39.1a5 5 0 0 1-4.9-3.8L30 44Z" style="fill:var(--surface-1);stroke:var(--accent)" stroke-width="2.4" stroke-linejoin="round"/>' +
+        '<path d="M26 44h44M38 44l6-12M58 44l-6-12" style="stroke:var(--accent)" stroke-width="2.4" stroke-linecap="round"/>' +
+        '<path d="M42 52v10M48 52v10M54 52v10" style="stroke:var(--accent)" stroke-opacity=".45" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<circle cx="71" cy="25" r="3" style="fill:var(--accent)" fill-opacity=".35"/><circle cx="24" cy="31" r="2" style="fill:var(--accent)" fill-opacity=".3"/>' +
+      '</svg>' +
+      '<div class="ce-title">আজকের বাজার ফাঁকা</div>' +
+      '<div class="ce-sub">উপরে থেকে জিনিস বেছে যোগ করুন, বা নিচের “আগের বাজার” থেকে একটা লিস্ট বেছে নিন</div>' +
+    '</div>';
+  }
+  var grandShown = 0, grandRaf = 0;
+  function setGrandTotal(target){
+    const el = document.getElementById('grandTotal'); if (!el) return;
+    if (grandRaf){ cancelAnimationFrame(grandRaf); grandRaf = 0; }
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const from = grandShown;
+    if (reduce || from === target || !isFinite(from)){ grandShown = target; el.textContent = fmt(target); return; }
+    const t0 = performance.now(), dur = 380;
+    const tick = now => {
+      const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      grandShown = from + (target - from) * e;
+      el.textContent = fmt(k === 1 ? target : grandShown);
+      if (k < 1) grandRaf = requestAnimationFrame(tick); else { grandRaf = 0; grandShown = target; }
+    };
+    grandRaf = requestAnimationFrame(tick);
+  }
+
+  /* ---------- পরিমাণ স্টেপার (− / +) ---------- */
+  function cartStepFor(unit){
+    if (unit === 'কেজি' || unit === 'লিটার') return 0.5;
+    if (unit === 'গ্রাম') return 100;
+    if (unit === 'টাকা') return 10;
+    return 1;
+  }
+  function stepCartQty(name, dir){
+    const it = priceList[name];
+    if (!it || quantities[name] === undefined) return;
+    closeCartQtyEdit();
+    const next = Math.round((quantities[name] + dir * cartStepFor(it.unit)) * 1000) / 1000;
+    if (next <= 0) return;                 // শূন্যে নামবে না — মুছতে চাইলে সোয়াইপ বা ✕
+    quantities[name] = next;
+    renderSummary();
+    // ছোট "পপ" অ্যানিমেশন + হালকা ভাইব্রেশন
+    try{
+      const el = document.querySelector('.cart-item[data-key="' + encodeURIComponent(name) + '"] .qty-editable');
+      if (el){ el.classList.remove('qty-pop'); void el.offsetWidth; el.classList.add('qty-pop'); }
+      if (navigator.vibrate) navigator.vibrate(8);
+    }catch(e){}
+  }
+
+  /* ---------- সোয়াইপ-টু-ডিলিট + আনডু ---------- */
+  let undoTimer = null;
+  function showUndo(msg, onUndo){
+    let bar = document.getElementById('undoBar');
+    if (!bar){
+      bar = document.createElement('div'); bar.id = 'undoBar'; bar.className = 'undo-bar';
+      bar.innerHTML = '<span class="ub-msg"></span><button type="button" class="ub-btn">ফিরিয়ে আনুন</button>';
+      document.body.appendChild(bar);
+    }
+    bar.querySelector('.ub-msg').textContent = msg;
+    bar.querySelector('.ub-btn').onclick = () => { clearTimeout(undoTimer); bar.classList.remove('show'); onUndo(); };
+    bar.classList.add('show');
+    clearTimeout(undoTimer);
+    undoTimer = setTimeout(() => bar.classList.remove('show'), 4500);
+  }
+  function swipeRemove(kind, key){
+    if (kind === 'item'){
+      const name = decodeURIComponent(key);
+      if (quantities[name] === undefined) return;
+      const qty = quantities[name];
+      delete quantities[name];
+      renderSummary();
+      showUndo('“' + name + '” মুছে ফেলা হয়েছে', () => { if (priceList[name]){ quantities[name] = qty; renderSummary(); } });
+    } else {
+      const id = Number(key);
+      const idx = otherItems.findIndex(o => o.id === id);
+      if (idx < 0) return;
+      const obj = otherItems[idx];
+      otherItems = otherItems.filter(o => o.id !== id);
+      renderSummary();
+      showUndo('“' + obj.text + '” মুছে ফেলা হয়েছে', () => { otherItems.splice(Math.min(idx, otherItems.length), 0, obj); renderSummary(); });
+    }
+  }
+  (function(){
+    const body = document.getElementById('summaryBody'); if (!body) return;
+    let el = null, fg = null, sx = 0, sy = 0, dx = 0, lock = null, w = 0;
+    const TH = 0.4;
+    function reset(){
+      if (fg){ fg.style.transition = ''; fg.style.transform = ''; }
+      if (el){ el.classList.remove('ci-armed'); el.classList.remove('ci-swiping'); }
+      el = fg = null; lock = null; dx = 0;
+    }
+    body.addEventListener('touchstart', e => {
+      if (e.touches.length !== 1) return;
+      const it = e.target.closest('.cart-item');
+      if (!it || e.target.closest('button, .qty-editable')) return;
+      el = it; fg = it.querySelector('.ci-fg'); w = it.offsetWidth;
+      const t = e.touches[0]; sx = t.clientX; sy = t.clientY; dx = 0; lock = null;
+      if (fg) fg.style.transition = 'none';
+    }, { passive:true });
+    body.addEventListener('touchmove', e => {
+      if (!el || !fg) return;
+      const t = e.touches[0], mx = t.clientX - sx, my = t.clientY - sy;
+      if (lock === null){
+        if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+        lock = Math.abs(mx) > Math.abs(my) * 1.2 ? 'x' : 'y';
+      }
+      if (lock !== 'x'){ reset(); return; }
+      dx = Math.min(0, mx);
+      el.classList.add('ci-swiping');
+      fg.style.transform = 'translateX(' + dx + 'px)';
+      el.classList.toggle('ci-armed', -dx > w * TH);
+    }, { passive:true });
+    function end(){
+      if (!el || !fg){ reset(); return; }
+      const it = el, f = fg, kind = it.dataset.kind, key = it.dataset.key;
+      if (lock === 'x' && -dx > w * TH){
+        el = fg = null; lock = null;
+        f.style.transition = 'transform .2s ease';
+        f.style.transform = 'translateX(-110%)';
+        setTimeout(() => {
+          it.style.height = it.offsetHeight + 'px';
+          void it.offsetHeight;
+          it.style.transition = 'height .18s ease, opacity .18s ease';
+          it.style.height = '0px'; it.style.opacity = '0';
+          setTimeout(() => swipeRemove(kind, key), 180);
+        }, 190);
+      } else {
+        f.style.transition = 'transform .22s cubic-bezier(.2,.8,.2,1)';
+        f.style.transform = '';
+        it.classList.remove('ci-armed');
+        setTimeout(() => it.classList.remove('ci-swiping'), 240);
+        el = fg = null; lock = null; dx = 0;
+      }
+    }
+    body.addEventListener('touchend', end);
+    body.addEventListener('touchcancel', reset);
+  })();
+
   // ===== টেম্পলেট =====
   const TEMPLATE_KEY = 'bazarHisab_templates_v1';
   const TEMPLATE_SYNCED_KEY = 'bazarHisab_templatesSynced_v1';
@@ -3545,6 +4385,7 @@
 
   function openTemplateModal(){
     tplViewId = null;
+    pgReset('tplList'); pgReset('tpl');
     renderTemplateList();
     document.getElementById('templateModal').classList.add('open');
     document.body.classList.add('no-scroll');
@@ -3590,12 +4431,13 @@
     if (tplDetailRows.length === 0){
       html += '<div class="tpl-empty">এই টেম্পলেটে কিছু নেই</div>';
     }
-    tplDetailRows.forEach((r, i) => {
+    const rowFn = (r, i) => {
+      let html = '';
       if (r.type === 'item'){
         const it = priceList[r.name];
         if (!it){
           html += `<div class="tpl-d-row gone"><input type="checkbox" disabled><div class="tpl-d-name">${esc(r.name)} <small>(প্রাইস লিস্টে নেই)</small></div></div>`;
-          return;
+          return html;
         }
         const disp = getDisplayQtyUnit(t.quantities[r.name], it.unit);
         const sub = t.quantities[r.name] * it.price;
@@ -3618,8 +4460,9 @@
           <label class="tpl-d-name" for="tplChk-${i}">${esc(r.text)} <small style="color:var(--text3); font-weight:400;">(অন্যান্য)</small></label>
         </div>`;
       }
-    });
-    box.innerHTML = html;
+      return html;
+    };
+    pgRender(box, 'tpl', tplDetailRows, rowFn, { pre: html, step: 25, sig: 'd' + tplViewId });
   }
 
   function toggleTemplateRow(i, checked){
@@ -3662,7 +4505,7 @@
       box.innerHTML = '<div class="tpl-empty">কোনো টেম্পলেট নেই। "টেম্পলেট বানান" চাপলে আজকের বাজারের লিস্ট সেভ হবে।</div>';
       return;
     }
-    box.innerHTML = templates.map(t => {
+    pgRender(box, 'tplList', templates, (t) => {
       const count = Object.keys(t.quantities).length + t.otherItems.length;
       const title = t.name || t.dateLabel;
       const meta = t.name ? `${t.dateLabel} · ${count} টি জিনিস` : `${count} টি জিনিস`;
@@ -3670,7 +4513,7 @@
         <div><div class="tpl-date">${title.replace(/</g,'&lt;')}</div><div class="tpl-meta">${meta}</div></div>
         <button type="button" class="picker-dots-btn" title="নাম পরিবর্তন, মুছুন" onclick="event.stopPropagation(); toggleTemplateMenu(this, ${t.id})">⋮</button>
       </div>`;
-    }).join('');
+    }, { step: 20, sig: 'l' });
   }
 
   /* ---------- টেম্পলেটের ⋮ মেনু (ক্যাটাগরির মেনুর মতোই: নাম পরিবর্তন / ডিলিট) ---------- */
@@ -3777,6 +4620,7 @@
   }
 
   function copyTextToClipboard(text){
+    text = toBn(text); // কপি করা টেক্সটেও বাংলা অঙ্ক
     return new Promise((resolve, reject) => {
       const tryFallback = () => {
         try{
@@ -3881,9 +4725,98 @@
     saveCartToHistory();
   }
 
+  /* ---------- শতাংশ দেখানো: অস্বাভাবিক বড় সংখ্যা সংক্ষিপ্ত ---------- */
+  function fmtPct(p){
+    const a = Math.abs(p);
+    if (a >= 500) return toBn('500%+');
+    if (a >= 100) return toBn(Math.round(a) + '%');
+    return toBn(a.toFixed(1) + '%');
+  }
+
+  /* ---------- হিস্টরি: মাস অনুযায়ী গ্রুপ + এই মাসের সারাংশ কার্ড ---------- */
+  var _histPrevMonth = '';
+  function histMonthKey(ts){
+    const d = new Date(ts);
+    if (isNaN(d)) return '';
+    return d.toLocaleDateString('bn-BD', { month:'long', year:'numeric' });
+  }
+  function monthHead(entry){
+    const k = histMonthKey(entry.id);
+    if (!k || k === _histPrevMonth) return '';
+    _histPrevMonth = k;
+    return `<div class="hist-month">${k}</div>`;
+  }
+  function histHeroHtml(){
+    const nowKey = histMonthKey(Date.now());
+    let total = 0, count = 0;
+    shoppingLog.forEach(e => {
+      if (!e.isChecklistOnly && histMonthKey(e.id) === nowKey){ total += (e.grand || 0); count++; }
+    });
+    if (!count) return '';
+    return `<div class="hist-hero">
+      <div><div class="hl">এই মাসের বাজার খরচ</div><div class="hv">৳ ${fmt(total)}</div></div>
+      <div class="hc">${toBn(count)} বার</div>
+    </div>`;
+  }
+
+  /* ---------- স্টিকি মোট বার: হিরো কার্ড স্ক্রিনের বাইরে গেলে নিচে ভেসে ওঠে ---------- */
+  var stickyHas = false, stickyHeroVisible = true;
+  function refreshSticky(){
+    const b = document.getElementById('stickyTotal'); if (!b) return;
+    const home = document.getElementById('tabPage2').classList.contains('active');
+    b.classList.toggle('show', stickyHas && !stickyHeroVisible && home);
+  }
+  function updateStickyTotal(total, count){
+    stickyHas = count > 0;
+    document.getElementById('stTotal').textContent = fmt(total);
+    document.getElementById('stCount').textContent = toBn(count);
+    refreshSticky();
+  }
+  (function(){
+    const g = document.querySelector('.grand');
+    if (!g || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(es => { stickyHeroVisible = es[0].isIntersecting; refreshSticky(); }).observe(g);
+  })();
+
+  /* ---------- সব দৃশ্যমান টেক্সটে ল্যাটিন অঙ্ক → বাংলা অঙ্ক (১ পাতা, ১ টি জিনিস, ৳১৫০.০০ ...) ---------- */
+  (function(){
+    const SKIP = { SCRIPT:1, STYLE:1, TEXTAREA:1, INPUT:1, SELECT:1 };
+    const DIGIT = /[0-9]/;
+    // জিনিসের নামের এলিমেন্টে অঙ্ক যেমন আছে তেমনই থাকবে
+    const isName = p => !!(p.closest && p.closest('.cart-item-name, .nm, .cl-name, .tpl-d-name, .mover-nm, #selectItemBtnLabel, .ub-msg'));
+    function fix(node){
+      if (node.nodeType === 3){
+        const p = node.parentNode;
+        if (p && !SKIP[p.nodeName] && !isName(p) && DIGIT.test(node.nodeValue)){
+          const v = toBn(node.nodeValue);
+          if (v !== node.nodeValue) node.nodeValue = v; // একই মান আবার সেট করলে অসীম লুপ হয়
+        }
+        return;
+      }
+      if (node.nodeType !== 1 || SKIP[node.nodeName]) return;
+      const w = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+      let n;
+      while ((n = w.nextNode())){
+        const p = n.parentNode;
+        if (p && !SKIP[p.nodeName] && !isName(p) && DIGIT.test(n.nodeValue)){
+          const v = toBn(n.nodeValue);
+          if (v !== n.nodeValue) n.nodeValue = v;
+        }
+      }
+    }
+    new MutationObserver(muts => {
+      muts.forEach(m => {
+        if (m.type === 'characterData') fix(m.target);
+        else m.addedNodes.forEach(fix);
+      });
+    }).observe(document.body, { childList:true, characterData:true, subtree:true });
+    fix(document.body);
+  })();
+
   renderPriceList();
   renderSelectDropdown();
   renderSummary();
+  renderHomeHistory();
 
   if (scriptUrl){
     setSyncStatus('⬇️ শিট থেকে আনা হচ্ছে...', 'busy');
@@ -3920,10 +4853,13 @@
       if (Math.abs(top - r.top) > 0.5) el.style.top = top + 'px';
     }
 
+    let lastH = -1;
     function update(){
       raf = null;
       const box = visibleBox();
-      document.documentElement.style.setProperty('--vvh', box.h + 'px');
+      const h = Math.round(box.h);
+      // স্ক্রলের সময় URL বার ওঠানামা করলে বারবার একই মান সেট করলে পুরো পেজের স্টাইল নতুন করে হিসাব হয় — তাই শুধু বদলালে সেট
+      if (h !== lastH){ lastH = h; document.documentElement.style.setProperty('--vvh', h + 'px'); }
       POPUP_IDS.forEach(id => clampPopup(document.getElementById(id)));
     }
     function schedule(){ if (!raf) raf = requestAnimationFrame(update); }
