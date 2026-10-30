@@ -1,8 +1,9 @@
 // Service Worker — Expense Tracker PWA
+// v9: বাজার হিসাব (bazar-hisab.html) অ্যাপ শেলে যোগ — iframe-এ অফলাইনে খুলবে।
 // v8: BASE PATH DYNAMIC — যেকোনো repo name এ কাজ করবে।
 //     sw.js যে ফোল্ডারে থাকবে, সেটাই স্বয়ংক্রিয়ভাবে base path হিসেবে নেবে।
 
-const CACHE_VERSION = 'v18';
+const CACHE_VERSION = 'v9';
 const CACHE_NAME    = 'expense-tracker-' + CACHE_VERSION;
 const FONT_CACHE    = 'expense-tracker-fonts-v1';
 
@@ -14,6 +15,7 @@ const BASE = self.location.pathname.replace(/\/sw\.js$/, '');
 const APP_SHELL = [
   BASE + '/',
   BASE + '/index.html',
+  BASE + '/bazar-hisab.html',
   BASE + '/manifest.json',
   BASE + '/icon-192.png',
   BASE + '/icon-512.png',
@@ -28,18 +30,20 @@ self.addEventListener('install', event => {
       Promise.all(
         APP_SHELL.map(url =>
           cache.add(url).catch(err =>
-            console.warn('[SW v8] Install cache skipped:', url, err)
+            console.warn('[SW v9] Install cache skipped:', url, err)
           )
         )
       )
     ).then(() =>
       caches.open(FONT_CACHE).then(fc =>
-        fc.add(
-          'https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap'
-        ).catch(() => console.warn('[SW v8] Font cache skipped (offline install)'))
+        Promise.all([
+          'https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap',
+          // বাজার হিসাব পেজের ফন্ট
+          'https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@500;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap'
+        ].map(u => fc.add(u).catch(() => console.warn('[SW v9] Font cache skipped:', u))))
       )
     ).then(() => {
-      console.log('[SW v8] Install complete, BASE:', BASE);
+      console.log('[SW v9] Install complete, BASE:', BASE);
       return self.skipWaiting();
     })
   );
@@ -55,12 +59,12 @@ self.addEventListener('activate', event => {
         keys
           .filter(k => k !== CACHE_NAME && k !== FONT_CACHE)
           .map(k => {
-            console.log('[SW v8] Removing old cache:', k);
+            console.log('[SW v9] Removing old cache:', k);
             return caches.delete(k);
           })
       )
     ).then(() => {
-      console.log('[SW v8] Activated');
+      console.log('[SW v9] Activated');
       return self.clients.claim();
     })
   );
