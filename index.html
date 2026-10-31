@@ -1459,6 +1459,10 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display:none; width:0; height
 .sheet { overscroll-behavior:contain; }
 .sheet-handle { position:relative; height:5px; }
 .sheet-handle::before { content:""; position:absolute; inset:-16px -60px; }
+
+/* নোট লিস্ট পেজে ধরে রাখলে ব্রাউজারের টেক্সট সিলেক্ট / Copy মেনু আসবে না (সার্চ বক্স বাদে) */
+#page-note, #page-note * { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+#page-note input, #page-note textarea { -webkit-user-select:text; user-select:text; }
 </style>
 </head>
 <body>
@@ -1859,12 +1863,49 @@ function fpRow(items) {
   return '<div class="fp-row">' + items.map(([k, , lb]) =>
     `<button type="button" class="fp-btn" onclick="openFp('${k}')"><span class="fp-ic">${ICON[FP_ICON[k]] || ''}</span><span class="fp-lb">${lb}</span></button>`).join('') + '</div>';
 }
+// ── শেয়ার্ড মাস/বছর বাছাই (খরচ, আয় ও ক্যাটাগরি/উৎস ডিটেইল — সব জায়গায় একই) ──
+// onM / onY = onchange এ চলবে এমন কোড স্ট্রিং (this.value ব্যবহার করা যাবে)
+function myPickers(month, year, years, onM, onY, allYear) {
+  return `<div class="report-pickers" style="margin-bottom:12px;">
+    <select class="report-select" onchange="${onM}"><option value="-1" ${month < 0 ? 'selected' : ''}>সব মাস</option>${BN_MONTHS.map((m, i) => `<option value="${i}" ${i === month ? 'selected' : ''}>${m}</option>`).join('')}</select>
+    <select class="report-select" onchange="${onY}">${allYear ? `<option value="all" ${year === 'all' ? 'selected' : ''}>সব বছর</option>` : ''}${years.map(y => `<option value="${y}" ${y === year ? 'selected' : ''}>${y}</option>`).join('')}</select>
+  </div>`;
+}
+// ক্যাটাগরি (খরচ) ও উৎস (আয়) তালিকার পপআপ — নিজস্ব মাস/বছর ফিল্টারসহ
+let fpF = { m: -1, y: new Date().getFullYear() };
+const fpIsList = k => k === 'cat' || k === 'incSrc';
+function fpListHtml() {
+  const isExp = fpKey === 'cat';
+  const all = isExp ? getExpenses() : getIncomes();
+  const ys = new Set([new Date().getFullYear(), fpF.y]);
+  all.forEach(e => { const d = _parseLocalDate(e.date); if (d && d.getTime() > 0) ys.add(d.getFullYear()); });
+  const years = [...ys].sort((a, b) => b - a);
+  const list = all.filter(e => _inMonth(e.date, fpF.y, fpF.m));
+  const total = list.reduce((t, e) => t + (+e.amount || 0), 0);
+  const tot = {};
+  list.forEach(e => { const c = (isExp ? e.category : e.source) || 'অন্যান্য'; tot[c] = (tot[c] || 0) + (+e.amount || 0); });
+  const rows = Object.entries(tot).sort(([, a], [, b]) => b - a).map(([name, val]) => {
+    const pct = total > 0 ? (val / total * 100).toFixed(1) : 0;
+    const icon = isExp ? (CAT_ICONS[name] || '🏷️') : _incSrc(name).icon;
+    const color = isExp ? (CAT_COLORS[name] || '#64748b') : _incSrc(name).color;
+    return `<div class="cat-bar-item fp-click" data-name="${_incEsc(name)}" onclick="openFpSub('${isExp ? 'exp' : 'inc'}', this.dataset.name)">
+      <div class="cat-bar-header"><div class="cat-bar-name">${iconSvg(icon)} ${_incEsc(name)}</div><div class="cat-bar-val">${_incMoney(val)}</div></div>
+      <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${pct}%;background:${color};"></div></div>
+      <div class="cat-bar-pct">${pct}%</div></div>`;
+  }).join('');
+  const empty = `<div class="empty-state"><div class="empty-icon"><svg class="empty-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></div><p>${isExp ? 'এই সময়ে কোনো খরচ নেই' : 'এই সময়ে কোনো আয় নেই'}</p></div>`;
+  return myPickers(fpF.m, fpF.y, years, 'fpListSetM(this.value)', 'fpListSetY(this.value)') + (rows || empty);
+}
+function fpListRedraw() { const b = document.getElementById('fpBody'); if (b) b.innerHTML = fpListHtml(); }
+function fpListSetM(v) { fpF.m = +v; fpListRedraw(); }
+function fpListSetY(v) { fpF.y = +v; fpListRedraw(); }
 function refreshFp() {
   refreshMonthFp();
   if (!fpKey) return;
   if (fpSub) { renderFpDetail(); return; }
   const b = document.getElementById('fpBody');
-  if (b && FP[fpKey] !== undefined) b.innerHTML = FP[fpKey];
+  if (b && fpIsList(fpKey)) b.innerHTML = fpListHtml();
+  else if (b && FP[fpKey] !== undefined) b.innerHTML = FP[fpKey];
 }
 // ── তারিখ অনুযায়ী গ্রুপ করা তালিকা (খরচ ও আয় — একই কোড) ──
 function _dayLabel(d) {
@@ -2116,7 +2157,10 @@ function renderMonthFp() {
 function openFp(key) {
   fpKey = key; fpSub = null;
   document.getElementById('fpTitle').textContent = FPT[key] || '';
-  document.getElementById('fpBody').innerHTML = FP[key] || '';
+  if (fpIsList(key)) {   // পেজে এখন যে মাস/বছর বাছা, সেটাই শুরুতে ধরো
+    fpF = key === 'cat' ? { m: expMonth, y: expYear } : { m: incMonth, y: incYear };
+    document.getElementById('fpBody').innerHTML = fpListHtml();
+  } else document.getElementById('fpBody').innerHTML = FP[key] || '';
   document.getElementById('fpModal').classList.add('show');
   _fpTop('fpBody');
 }
@@ -3320,10 +3364,7 @@ function renderIncome() {
   const yearSet = new Set([new Date().getFullYear(), incYear]);
   incomes.concat(expenses).forEach(e => { const d = _parseLocalDate(e.date); if (d && d.getTime() > 0) yearSet.add(d.getFullYear()); });
   const years = [...yearSet].sort((a, b) => b - a);
-  const pickers = `<div class="report-pickers" style="margin-bottom:12px;">
-    <select class="report-select" onchange="incMonth=+this.value;renderIncome()"><option value="-1" ${incMonth<0?'selected':''}>সব</option>${BN_MONTHS.map((m, i) => `<option value="${i}" ${i===incMonth?'selected':''}>${m}</option>`).join('')}</select>
-    <select class="report-select" onchange="incYear=+this.value;renderIncome()">${years.map(y => `<option value="${y}" ${y===incYear?'selected':''}>${y}</option>`).join('')}</select>
-  </div>`;
+  const pickers = myPickers(incMonth, incYear, years, 'incMonth=+this.value;renderIncome()', 'incYear=+this.value;renderIncome()');
 
   const nowD = new Date();
   const allMonths = incMonth < 0;
@@ -4132,10 +4173,7 @@ function renderExpense() {
   const yearSet = new Set([nowD.getFullYear(), expYear]);
   expenses.forEach(e => { const d = _parseLocalDate(e.date); if (d && d.getTime() > 0) yearSet.add(d.getFullYear()); });
   const years = [...yearSet].sort((a, b) => b - a);
-  const pickers = `<div class="report-pickers" style="margin-bottom:12px;">
-    <select class="report-select" onchange="expMonth=+this.value;renderExpense()"><option value="-1" ${expMonth<0?'selected':''}>সব</option>${BN_MONTHS.map((m, i) => `<option value="${i}" ${i===expMonth?'selected':''}>${m}</option>`).join('')}</select>
-    <select class="report-select" onchange="expYear=+this.value;renderExpense()">${years.map(y => `<option value="${y}" ${y===expYear?'selected':''}>${y}</option>`).join('')}</select>
-  </div>`;
+  const pickers = myPickers(expMonth, expYear, years, 'expMonth=+this.value;renderExpense()', 'expYear=+this.value;renderExpense()');
 
   const hero = `<div class="inc-hero">
     <div class="inc-hero-label">${heroLabel}</div>
@@ -4833,7 +4871,7 @@ window.addEventListener('DOMContentLoaded', () => {
     box.addEventListener('touchmove', e => { if (Math.abs(e.touches[0].clientX - sx) > 8 || Math.abs(e.touches[0].clientY - sy) > 8) clearTimeout(timer); }, { passive: true });
     box.addEventListener('touchend', () => clearTimeout(timer));
     box.addEventListener('contextmenu', e => {
-      const it = e.target.closest('.nt-item'); if (!it) return;
+      const it = e.target.closest('.nt-item'); if (!it) { e.preventDefault(); return; }
       e.preventDefault();
       if (Date.now() - lastTouch < 1500) return;           // টাচের লং-প্রেস → সিলেক্ট মোড (উপরে)
       showCtx(e.clientX, e.clientY, it.dataset.id);        // মাউস রাইট-ক্লিক → মেনু
