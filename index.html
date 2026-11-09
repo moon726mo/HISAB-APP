@@ -1463,6 +1463,72 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display:none; width:0; height
 /* নোট লিস্ট পেজে ধরে রাখলে ব্রাউজারের টেক্সট সিলেক্ট / Copy মেনু আসবে না (সার্চ বক্স বাদে) */
 #page-note, #page-note * { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
 #page-note input, #page-note textarea { -webkit-user-select:text; user-select:text; }
+
+/* ══════════ Samsung Notes স্টাইল নোট তালিকা ══════════ */
+#page-note { padding-left:18px; padding-right:18px; }
+#page-note .nt-head { display:block; padding:30px 0 0; }
+#page-note .nt-titlebox { text-align:center; }
+#page-note .nt-head h2 { font-size:34px; font-weight:600; letter-spacing:-.02em; line-height:1.25; color:var(--text); }
+#page-note .nt-head small { font-size:16px; color:var(--text2); margin-top:6px; }
+.nt-toolbar { display:flex; align-items:center; justify-content:space-between; margin:44px -10px 4px; }
+.nt-toolbar .nt-actions { gap:2px; }
+.nt-toolbar .nt-search-btn { width:46px; height:46px; border-radius:50%; background:none; border:none; box-shadow:none; color:var(--text); display:flex; align-items:center; justify-content:center; }
+.nt-toolbar .nt-search-btn:active { background:var(--bg3); }
+.nt-toolbar .nt-search-btn svg { width:25px; height:25px; stroke-width:1.8; }
+#page-note .nt-tabs { display:none; }
+#ntList .nt-group { font-size:15.5px; font-weight:500; color:var(--text); margin:22px 0 8px; letter-spacing:0; }
+#ntList.v-list .nt-row { margin:0; border-radius:0; }
+#ntList.v-list .nt-item, #ntList.v-list .nt-item.has-img, #ntList.v-list .nt-item.fav { align-items:center; gap:16px; padding:9px 0; margin:0; border:0; border-radius:0; box-shadow:none; background:var(--bg); overflow:visible; }
+#ntList.v-list .nt-item:active { transform:none; }
+#ntList.v-list .nt-item.picked { background:var(--pill); }
+#ntList.v-list .nt-act { border-radius:14px; }
+#ntList.v-list .nt-sthumb { flex:0 0 66px; width:66px; height:66px; margin:0; border-radius:14px; background:var(--card2,var(--bg3)); box-shadow:inset 0 0 0 1px var(--border); overflow:hidden; position:relative; }
+#ntList.v-list .nt-sthumb img { width:100%; height:100%; object-fit:cover; }
+#ntList.v-list .nt-tt > i { position:absolute; left:0; top:0; width:200%; height:200%; transform:scale(.5); transform-origin:0 0; padding:13px 12px; font:normal 10px/1.4 var(--font); color:var(--text2); white-space:pre-wrap; word-break:break-all; overflow:hidden; }
+#ntList.v-list .nt-title { font-size:18px; font-weight:600; line-height:1.3; color:var(--text); }
+#ntList.v-list .nt-sdate { display:flex; align-items:center; gap:7px; margin-top:3px; font-size:14.5px; color:var(--text2); }
+#ntList.v-list .nt-sdate svg { width:14px; height:14px; fill:#F5B301; stroke:#F5B301; stroke-width:1; flex-shrink:0; }
+.nt-fab { width:62px; height:62px; background:var(--bg3); color:#E5484D; border:1px solid var(--border); box-shadow:0 8px 22px rgba(0,0,0,.3); }
+.nt-fab .nic { width:26px; height:26px; stroke-width:2; }
+
+#ntFMenu { min-width:230px; }
+#ntFMenu .mv-l, #ntFMenu .mv-r { display:flex; align-items:center; gap:10px; }
+#ntFMenu .mv-r { color:var(--text2); font-size:13.5px; font-weight:500; gap:4px; }
+#ntFMenu .nic { width:20px; height:20px; }
+#ntFMenu .nt-msep { height:1px; background:var(--border); margin:5px 10px; }
+#ntFMenu .mv-back { font-weight:700; }
+
+/* ══ Samsung Notes (পিক্সেল মিলানো) ══ */
+#page-note { padding-left:14px; padding-right:14px; }
+.nt-toolbar { position:sticky; top:60px; z-index:30; margin:40px -2px 2px; pointer-events:none; }
+.nt-toolbar > * { pointer-events:auto; }
+.nt-toolbar .nt-search-btn { width:48px; height:48px; transition:background .2s, box-shadow .2s; }
+.nt-toolbar .nt-actions { border-radius:30px; transition:background .2s, box-shadow .2s; }
+.nt-toolbar.stuck #ntMenuBtn, .nt-toolbar.stuck .nt-actions { background:color-mix(in srgb, var(--bg3) 90%, transparent); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); box-shadow:0 2px 12px rgba(0,0,0,.18); }
+.nt-toolbar.stuck .nt-actions .nt-search-btn { background:none; box-shadow:none; }
+#page-note.sel-mode .nt-toolbar, #page-note.sel-mode .nt-up { display:none; }
+#ntList .nt-group { margin-left:4px; }
+#ntList.v-list { margin:0 -4px; }
+#ntList.v-list .nt-group { font-size:16px; font-weight:500; margin:34px 0 6px 15px; }
+#ntList.v-list .nt-group:first-child { margin-top:14px; }
+#ntList.v-list .nt-item, #ntList.v-list .nt-item.has-img, #ntList.v-list .nt-item.fav { gap:14px; padding:14px 0; }
+#ntList.v-list .nt-title { font-size:19px; font-weight:600; }
+#ntList.v-list .nt-sdate { margin-top:4px; font-size:15px; gap:8px; }
+#ntList.v-list .nt-sdate svg { width:15px; height:15px; }
+#ntList.v-list .nt-sthumb { flex:0 0 66px; width:66px; height:66px; border-radius:14px; }
+.nt-fab { width:58px; height:58px; background:#fff; color:#E5484D; border:0; box-shadow:0 6px 18px rgba(0,0,0,.22); }
+.nt-up { display:none; position:fixed; left:50%; margin-left:-24px; bottom:calc(var(--nav-h) + var(--safe-bot) + 16px); width:48px; height:48px; border-radius:50%; border:0; background:color-mix(in srgb, var(--bg3) 92%, transparent); color:var(--text); box-shadow:0 4px 14px rgba(0,0,0,.25); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); z-index:90; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .2s; }
+#page-note.active .nt-up { display:flex; }
+.nt-up.show { opacity:1; pointer-events:auto; }
+.nt-up .nic { width:26px; height:26px; stroke-width:2; }
+@media (prefers-color-scheme: dark) { .nt-fab { background:#3a3a3c; } }
+
+/* ── রিড মোড ── */
+.ne-ic.on { color:var(--accent); background:var(--pill, rgba(27,67,50,.1)); }
+.note-editor.ne-read .ne-bar { display:none; }
+.note-editor.ne-read .ne-edit-only { opacity:.35; pointer-events:none; }
+.note-editor.ne-read .ne-body { cursor:default; caret-color:transparent; }
+.note-editor.ne-read .ne-title { pointer-events:none; }
 </style>
 </head>
 <body>
@@ -1509,9 +1575,11 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display:none; width:0; height
   <!-- ══ নোট (লেখা + ছবি) ══ -->
   <section class="page" id="page-note">
     <div class="nt-head">
-      <div><h2>সব নোট</h2><small id="ntCount">০ টি নোট</small></div>
-      <div class="nt-actions"><button class="nt-search-btn" id="ntViewBtn" onclick="ntViewMenu(event)" aria-label="ভিউ বদলান" aria-haspopup="menu" aria-expanded="false"></button><button class="nt-search-btn" onclick="ntToggleSearch()" aria-label="খুঁজুন"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button></div>
+      <div class="nt-titlebox"><h2>সব নোট</h2><small id="ntCount">০ টি নোট</small></div>
+      
     </div>
+    <div class="nt-toolbar"><button class="nt-search-btn" id="ntMenuBtn" onclick="ntFilterMenu(event)" aria-label="মেনু" aria-haspopup="menu"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg></button>
+      <div class="nt-actions"><button class="nt-search-btn" onclick="ntToggleSearch()" aria-label="খুঁজুন"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button></div></div>
     <div class="nt-selhead">
       <button class="nt-all" onclick="ntSelectAll()"><span class="nt-chk" id="ntAllChk"></span>সব</button>
       <h2 id="ntSelTitle">০ টি নির্বাচিত</h2>
@@ -1520,7 +1588,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display:none; width:0; height
     <div class="nt-tabs" id="ntTabs"><button class="on" data-t="all" onclick="ntTab('all')">সব নোট</button><button data-t="fav" onclick="ntTab('fav')"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> ফেভারিট</button></div>
     <div class="nt-search" id="ntSearch"><input id="ntSearchInput" type="search" placeholder="নোট খুঁজুন…" oninput="ntSearchChange(this.value)"></div>
     <div id="ntList"></div>
-    <button class="nt-fab" onclick="openNoteEditor()" aria-label="নতুন নোট"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg></button>
+    <button class="nt-fab" onclick="openNoteEditor()" aria-label="নতুন নোট"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg></button>
+    <button class="nt-up" id="ntUp" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="উপরে যান"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg></button>
     <div class="nt-selbar"><button id="ntFavBtn" onclick="ntFavSelected()"><span><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><em id="ntFavLbl" style="font-style:normal">ফেভারিট</em></button><button id="ntDelBtn" onclick="ntDeleteSelected()"><span><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></span>মুছুন</button></div>
     <div class="nt-ctx" id="ntCtx"></div>
     <div class="nt-vmenu" id="ntVMenu" role="menu"></div>
@@ -1570,10 +1639,11 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display:none; width:0; height
 <div class="note-editor" id="noteEditor">
   <div class="ne-top">
     <button class="ne-done" onclick="closeNoteEditor()" aria-label="সংরক্ষণ"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></button>
-    <button class="ne-ic" onclick="neCmd('undo')" aria-label="Undo"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></button>
-    <button class="ne-ic" onclick="neCmd('redo')" aria-label="Redo"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg></button>
+    <button class="ne-ic ne-edit-only" onclick="neCmd('undo')" aria-label="Undo"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></button>
+    <button class="ne-ic ne-edit-only" onclick="neCmd('redo')" aria-label="Redo"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg></button>
     <button class="ne-ic fav" id="neFavBtn" onclick="neToggleFav()" aria-label="ফেভারিট"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
-    <button class="ne-ic" onclick="neTogglePop('add')" aria-label="ছবি যোগ"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button>
+    <button class="ne-ic" id="neReadBtn" onclick="neToggleRead()" aria-label="রিড মোড" aria-pressed="false"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg></button>
+    <button class="ne-ic ne-edit-only" onclick="neTogglePop('add')" aria-label="ছবি যোগ"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button>
     <button class="ne-ic" onclick="neToggleMenu()" aria-label="আরও"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
   </div>
   <div class="ne-menu" id="neMenu"><div class="ne-zrow"><span class="zl">জুম</span><button onclick="neZoomBy(-0.25)" aria-label="ছোট">−</button><button onclick="neZoomReset()" aria-label="নরমাল">১০০%</button><button onclick="neZoomBy(0.25)" aria-label="বড়">+</button></div><button onclick="neDelete()"><svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg> নোট মুছুন</button></div>
@@ -4673,6 +4743,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const VIEWS = [['gl', 'গ্রিড (বড়)'], ['gs', 'গ্রিড (ছোট)'], ['list', 'তালিকা'], ['simple', 'সহজ তালিকা']];
   let view = 'list';
   try { const sv = localStorage.getItem('et_notes_view'); view = sv === 'grid' ? 'gl' : (VIEWS.some(v => v[0] === sv) ? sv : 'list'); } catch (e) {}
+  try { if (!localStorage.getItem('et_nv_samsung')) { view = 'list'; localStorage.setItem('et_notes_view', 'list'); localStorage.setItem('et_nv_samsung', '1'); } } catch (e) {}
   const isGrid = () => view === 'gl' || view === 'gs';
   const hiddenIds = new Set();   // মুছে ফেলা হয়েছে কিন্তু "ফিরিয়ে আনুন" এর সময় চলছে
   const reduceMotion = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -4706,14 +4777,18 @@ window.addEventListener('DOMContentLoaded', () => {
   if (location.protocol === 'file:') setTimeout(() => { try { showToast('⚠️ অ্যাপটি ডাউনলোড করা ফাইল থেকে খোলা — নোট/শিরোনাম সেভ নাও থাকতে পারে। হোস্ট করা লিংক (https) থেকে খুলুন।', 'warning', 9000); } catch (e) {} }, 3000);
 
   // ── তালিকা ──
+  const cts = n => n.updated || n.created || 0;   // শেষ এডিটের সময়: শুধু খুললে বদলায় না, আসলে এডিট করলে আজকের তারিখ হয়
   function fmtTime(ts) { return _en(new Date(ts).toLocaleTimeString('bn-BD', { hour: 'numeric', minute: '2-digit' })); }
+  // Samsung Notes এর মতো: মাস অনুযায়ী গ্রুপ (চলতি বছরে শুধু মাস, আগের বছরে মাস + বছর)
   function groupLabel(ts) {
     const d = new Date(ts), t = new Date();
-    const d0 = new Date(d.getFullYear(), d.getMonth(), d.getDate()), t0 = new Date(t.getFullYear(), t.getMonth(), t.getDate());
-    const diff = Math.round((t0 - d0) / 86400000);
-    if (diff === 0) return 'আজ';
-    if (diff === 1) return 'গতকাল';
-    return _en(d.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' }));
+    const m = d.toLocaleDateString('bn-BD', { month: 'long' });
+    return _en(d.getFullYear() === t.getFullYear() ? m : m + ' ' + d.getFullYear());
+  }
+  function fmtDay(ts) {
+    const d = new Date(ts), t = new Date(), o = { day: 'numeric', month: 'long' };
+    if (d.getFullYear() !== t.getFullYear()) o.year = 'numeric';
+    return _en(d.toLocaleDateString('bn-BD', o));
   }
   function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 
@@ -4726,6 +4801,21 @@ window.addEventListener('DOMContentLoaded', () => {
     const hm = /^<h1 class="ne-h1">([\s\S]*?)<\/h1>/.exec(n.html || '');
     if (hm) { const ta = document.createElement('textarea'); ta.innerHTML = hm[1]; shownTitle = ta.value || n.title; }
     const prev = n.text.replace(/\s+/g, ' ').trim().slice(shownTitle.length).trim().slice(0, 220);
+    if (view === 'list') {
+      const bodyTxt = (n.ttl && n.text.indexOf(n.ttl) === 0) ? n.text.slice(n.ttl.length) : n.text;
+      const tiny = bodyTxt.trim().split('\n').slice(0, 16).join('\n').slice(0, 300);
+      const th = n.thumb
+        ? '<div class="nt-sthumb nt-cover"><img src="' + esc(n.thumb) + '" alt="" draggable="false" decoding="async"></div>'
+        : '<div class="nt-sthumb nt-tt"><i>' + esc(tiny) + '</i></div>';
+      const star = fav ? '<svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' : '';
+      return '<div class="nt-row" data-rid="' + n.id + '">' +
+        '<div class="nt-act fav">' + STAR_SVG + '<b>' + (fav ? 'সরান' : 'ফেভারিট') + '</b></div>' +
+        '<div class="nt-act del"><b>মুছুন</b>' + TRASH_SVG + '</div>' +
+        '<div class="nt-item' + (fav ? ' fav' : '') + '" data-id="' + n.id + '" data-g="' + esc(g) + '"' + (m.c ? ' data-c="' + m.c + '"' : '') + '>' +
+        '<span class="nt-chk"></span>' + th +
+        '<div class="nt-main"><div class="nt-top"><div class="nt-title">' + esc(shownTitle) + '</div></div>' +
+        '<div class="nt-sdate"><span>' + fmtDay(cts(n)) + '</span>' + star + '</div></div></div></div>';
+    }
     const cover = n.thumb ? '<div class="nt-cover"><img src="' + esc(n.thumb) + '" alt="" draggable="false" decoding="async"></div>' : '';
     return '<div class="nt-row" data-rid="' + n.id + '">' +
       '<div class="nt-act fav">' + STAR_SVG + '<b>' + (fav ? 'সরান' : 'ফেভারিট') + '</b></div>' +
@@ -4735,7 +4825,7 @@ window.addEventListener('DOMContentLoaded', () => {
       '<div class="nt-top"><div class="nt-title">' + esc(shownTitle) + '</div>' +
       '</div>' +
       (prev ? '<div class="nt-prev">' + esc(prev) + '</div>' : '') +
-      '<div class="nt-foot"><span class="nt-time">' + fmtTime(n.updated) + '</span></div></div></div></div>';
+      '<div class="nt-foot"><span class="nt-time">' + fmtTime(cts(n)) + '</span></div></div></div></div>';
   }
   async function renderNotes(opt) {
     const flip = !!(opt && opt.flip);
@@ -4743,13 +4833,14 @@ window.addEventListener('DOMContentLoaded', () => {
     let first = null;
     if (flip) { first = new Map(); box.querySelectorAll('.nt-row').forEach(r => { const b = r.getBoundingClientRect(); first.set(r.dataset.rid, [b.left, b.top]); }); }
     try { notes = (await loadAll()).filter(n => !hiddenIds.has(n.id)); } catch (e) { notes = []; }
-    notes.sort((a, b) => b.updated - a.updated);
+    notes.sort((a, b) => cts(b) - cts(a));   // সত্যিকারের এডিটের সময় অনুযায়ী
     [...sel].forEach(id => { if (!notes.find(n => n.id === id)) sel.delete(id); });
     const q = query.trim().toLowerCase();
     let list = q ? notes.filter(n => (n.title + ' ' + (n.ttl || '') + ' ' + n.text).toLowerCase().includes(q)) : notes;
     if (tab === 'fav') list = list.filter(n => isFav(n.id));
     else list = [...list.filter(n => isFav(n.id)), ...list.filter(n => !isFav(n.id))];   // ফেভারিট আগে
     document.querySelectorAll('#ntTabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
+    { const h = document.querySelector('#page-note .nt-head h2'); if (h) h.textContent = tab === 'fav' ? 'ফেভারিট' : 'সব নোট'; }
     visibleIds = list.map(n => n.id);
     $('ntCount').textContent = bn(notes.length) + ' টি নোট';
     box.className = 'v-' + view + (isGrid() ? ' v-grid' : '');
@@ -4763,7 +4854,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     const groups = [];
     list.forEach(n => {
-      const g = (tab === 'all' && isFav(n.id)) ? '★ ফেভারিট' : groupLabel(n.updated);
+      const g = (tab === 'all' && isFav(n.id)) ? 'ফেভারিট' : groupLabel(cts(n));
       const last = groups[groups.length - 1];
       if (!last || last.g !== g) groups.push({ g, items: [n] }); else last.items.push(n);
     });
@@ -4826,6 +4917,50 @@ window.addEventListener('DOMContentLoaded', () => {
   };
   window.renderNotes = renderNotes;
   window.ntTab = t => { tab = t; renderNotes(); };
+  (function () {
+    const tb = document.querySelector('#page-note .nt-toolbar'), up = $('ntUp');
+    const onScr = () => {
+      const y = window.scrollY || document.documentElement.scrollTop || 0;
+      if (tb) tb.classList.toggle('stuck', y > 10 && tb.getBoundingClientRect().top <= 66);
+      if (up) up.classList.toggle('show', y > 420);
+    };
+    window.addEventListener('scroll', onScr, { passive: true }); onScr();
+  })();
+  // ☰ মেনু: সব নোট / ফেভারিট + "ভিউ" (ক্লিক করলে গ্রিড · তালিকা · সহজ তালিকা)
+  const CHEV = '<svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
+  const BACK = '<svg class="nic" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>';
+  function fMenuMain(m) {
+    const vname = (VIEWS.find(v => v[0] === view) || ['', ''])[1];
+    m.innerHTML = [['all', 'সব নোট'], ['fav', 'ফেভারিট']].map(v => '<button type="button" data-t="' + v[0] + '" class="' + (v[0] === tab ? 'on' : '') + '"><span>' + v[1] + '</span>' + (v[0] === tab ? ICON_CHECK : '') + '</button>').join('') +
+      '<div class="nt-msep"></div>' +
+      '<button type="button" data-act="view"><span class="mv-l">' + (VIEW_ICON[view] || '') + 'ভিউ</span><span class="mv-r">' + vname + CHEV + '</span></button>';
+  }
+  function fMenuView(m) {
+    m.innerHTML = '<button type="button" data-act="back" class="mv-back"><span class="mv-l">' + BACK + 'ভিউ</span></button><div class="nt-msep"></div>' +
+      VIEWS.map(v => '<button type="button" data-v="' + v[0] + '" class="' + (v[0] === view ? 'on' : '') + '"><span class="mv-l">' + (VIEW_ICON[v[0]] || '') + v[1] + '</span>' + (v[0] === view ? ICON_CHECK : '') + '</button>').join('');
+  }
+  window.ntFilterMenu = ev => {
+    if (ev) ev.stopPropagation();
+    let m = $('ntFMenu');
+    if (!m) {
+      m = document.createElement('div'); m.id = 'ntFMenu'; m.className = 'nt-vmenu'; m.style.transformOrigin = 'top left'; document.body.appendChild(m);
+      m.addEventListener('click', e => {
+        const t = e.target.closest('button'); if (!t) return;
+        if (t.dataset.t) { m.classList.remove('show'); window.ntTab(t.dataset.t); }
+        else if (t.dataset.act === 'view') fMenuView(m);
+        else if (t.dataset.act === 'back') fMenuMain(m);
+        else if (t.dataset.v) { m.classList.remove('show'); setView(t.dataset.v); }
+      });
+      document.addEventListener('pointerdown', e => { if (!e.target.closest('#ntFMenu, #ntMenuBtn')) m.classList.remove('show'); }, true);
+      window.addEventListener('scroll', () => m.classList.remove('show'), true);
+      window.addEventListener('resize', () => m.classList.remove('show'));
+    }
+    if (m.classList.contains('show')) { m.classList.remove('show'); return; }
+    fMenuMain(m);
+    const r = ev.currentTarget.getBoundingClientRect();
+    m.style.top = (r.bottom + 8) + 'px'; m.style.left = Math.max(8, r.left) + 'px'; m.style.right = 'auto';
+    m.classList.add('show');
+  };
   window.ntToggleSearch = () => {
     const s = $('ntSearch'); s.classList.toggle('show');
     if (s.classList.contains('show')) $('ntSearchInput').focus(); else { $('ntSearchInput').value = ''; query = ''; renderNotes(); }
@@ -5202,7 +5337,7 @@ window.addEventListener('DOMContentLoaded', () => {
     updFavBtn(); showToast((curId ? isFav(curId) : pendFav) ? 'ফেভারিটে যোগ হয়েছে' : 'ফেভারিট থেকে সরানো হয়েছে', 'info', 1500);
   };
   window.openNoteEditor = function (id) {
-    closing = false; imgTarget = null; hidePops(); closeNeViewer(); if (window.neZoomResetSilent) neZoomResetSilent();
+    closing = false; imgTarget = null; hidePops(); closeNeViewer(); if (readMode) setRead(false, true); if (window.neZoomResetSilent) neZoomResetSilent();
     const b = body();
     curId = null; curCreated = 0;
     if (id) {
@@ -5226,6 +5361,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!curId) { curTr = 0; curTv = 0; curThumb = ''; curThumbSrc = ''; $('neTitle').value = ''; $('neMeta').textContent = fmtMeta(Date.now()); }
     b.querySelectorAll('img.sel').forEach(i => i.classList.remove('sel'));
     updFavBtn(); syncEmpty(); linkify(true); fitViewport();
+    snap = curId ? snapKey() : null;
     setOrigin(); $('noteEditor').classList.add('show');
     $('neWrap').scrollTop = 0;
     if (!id) setTimeout(() => $('neTitle').focus(), 60);
@@ -5257,6 +5393,8 @@ window.addEventListener('DOMContentLoaded', () => {
     return /drive\.google\.com\/thumbnail/.test(src) ? src.replace(/sz=w\d+/, 'sz=w600') : src;
   }
   let curThumb = '', curThumbSrc = '', curTr = 0, curTv = 0, curMeta = { c: '', t: [] };
+  let snap = null;
+  const snapKey = () => body().innerHTML + '\u0001' + $('neTitle').value.replace(/\s+/g, ' ').trim();
   async function saveCurrent() {
     const b = body(); clearTimeout(saveTimer);
     b.querySelectorAll('img.sel').forEach(i => i.classList.remove('sel'));
@@ -5269,6 +5407,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!text && !firstImg) { if (curId) { await delNote(curId); curId = null; } return; }
     const firstLine = text.split('\n').map(s => s.trim()).find(Boolean) || '';
     const now = Date.now();
+    if (curId && snap !== null && snapKey() === snap) { setMeta(curId, curMeta); return; }   // কিছু বদলায়নি → সেভ নয়, সময়ও বদলাবে না
     if (!curId) { curId = genId(); curCreated = now; }
     if (pendFav) { favs.add(curId); saveFavs(); pendFav = false; }
     setMeta(curId, curMeta);
@@ -5288,7 +5427,7 @@ window.addEventListener('DOMContentLoaded', () => {
       title: (ttl || firstLine || 'ছবি').slice(0, 60), ttl,
       thumb, tr, tv
     };
-    try { await putNote(note); scheduleNoteSync(); }
+    try { await putNote(note); snap = snapKey(); scheduleNoteSync(); }
     catch (e) { showToast('সংরক্ষণ করা যায়নি (জায়গা শেষ?)', 'error'); }
   }
   // সেভ সিরিয়াল করা + আটকে গেলে timeout — যাতে এডিটর কখনো stuck না হয়
@@ -5342,8 +5481,29 @@ window.addEventListener('DOMContentLoaded', () => {
     syncEmpty(); autosave();
   };
   $('neBar').addEventListener('mousedown', e => { if (!e.target.closest('input')) e.preventDefault(); });
+  // ── রিড মোড: লক থাকলে লেখা এডিট হয় না, ট্যাপ করলে কিবোর্ডও খোলে না; আবার চাপলে আনলক + কিবোর্ড ──
+  let readMode = false;
+  function setRead(on, silent) {
+    readMode = !!on;
+    const b = body(), t = $('neTitle'), ed = $('noteEditor'), btn = $('neReadBtn');
+    b.contentEditable = on ? 'false' : 'true';
+    t.readOnly = !!on;
+    ed.classList.toggle('ne-read', !!on);
+    if (btn) { btn.classList.toggle('on', !!on); btn.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+    hidePops();
+    if (on) {
+      try { const ae = document.activeElement; if (ae && ed.contains(ae)) ae.blur(); } catch (_) {}
+      try { getSelection().removeAllRanges(); } catch (_) {}
+      if (!silent) showToast('রিড মোড চালু — এডিট করতে আবার চাপুন', 'info', 1600);
+    } else if (!silent) {
+      b.focus();
+      try { const r = document.createRange(); r.selectNodeContents(b); r.collapse(false); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(r); } catch (_) {}
+    }
+  }
+  window.neToggleRead = () => setRead(!readMode);
   // ফাঁকা জায়গায় (বডির বাইরে/নিচে) ট্যাপ করলেও লেখার ঘরে কার্সর যাবে
   $('neWrap').addEventListener('click', e => {
+    if (readMode) return;
     const t = e.target;
     if (t.closest && t.closest('input, button, a, img, .ne-title')) return;
     const b = body();
