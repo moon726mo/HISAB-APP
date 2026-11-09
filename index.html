@@ -5346,7 +5346,18 @@ window.addEventListener('DOMContentLoaded', () => {
   $('neWrap').addEventListener('click', e => {
     const t = e.target;
     if (t.closest && t.closest('input, button, a, img, .ne-title')) return;
-    const b = body(); if (b.contains(t) && t !== b) return;
+    const b = body();
+    if (b.contains(t)) {
+      if (t !== b) return;
+      // বডির নিজের উপর ট্যাপ: শুধু শেষ লাইনের নিচের ফাঁকা জায়গায় হলেই কার্সর শেষে যাবে;
+      // লেখার লাইনের উপর ট্যাপ করলে ব্রাউজার যেখানে কার্সর রেখেছে সেখানেই থাকবে
+      let bottom = b.getBoundingClientRect().top;
+      try {
+        const rg = document.createRange(); rg.selectNodeContents(b);
+        Array.from(rg.getClientRects()).forEach(r => { if (r.bottom > bottom) bottom = r.bottom; });
+      } catch (_) {}
+      if (e.clientY <= bottom) return;
+    }
     const sel = getSelection(); if (sel && !sel.isCollapsed) return;
     b.focus();
     try { const r = document.createRange(); r.selectNodeContents(b); r.collapse(false); sel.removeAllRanges(); sel.addRange(r); } catch (_) {}
